@@ -1,0 +1,5 @@
+While writing Spring projects we often need to specify some configurations in the application.properties (or .yml) file. What is the name of the folder that contains this file?;properties;static;resources;tests
+What is the name of Spring Boot config file?;boot.config;spring.properties;application.json;application.properties
+What naming pattern do all the Spring Boot starters follow?;starter-spring-boot-*;spring-boot-starter-*;spring-starter-*;starter-spring-*
+Why were Spring Boot starters created?;to bring new technologies to the Spring framework;to simplify dependency management and speed up the development process;to simplify dependency management and make programs run faster;to decrease the number of bugs and make programs run faster
+We started a new Spring project. What will happen if we remove the @SpringBootApplication annotation located above the main class and try to run the program?;The program will start but some Spring features will not be enabled;We will see an error and the program won't start;This annotation is used to annotate methods, not classes;Nothing will happen, this annotation can be skipped and the program will work correctly
