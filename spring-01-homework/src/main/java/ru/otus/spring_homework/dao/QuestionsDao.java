@@ -1,10 +1,10 @@
 package ru.otus.spring_homework.dao;
 
-import com.opencsv.exceptions.CsvException;
+import ru.otus.spring_homework.domain.TestQuestion;
+import ru.otus.spring_homework.exceptions.GetTestQuestionException;
 
-import java.io.IOException;
 import java.util.List;
 
 public interface QuestionsDao {
-    List<String[]> getTestQuestions() throws IOException, CsvException;
+    List<TestQuestion> getTestQuestions() throws GetTestQuestionException;
 }

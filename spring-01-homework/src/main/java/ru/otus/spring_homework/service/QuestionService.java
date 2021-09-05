@@ -1,9 +1,7 @@
 package ru.otus.spring_homework.service;
 
-import com.opencsv.exceptions.CsvException;
-
-import java.io.IOException;
+import ru.otus.spring_homework.exceptions.GetTestQuestionException;
 
 public interface QuestionService {
-    void printQuestions() throws CsvException, IOException;
+    void printQuestions() throws GetTestQuestionException;
 }
