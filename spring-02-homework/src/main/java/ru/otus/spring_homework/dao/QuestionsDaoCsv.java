@@ -24,12 +24,10 @@ import java.util.stream.Collectors;
 public class QuestionsDaoCsv implements QuestionsDao {
 
     private final Resource testQuestions;
-    private final Integer minAnswers;
+    private static final String SEPARATOR = "~\\|~";
 
-    public QuestionsDaoCsv(@Value("classpath:${app.resource}") Resource resource,
-                           @Value("${app.min-answers}") Integer minAnswers) {
+    public QuestionsDaoCsv(@Value("classpath:${app.resource}") Resource resource) {
         this.testQuestions = resource;
-        this.minAnswers = minAnswers;
     }
 
     @Override
@@ -53,17 +51,12 @@ public class QuestionsDaoCsv implements QuestionsDao {
             question.setQuestion(row[0]);
             question.setAnswers(Arrays.stream(row)
                     .skip(1)
-                    .map(e -> new Answer(e.split(Answer.getSeparator())[0],
-                            Boolean.parseBoolean(e.split(Answer.getSeparator())[1])))
+                    .map(e -> new Answer(e.split(SEPARATOR)[0],
+                            Boolean.parseBoolean(e.split(SEPARATOR)[1])))
                     .collect(Collectors.toList()));
 
             questions.add(question);
         }
         return questions;
-    }
-
-    @Override
-    public Integer getMinAnswers() {
-        return minAnswers;
     }
 }

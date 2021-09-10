@@ -28,7 +28,7 @@ class QuestionServiceImplTest {
     @Test
     @DisplayName("should invoke getTestQuestions() on dao")
     public void shouldInvokeGetTestQuestions() throws GetTestQuestionException {
-        when(ioService.get()).thenReturn("A");
+        when(ioService.readLine()).thenReturn("A");
         service.performTest();
         verify(dao).getTestQuestions();
     }

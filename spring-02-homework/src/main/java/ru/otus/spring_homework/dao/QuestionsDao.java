@@ -7,5 +7,4 @@ import java.util.List;
 
 public interface QuestionsDao {
     List<TestQuestion> getTestQuestions() throws GetTestQuestionException;
-    Integer getMinAnswers();
 }

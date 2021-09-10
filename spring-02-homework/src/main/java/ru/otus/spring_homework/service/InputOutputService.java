@@ -1,6 +1,9 @@
 package ru.otus.spring_homework.service;
 
+import org.springframework.lang.NonNull;
+
 public interface InputOutputService {
-    String get();
-    void put(String string);
+    @NonNull
+    String readLine();
+    void output(String string);
 }
