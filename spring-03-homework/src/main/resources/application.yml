@@ -1,0 +1,10 @@
+app:
+  resources:
+    ru: questions_Ru.csv
+    en: questions.csv
+  min-answers: 3
+  locale:
+
+spring:
+  messages:
+    basename: i18n/messages
