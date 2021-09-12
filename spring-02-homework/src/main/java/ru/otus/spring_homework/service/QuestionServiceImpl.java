@@ -13,13 +13,13 @@ import java.util.List;
 public class QuestionServiceImpl implements QuestionService {
     private final QuestionsDao dao;
     private final InputOutputService ioService;
-    private final Integer minAnswers;
+    private final int minAnswers;
     private static final char FIRST_BULLET = 'A';
 
     @Autowired
     public QuestionServiceImpl(QuestionsDao dao,
                                InputOutputService ioService,
-                               @Value("${app.min-answers}") Integer minAnswers) {
+                               @Value("${app.min-answers}") int minAnswers) {
         this.dao = dao;
         this.ioService = ioService;
         this.minAnswers = minAnswers;
