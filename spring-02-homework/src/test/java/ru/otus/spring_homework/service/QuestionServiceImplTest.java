@@ -18,17 +18,16 @@ import static org.mockito.Mockito.when;
 class QuestionServiceImplTest {
     @Mock
     private QuestionsDaoCsv dao;
-
     @Mock
     private InputOutputServiceImpl ioService;
-
-    @InjectMocks
-    private QuestionServiceImpl service;
 
     @Test
     @DisplayName("should invoke getTestQuestions() on dao")
     public void shouldInvokeGetTestQuestions() throws GetTestQuestionException {
         when(ioService.readLine()).thenReturn("A");
+
+        QuestionServiceImpl service = new QuestionServiceImpl(dao, ioService, 3);
+
         service.performTest();
         verify(dao).getTestQuestions();
     }
