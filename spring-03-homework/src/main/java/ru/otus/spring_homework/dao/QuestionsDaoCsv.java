@@ -40,10 +40,10 @@ public class QuestionsDaoCsv implements QuestionsDao {
         List<TestQuestion> questions = new ArrayList<>();
         CSVParser csvParser = new CSVParserBuilder().withSeparator(';').build();
 
-        try {
-            CSVReader csvReader = new CSVReaderBuilder(new InputStreamReader(testQuestions.getInputStream()))
-                    .withCSVParser(csvParser)
-                    .build();
+        try (CSVReader csvReader = new CSVReaderBuilder(new InputStreamReader(testQuestions.getInputStream()))
+                .withCSVParser(csvParser)
+                .build()) {
+
             csvResult = csvReader.readAll();
         } catch (CsvException | IOException e) {
             throw new GetTestQuestionException("Can't get test questions: ", e);

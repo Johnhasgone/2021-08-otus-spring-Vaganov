@@ -15,7 +15,7 @@ import java.util.Locale;
 public class QuestionServiceImpl implements QuestionService {
     private final QuestionsDao dao;
     private final InputOutputService ioService;
-    private final Integer minAnswers;
+    private final int minAnswers;
     private final Locale locale;
     private final MessageSource msg;
 
