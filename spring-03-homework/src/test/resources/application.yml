@@ -4,7 +4,3 @@ app:
     en: questions.csv
   min-answers: 3
   locale: ru-RU
-
-spring:
-  messages:
-    basename: i18n/messages

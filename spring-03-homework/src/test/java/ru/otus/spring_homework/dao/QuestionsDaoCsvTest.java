@@ -1,6 +1,6 @@
 package ru.otus.spring_homework.dao;
 
-import com.opencsv.CSVReader;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,20 +30,21 @@ class QuestionsDaoCsvTest {
     private AppProps props;
     @Mock
     private InputStream inputStream;
-    @Mock
-    private CSVReader csvReader;
+
+
+    @BeforeEach
+    private void setMockInvocationResult() {
+        when(props.getResources()).thenReturn(resources);
+        when(props.getLocale()).thenReturn("ru-RU");
+        when(resources.getRu()).thenReturn(testQuestions);
+    }
 
 
     @Test
     @DisplayName("should invoke getInputStream() on dao")
     public void shouldInvokeTestQuestions() throws IOException, GetTestQuestionException {
         when(testQuestions.getInputStream()).thenReturn(inputStream);
-        when(props.getResources()).thenReturn(resources);
-        when(resources.getRu()).thenReturn(testQuestions);
-        when(props.getLocale()).thenReturn("ru-RU");
-
         QuestionsDaoCsv daoCsv = new QuestionsDaoCsv(props);
-
         daoCsv.getTestQuestions();
         verify(testQuestions).getInputStream();
     }
@@ -52,26 +53,7 @@ class QuestionsDaoCsvTest {
     @DisplayName("should throw GetTestQuestionException")
     public void shouldThrowGetTestQuestionException() throws IOException {
         when(testQuestions.getInputStream()).thenThrow(new IOException());
-        when(props.getResources()).thenReturn(resources);
-        when(props.getLocale()).thenReturn("ru-RU");
-        when(resources.getRu()).thenReturn(testQuestions);
-
-
         QuestionsDaoCsv daoCsv = new QuestionsDaoCsv(props);
-
         assertThrows(GetTestQuestionException.class, daoCsv::getTestQuestions);
-    }
-
-    @Test
-    @DisplayName("should return list of TestQuestion")
-    public void shouldReturnListOfTestQuestion() throws GetTestQuestionException, IOException {
-        when(props.getResources()).thenReturn(resources);
-        when(props.getLocale()).thenReturn("ru-RU");
-        when(resources.getRu()).thenReturn(testQuestions);
-        when(testQuestions.getInputStream()).thenReturn(inputStream);
-        // TODO get power mock for mocking creating local instances
-
-        QuestionsDaoCsv daoCsv = new QuestionsDaoCsv(props);
-        daoCsv.getTestQuestions();
     }
 }
