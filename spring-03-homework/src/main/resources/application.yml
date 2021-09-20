@@ -1,9 +1,7 @@
 app:
-  resources:
-    ru: questions_Ru.csv
-    en: questions.csv
+  resource: questions_${app.locale}.csv
   min-answers: 3
-  locale: ru-RU
+  locale: en
 
 spring:
   messages:

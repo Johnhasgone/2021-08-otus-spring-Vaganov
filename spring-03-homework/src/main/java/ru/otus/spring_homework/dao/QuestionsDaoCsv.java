@@ -6,10 +6,9 @@ import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.exceptions.CsvException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Repository;
-import ru.otus.spring_homework.config.AppProps;
+import ru.otus.spring_homework.config.QuestionsDaoProps;
 import ru.otus.spring_homework.domain.Answer;
 import ru.otus.spring_homework.domain.TestQuestion;
 import ru.otus.spring_homework.exceptions.GetTestQuestionException;
@@ -29,8 +28,8 @@ public class QuestionsDaoCsv implements QuestionsDao {
     private static final String SEPARATOR = "~\\|~";
 
     @Autowired
-    public QuestionsDaoCsv(AppProps props) {
-        this.testQuestions = "ru-RU".equals(props.getLocale()) ? props.getResources().getRu() : props.getResources().getEn();
+    public QuestionsDaoCsv(QuestionsDaoProps props) {
+        this.testQuestions = props.getResource();
     }
 
     @Override

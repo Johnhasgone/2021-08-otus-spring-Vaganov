@@ -6,17 +6,17 @@ import org.springframework.core.io.Resource;
 
 @ConfigurationProperties(prefix = "app")
 @Configuration
-public class AppProps {
-    private Resources resources;
+public class AppProps implements LocalizationProps, QuestionServiceProps, QuestionsDaoProps {
+    private Resource resource;
     private int minAnswers;
     private String locale;
 
-    public Resources getResources() {
-        return resources;
+    public Resource getResource() {
+        return resource;
     }
 
-    public void setResources(Resources resources) {
-        this.resources = resources;
+    public void setResource(Resource resource) {
+        this.resource = resource;
     }
 
     public int getMinAnswers() {
@@ -33,26 +33,5 @@ public class AppProps {
 
     public void setLocale(String locale) {
         this.locale = locale;
-    }
-
-    public static class Resources {
-        Resource ru;
-        Resource en;
-
-        public Resource getRu() {
-            return ru;
-        }
-
-        public void setRu(Resource ru) {
-            this.ru = ru;
-        }
-
-        public Resource getEn() {
-            return en;
-        }
-
-        public void setEn(Resource en) {
-            this.en = en;
-        }
     }
 }
