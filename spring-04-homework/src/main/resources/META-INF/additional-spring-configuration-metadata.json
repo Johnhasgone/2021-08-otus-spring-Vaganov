@@ -1,0 +1,18 @@
+{
+  "properties": [
+    {
+      "name": "app.resource",
+      "type": "java.lang.String",
+      "description": "Description for app.resource."
+    },
+    {
+      "name": "app.min-answers",
+      "type": "java.lang.String",
+      "description": "Description for app.min-answers."
+    },
+    {
+      "name": "app.locale",
+      "type": "java.lang.String",
+      "description": "Description for app.locale."
+    }
+  ] }
