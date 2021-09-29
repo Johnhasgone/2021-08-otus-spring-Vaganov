@@ -1,6 +1,0 @@
-app:
-  resources:
-    ru: questions_Ru.csv
-    en: questions.csv
-  min-answers: 3
-  locale: ru-RU

@@ -1,12 +1,13 @@
 package ru.otus.spring_homework.dao;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.io.Resource;
 import ru.otus.spring_homework.config.AppProps;
 import ru.otus.spring_homework.exceptions.GetTestQuestionException;
@@ -22,29 +23,21 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
 class QuestionsDaoCsvTest {
-    @Mock
-    private Resource testQuestions;
-    @Mock
-    private AppProps.Resources resources;
-    @Mock
+    @MockBean
     private AppProps props;
     @Mock
+    private Resource testQuestions;
+    @MockBean
     private InputStream inputStream;
 
-
-    @BeforeEach
-    private void setMockInvocationResult() {
-        when(props.getResources()).thenReturn(resources);
-        when(props.getLocale()).thenReturn("ru-RU");
-        when(resources.getRu()).thenReturn(testQuestions);
-    }
-
+    @Autowired
+    private QuestionsDaoCsv daoCsv;
 
     @Test
     @DisplayName("should invoke getInputStream() on dao")
     public void shouldInvokeTestQuestions() throws IOException, GetTestQuestionException {
+        when(props.getResource()).thenReturn(testQuestions);
         when(testQuestions.getInputStream()).thenReturn(inputStream);
-        QuestionsDaoCsv daoCsv = new QuestionsDaoCsv(props);
         daoCsv.getTestQuestions();
         verify(testQuestions).getInputStream();
     }
@@ -52,8 +45,8 @@ class QuestionsDaoCsvTest {
     @Test
     @DisplayName("should throw GetTestQuestionException")
     public void shouldThrowGetTestQuestionException() throws IOException {
+        when(props.getResource()).thenReturn(testQuestions);
         when(testQuestions.getInputStream()).thenThrow(new IOException());
-        QuestionsDaoCsv daoCsv = new QuestionsDaoCsv(props);
         assertThrows(GetTestQuestionException.class, daoCsv::getTestQuestions);
     }
 }
