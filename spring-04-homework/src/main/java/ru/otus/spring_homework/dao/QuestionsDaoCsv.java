@@ -15,9 +15,7 @@ import ru.otus.spring_homework.exceptions.GetTestQuestionException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Repository
@@ -50,14 +48,22 @@ public class QuestionsDaoCsv implements QuestionsDao {
         }
 
         for (String[] row : csvResult) {
+            if (row.length < 3) {
+                throw new GetTestQuestionException("Got incorrect question format");
+            }
             TestQuestion question = new TestQuestion();
             question.setQuestion(row[0]);
-            question.setAnswers(Arrays.stream(row)
-                    .skip(1)
-                    .map(e -> new Answer(e.split(SEPARATOR)[0],
-                            Boolean.parseBoolean(e.split(SEPARATOR)[1])))
-                    .collect(Collectors.toList()));
 
+            List<Answer> answers = new ArrayList<>();
+            for (int i = 1; i < row.length; i++) {
+                String[] answer = row[i].split(SEPARATOR);
+                if (answer.length != 2) {
+                    throw new GetTestQuestionException("Got incorrect answer format");
+                }
+                answers.add(new Answer(answer[0], Boolean.parseBoolean(answer[1])));
+            }
+
+            question.setAnswers(answers);
             questions.add(question);
         }
         return questions;

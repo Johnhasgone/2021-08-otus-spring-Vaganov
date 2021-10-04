@@ -11,6 +11,7 @@ public class AppProps implements LocalizationProps, QuestionServiceProps, Questi
     private int minAnswers;
     private String locale;
 
+    @Override
     public Resource getResource() {
         return resource;
     }
@@ -19,6 +20,7 @@ public class AppProps implements LocalizationProps, QuestionServiceProps, Questi
         this.resource = resource;
     }
 
+    @Override
     public int getMinAnswers() {
         return minAnswers;
     }
@@ -27,6 +29,7 @@ public class AppProps implements LocalizationProps, QuestionServiceProps, Questi
         this.minAnswers = minAnswers;
     }
 
+    @Override
     public String getLocale() {
         return locale;
     }

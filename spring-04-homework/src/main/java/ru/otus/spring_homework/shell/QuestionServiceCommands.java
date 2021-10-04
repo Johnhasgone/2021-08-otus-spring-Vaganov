@@ -29,7 +29,7 @@ public class QuestionServiceCommands {
 
     private Availability isTestAvailable() {
         return userName == null
-                ? Availability.unavailable("Please, login to start the test")
+                ? Availability.unavailable("you should be logged in to start the test")
                 : Availability.available();
     }
 }
