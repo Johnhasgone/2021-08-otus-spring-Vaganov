@@ -6,25 +6,27 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellMethodAvailability;
 import org.springframework.shell.standard.ShellOption;
+import ru.otus.spring_homework.service.LocalizationService;
 import ru.otus.spring_homework.service.QuestionService;
 
 @ShellComponent
 @RequiredArgsConstructor
 public class QuestionServiceCommands {
     private final QuestionService questionService;
+    private final LocalizationService localizationService;
     private String userName;
 
     @ShellMethod(value = "Login command", key = {"l", "login"})
     public String login(@ShellOption(defaultValue = "guest") String name) {
         userName = name;
-        return "Welcome, " + name;
+        return localizationService.localize("strings.greeting", name);
     }
 
     @ShellMethod(value = "Start test", key = {"start"})
     @ShellMethodAvailability(value = "isTestAvailable")
     public String startTest() {
         questionService.performTest();
-        return "The test is over. Enter \"exit\" to finish or \"start\" to pass the test again";
+        return localizationService.localize("strings.end");
     }
 
     private Availability isTestAvailable() {
