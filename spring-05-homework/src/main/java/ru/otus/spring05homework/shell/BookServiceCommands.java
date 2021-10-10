@@ -50,7 +50,15 @@ public class BookServiceCommands {
     @ShellMethod(value = "updating book", key = {"book-update"})
     public String updateBook(Long id, String name, String authorName, String genreName) {
         Genre genre = genreService.getByName(genreName);
+        if (genre == null) {
+            genre = new Genre(genreService.create(new Genre(genreName)), genreName);
+        }
+
         Author author = authorService.getByName(authorName);
+        if (author == null) {
+            author = new Author(authorService.create(new Author(authorName)), authorName);
+        }
+
         Book book = new Book(id, name, genre, author);
         bookService.update(book);
         return "book updated";
