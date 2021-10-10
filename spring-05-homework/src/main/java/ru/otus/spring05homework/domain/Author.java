@@ -1,12 +1,21 @@
 package ru.otus.spring05homework.domain;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
 @RequiredArgsConstructor
 public class Author {
-    private final Long id;
+    private Long id;
     private final String name;
+
+    @Override
+    public String toString() {
+        return id + " | " + name;
+    }
 
 }

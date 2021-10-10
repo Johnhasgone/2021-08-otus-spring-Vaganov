@@ -1,11 +1,17 @@
 package ru.otus.spring05homework.domain;
 
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
 @RequiredArgsConstructor
 public class Genre {
-    private final Long id;
+    private Long id;
     private final String name;
+
+    @Override
+    public String toString() {
+        return id + " | " + name;
+    }
 }

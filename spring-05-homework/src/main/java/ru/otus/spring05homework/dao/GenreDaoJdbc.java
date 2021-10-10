@@ -2,7 +2,10 @@ package ru.otus.spring05homework.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.otus.spring05homework.domain.Genre;
 
@@ -22,13 +25,33 @@ public class GenreDaoJdbc implements GenreDao {
     }
 
     @Override
-    public void insert(Genre genre) {
-        jdbc.update("insert into genre(name) values(:name)", Map.of("name", genre.getName()));
+    public Long insert(Genre genre) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("name", genre.getName());
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbc.update("insert into genre(name) values(:name)", params, keyHolder);
+        return keyHolder.getKeyAs(Long.class);
+    }
+
+    @Override
+    public void update(Genre genre) {
+        jdbc.update("update genre set name = :name where id = :id",
+                Map.of("name", genre.getName(), "id", genre.getId()));
     }
 
     @Override
     public Genre getById(Long id) {
-        return jdbc.queryForObject("select * from genre where id = :id", Map.of("id", id), new GenreRowMapper());
+        List<Genre> genres = jdbc.query("select * from genre where id = :id",
+                Map.of("id", id), new GenreRowMapper());
+        return genres.isEmpty() ? null : genres.get(0);
+    }
+
+    @Override
+    public Genre getByName(String name) {
+        List<Genre> genres = jdbc.query("select * from genre where name = :name",
+                Map.of("name", name), new GenreRowMapper());
+
+        return genres.isEmpty() ? null : genres.get(0);
     }
 
     @Override
@@ -38,7 +61,8 @@ public class GenreDaoJdbc implements GenreDao {
 
     @Override
     public void deleteById(Long id) {
-        jdbc.update("delete from genre where id = :id", Map.of("id", id));
+        jdbc.update("delete from genre where id = :id",
+                Map.of("id", id));
     }
 
     public static class GenreRowMapper implements RowMapper<Genre> {
