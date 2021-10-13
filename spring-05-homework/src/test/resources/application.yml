@@ -1,7 +1,9 @@
 spring:
   datasource:
-    url: jdbc:h2:test:bookdb
-sql:
-  init:
-    mode: always
-    data-location: data.sql
+    url: jdbc:h2:mem:test
+
+  liquibase:
+    enabled: true
+    drop-first: true
+    change-log: classpath:db/changelog/db.changelog-master-test.yaml
+

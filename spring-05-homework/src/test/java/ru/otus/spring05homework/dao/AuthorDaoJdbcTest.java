@@ -40,7 +40,7 @@ class AuthorDaoJdbcTest {
 
     @DisplayName("получать автора по ID")
     @Test
-    void shouldGetExpectedUserById() {
+    void shouldGetExpectedAuthorById() {
         Author expectedAuthor = new Author(1L, "Афанасий Афанасьевич Фет");
         Author actualAuthor = authorDaoJdbc.getById(1L);
         assertThat(actualAuthor).usingRecursiveComparison().isEqualTo(expectedAuthor);
@@ -48,7 +48,7 @@ class AuthorDaoJdbcTest {
 
     @DisplayName("получать автора по имени")
     @Test
-    void getByName() {
+    void shouldGetAuthorByName() {
         Author expectedAuthor = new Author(1L, "Афанасий Афанасьевич Фет");
         Author actualAuthor = authorDaoJdbc.getByName(expectedAuthor.getName());
         assertThat(actualAuthor).usingRecursiveComparison().isEqualTo(expectedAuthor);
@@ -56,18 +56,16 @@ class AuthorDaoJdbcTest {
 
     @DisplayName("получать всех авторов из БД")
     @Test
-    void getAll() {
+    void shouldGetAllAuthors() {
         List<Author> expectedAuthors = List.of(new Author(1L, "Афанасий Афанасьевич Фет"), new Author(2L, "Сергей Михалков"));
         List<Author> actualAuthors = authorDaoJdbc.getAll();
-        System.out.println(actualAuthors.get(0).getId());
-        System.out.println(expectedAuthors.get(0).getId());
         assertThat(actualAuthors)
                 .containsExactlyInAnyOrderElementsOf(expectedAuthors);
     }
 
     @DisplayName("удалять автора по ID")
     @Test
-    void deleteById() {
+    void shouldDeleteAuthorById() {
         authorDaoJdbc.deleteById(2L);
         assertThat(authorDaoJdbc.getById(2L)).isNull();
     }

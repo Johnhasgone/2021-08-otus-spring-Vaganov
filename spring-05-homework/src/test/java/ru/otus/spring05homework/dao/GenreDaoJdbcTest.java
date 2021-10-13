@@ -40,7 +40,7 @@ class GenreDaoJdbcTest {
 
     @DisplayName("получать жанр по ID")
     @Test
-    void shouldGetExpectedUserById() {
+    void shouldGetExpectedGenreById() {
         Genre expectedGenre = new Genre(1L, "проза");
         Genre actualGenre = genreDaoJdbc.getById(1L);
         assertThat(actualGenre).usingRecursiveComparison().isEqualTo(expectedGenre);
@@ -48,7 +48,7 @@ class GenreDaoJdbcTest {
 
     @DisplayName("получать жанр по имени")
     @Test
-    void getByName() {
+    void shouldGetGenreByName() {
         Genre expectedGenre = new Genre(1L, "проза");
         Genre actualGenre = genreDaoJdbc.getByName(expectedGenre.getName());
         assertThat(actualGenre).usingRecursiveComparison().isEqualTo(expectedGenre);
@@ -56,7 +56,7 @@ class GenreDaoJdbcTest {
 
     @DisplayName("получать все жанры из БД")
     @Test
-    void getAll() {
+    void shouldGetAllGenres() {
         List<Genre> expectedGenres = List.of(new Genre(1L, "проза"), new Genre(2L, "поэзия"));
         List<Genre> actualGenres = genreDaoJdbc.getAll();
         System.out.println(actualGenres.get(0).getId());
@@ -67,7 +67,7 @@ class GenreDaoJdbcTest {
 
     @DisplayName("удалять жанр по ID")
     @Test
-    void deleteById() {
+    void shouldDeleteGenreById() {
         genreDaoJdbc.deleteById(2L);
         assertThat(genreDaoJdbc.getById(2L)).isNull();
     }

@@ -41,7 +41,7 @@ public class BookDaoJdbc implements BookDao {
 
     @Override
     public void update(Book book) {
-        jdbc.update("update book set name = :name, genre_id = :genreId, author_id = authorId where id = :id",
+        jdbc.update("update book set name = :name, genre_id = :genreId, author_id = :authorId where id = :id",
                 Map.of("id", book.getId(),
                         "name", book.getName(),
                         "genreId", book.getGenre().getId(),
