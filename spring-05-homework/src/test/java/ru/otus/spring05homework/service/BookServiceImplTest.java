@@ -38,7 +38,7 @@ class BookServiceImplTest {
     @Test
     void shouldReturnExpectedBookByName() {
         Book expectedBook = new Book(1L, "Стихотворения", new Genre(1L, "поэзия"), new Author(1L, "Афанасий Афанасьевич Фет"));
-        when(bookDao.getByName(any())).thenReturn(expectedBook);
+        when(bookDao.getByTitle(any())).thenReturn(expectedBook);
         Book actualBook = bookService.getByName("Стихотворения");
         assertThat(actualBook).usingRecursiveComparison().isEqualTo(expectedBook);
     }
@@ -67,18 +67,16 @@ class BookServiceImplTest {
     @DisplayName("вызывать bookDao.update()")
     @Test
     void shouldInvokeUpdateInDao() {
-        doNothing().when(bookDao).update(any());
         Book updatingBook = new Book(1L, "Стихотворения", new Genre(1L, "поэзия"), new Author(1L, "Афанасий Афанасьевич Фет"));
-        bookService.update(updatingBook);
-        verify(bookDao).update(updatingBook);
+        when(bookDao.update(updatingBook)).thenReturn(true);
+        assertThat(bookService.update(updatingBook)).isTrue();
     }
 
     @DisplayName("вызывать bookDao.delete()")
     @Test
     void shouldInvokeDeleteInDao() {
         Long id = 1L;
-        doNothing().when(bookDao).deleteById(any());
-        bookService.deleteById(id);
-        verify(bookDao).deleteById(id);
+        when(bookDao.deleteById(id)).thenReturn(true);
+        assertThat(bookService.deleteById(id)).isTrue();
     }
 }

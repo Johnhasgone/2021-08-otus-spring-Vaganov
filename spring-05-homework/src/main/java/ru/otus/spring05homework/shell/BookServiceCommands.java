@@ -21,10 +21,10 @@ public class BookServiceCommands {
     private final GenreService genreService;
 
     @ShellMethod(value = "creating book", key = {"book-create"})
-    public String createBook(String name, String genreName, String authorName) {
+    public String createBook(String title, String genreName, String authorName) {
         Genre genre = getGenre(genreName);
         Author author = getAuthor(authorName);
-        Book book = new Book(name, genre, author);
+        Book book = new Book(title, genre, author);
         return  "создана книга с id = " + bookService.create(book);
     }
 
@@ -46,10 +46,10 @@ public class BookServiceCommands {
     }
 
     @ShellMethod(value = "updating book", key = {"book-update"})
-    public String updateBook(Long id, String name, String authorName, String genreName) {
+    public String updateBook(Long id, String title, String authorName, String genreName) {
         Genre genre = getGenre(genreName);
         Author author = getAuthor(authorName);
-        Book book = new Book(id, name, genre, author);
+        Book book = new Book(id, title, genre, author);
         return bookService.update(book) ? "книга обновлена" : "книга не найдена";
     }
 

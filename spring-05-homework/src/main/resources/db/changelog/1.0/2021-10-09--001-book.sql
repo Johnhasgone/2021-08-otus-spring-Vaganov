@@ -13,7 +13,7 @@ create table if not exists  genre(
 
 create table if not exists book(
     id bigint auto_increment primary key,
-    name varchar(200),
+    title varchar(200),
     author_id bigint,
     genre_id bigint,
     constraint fk_author

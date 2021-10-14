@@ -33,7 +33,7 @@ insert into author(name) values
                              ('Фёдор Достоевский')
 ;
 
-insert into book(name, author_id, genre_id)  values
+insert into book(title, author_id, genre_id)  values
                                                  ('Гордость и предубеждение', 1, 9),
                                                  ('1984', 2, 9),
                                                  ('Джейн Эйр', 3, 9),

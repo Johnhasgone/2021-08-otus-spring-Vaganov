@@ -53,7 +53,7 @@ class BookDaoJdbcTest {
                 )
         );
         Book actualBook = bookDaoJdbc.getById(updatableBook.getId());
-        assertThat(actualBook.getName()).isEqualTo(expectedName);
+        assertThat(actualBook.getTitle()).isEqualTo(expectedName);
     }
 
     @DisplayName("получать книгу по ID")
@@ -78,7 +78,7 @@ class BookDaoJdbcTest {
                 new Genre(2L, "поэзия"),
                 new Author(1L, "Афанасий Афанасьевич Фет")
         );
-        Book actualBook = bookDaoJdbc.getByName(expectedBook.getName());
+        Book actualBook = bookDaoJdbc.getByTitle(expectedBook.getTitle());
         assertThat(actualBook).usingRecursiveComparison().isEqualTo(expectedBook);
     }
 
