@@ -7,7 +7,7 @@ import java.util.List;
 public interface BookDao {
     Long insert(Book book);
 
-    void update(Book book);
+    boolean update(Book book);
 
     Book getById(Long id);
 
@@ -15,5 +15,5 @@ public interface BookDao {
 
     List<Book> getAll();
 
-    void deleteById(Long id);
+    boolean deleteById(Long id);
 }

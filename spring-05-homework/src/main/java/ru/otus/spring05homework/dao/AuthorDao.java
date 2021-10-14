@@ -7,7 +7,7 @@ import java.util.List;
 public interface AuthorDao {
     Long insert(Author author);
 
-    void update(Author author);
+    boolean update(Author author);
 
     Author getById(Long id);
 
@@ -15,5 +15,5 @@ public interface AuthorDao {
 
     List<Author> getAll();
 
-    void deleteById(Long id);
+    boolean deleteById(Long id);
 }

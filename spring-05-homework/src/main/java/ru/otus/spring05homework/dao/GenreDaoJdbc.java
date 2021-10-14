@@ -34,9 +34,10 @@ public class GenreDaoJdbc implements GenreDao {
     }
 
     @Override
-    public void update(Genre genre) {
-        jdbc.update("update genre set name = :name where id = :id",
+    public boolean update(Genre genre) {
+        int res = jdbc.update("update genre set name = :name where id = :id",
                 Map.of("name", genre.getName(), "id", genre.getId()));
+        return res != 0;
     }
 
     @Override
@@ -60,9 +61,10 @@ public class GenreDaoJdbc implements GenreDao {
     }
 
     @Override
-    public void deleteById(Long id) {
-        jdbc.update("delete from genre where id = :id",
+    public boolean deleteById(Long id) {
+        int res = jdbc.update("delete from genre where id = :id",
                 Map.of("id", id));
+        return res != 0;
     }
 
     public static class GenreRowMapper implements RowMapper<Genre> {

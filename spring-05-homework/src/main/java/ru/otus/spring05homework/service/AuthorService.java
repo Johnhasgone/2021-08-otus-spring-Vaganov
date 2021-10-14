@@ -14,7 +14,7 @@ public interface AuthorService {
 
     Long create(Author author);
 
-    void update(Author author);
+    boolean update(Author author);
 
-    void deleteById(Long id);
+    boolean deleteById(Long id);
 }

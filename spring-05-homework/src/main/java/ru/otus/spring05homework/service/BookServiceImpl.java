@@ -38,12 +38,12 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void update(Book book) {
-        bookDao.update(book);
+    public boolean update(Book book) {
+        return bookDao.update(book);
     }
 
     @Override
-    public void deleteById(Long id) {
-        bookDao.deleteById(id);
+    public boolean deleteById(Long id) {
+        return bookDao.deleteById(id);
     }
 }

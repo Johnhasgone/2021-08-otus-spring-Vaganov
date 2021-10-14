@@ -38,12 +38,12 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public void update(Author author) {
-        authorDao.update(author);
+    public boolean update(Author author) {
+        return authorDao.update(author);
     }
 
     @Override
-    public void deleteById(Long id) {
-        authorDao.deleteById(id);
+    public boolean deleteById(Long id) {
+        return authorDao.deleteById(id);
     }
 }

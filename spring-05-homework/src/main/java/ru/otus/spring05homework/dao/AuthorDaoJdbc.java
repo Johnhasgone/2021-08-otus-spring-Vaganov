@@ -38,9 +38,10 @@ public class AuthorDaoJdbc implements AuthorDao {
     }
 
     @Override
-    public void update(Author author) {
-        jdbc.update("update author set name = :name where id = :id",
+    public boolean update(Author author) {
+        int res = jdbc.update("update author set name = :name where id = :id",
                 Map.of("name", author.getName(), "id", author.getId()));
+        return res != 0;
     }
 
     @Override
@@ -61,8 +62,9 @@ public class AuthorDaoJdbc implements AuthorDao {
     }
 
     @Override
-    public void deleteById(Long id) {
-        jdbc.update("delete from author where id = :id", Map.of("id", id));
+    public boolean deleteById(Long id) {
+        int res = jdbc.update("delete from author where id = :id", Map.of("id", id));
+        return res != 0;
     }
 
     public static class AuthorRowMapper implements RowMapper<Author> {

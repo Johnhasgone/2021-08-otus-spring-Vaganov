@@ -10,6 +10,7 @@ import ru.otus.spring05homework.service.AuthorService;
 import ru.otus.spring05homework.service.BookService;
 import ru.otus.spring05homework.service.GenreService;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @ShellComponent
@@ -24,19 +25,24 @@ public class BookServiceCommands {
         Genre genre = getGenre(genreName);
         Author author = getAuthor(authorName);
         Book book = new Book(name, genre, author);
-        return  "created book with id = " + bookService.create(book);
+        return  "создана книга с id = " + bookService.create(book);
     }
 
     @ShellMethod(value = "getting book by id", key = {"book-get"})
     public String getBookById(Long id) {
-        return bookService.getById(id).toString();
+        Book book = bookService.getById(id);
+        return book != null ? book.toString() : "книга не найдена";
     }
 
     @ShellMethod(value = "getting all books", key = {"book-get-all"})
     public String getAllBooks() {
-        return bookService.getAll().stream()
-                .map(Book::toString)
-                .collect(Collectors.joining("\n"));
+        List<Book> books = bookService.getAll();
+
+        return !books.isEmpty()
+                ? books.stream()
+                        .map(Book::toString)
+                        .collect(Collectors.joining("\n"))
+                : "книги не найдены";
     }
 
     @ShellMethod(value = "updating book", key = {"book-update"})
@@ -44,82 +50,89 @@ public class BookServiceCommands {
         Genre genre = getGenre(genreName);
         Author author = getAuthor(authorName);
         Book book = new Book(id, name, genre, author);
-        bookService.update(book);
-        return "book updated";
+        return bookService.update(book) ? "книга обновлена" : "книга не найдена";
     }
 
     private Genre getGenre(String genreName) {
         Genre genre = genreService.getByName(genreName);
         if (genre == null) {
-            genre = genreService.getById(genreService.create(new Genre(genreName)));
-        } return genre;
+            genre = new Genre(genreService.create(new Genre(genreName)), genreName);
+        }
+        return genre;
     }
 
     private Author getAuthor(String authorName) {
         Author author = authorService.getByName(authorName);
         if (author == null) {
-            author = authorService.getById(authorService.create(new Author(authorName)));
+            author = new Author(authorService.create(new Author(authorName)), authorName);
         }
         return author;
     }
 
     @ShellMethod(value = "deleting book", key = {"book-delete"})
     public String deleteBook(Long id) {
-        bookService.deleteById(id);
-        return "book deleted";
+        return bookService.deleteById(id) ? "книга удалена" : "книга не найдена";
     }
 
     @ShellMethod(value = "getting author by id", key = {"author-get"})
     public String getAuthorById(Long id) {
-        return authorService.getById(id).toString();
+        Author author = authorService.getById(id);
+        return author != null ? author.toString() : "автор не найден";
     }
 
     @ShellMethod(value = "getting all authors", key = {"author-get-all"})
     public String getAllAuthors() {
-        return authorService.getAll().stream().map(Author::toString).collect(Collectors.joining("\n"));
+        List<Author> authors = authorService.getAll();
+        return !authors.isEmpty()
+                ? authors.stream()
+                        .map(Author::toString)
+                        .collect(Collectors.joining("\n"))
+                : "авторы не найдены";
     }
 
     @ShellMethod(value = "creating author", key = {"author-create"})
     public String createAuthor(String name) {
-        return "created author with id = " + authorService.create(new Author(name));
+        return "создан автор с id = " + authorService.create(new Author(name));
     }
 
     @ShellMethod(value = "updating author", key = {"author-update"})
     public String updateAuthor(Long id, String name) {
-        authorService.update(new Author(id, name));
-        return "author updated";
+        return authorService.update(new Author(id, name)) ? "автор обновлен" : "автор не найден";
     }
 
     @ShellMethod(value = "deleting author", key = {"author-delete"})
     public String deleteAuthor(Long id) {
-        authorService.deleteById(id);
-        return "author deleted";
+        return authorService.deleteById(id) ? "автор удален" : "автор не найден";
     }
 
     @ShellMethod(value = "getting genre by id", key = {"genre-get"})
     public String getGenreById(Long id) {
-        return genreService.getById(id).toString();
+        Genre genre = genreService.getById(id);
+        return genre != null ? genre.toString() : "жанр не найден";
     }
 
     @ShellMethod(value = "getting all genres", key = {"genre-get-all"})
     public String getAllGenres() {
-        return genreService.getAll().stream().map(Genre::toString).collect(Collectors.joining("\n"));
+        List<Genre> genres = genreService.getAll();
+        return !genres.isEmpty()
+                ? genres.stream()
+                        .map(Genre::toString)
+                        .collect(Collectors.joining("\n"))
+                : "жанры не найдены";
     }
 
     @ShellMethod(value = "creating genre", key = {"genre-create"})
     public String createGenre(String name) {
-        return "created genre with id = " + genreService.create(new Genre(name));
+        return "создан жанр с id = " + genreService.create(new Genre(name));
     }
 
     @ShellMethod(value = "updating genre", key = {"genre-update"})
     public String updateGenre(Long id, String name) {
-        genreService.update(new Genre(id, name));
-        return "genre updated";
+        return genreService.update(new Genre(id, name)) ? "жанр обновлен" : "жанр не найден";
     }
 
     @ShellMethod(value = "deleting genre", key = {"genre-delete"})
     public String deleteGenre(Long id) {
-        genreService.deleteById(id);
-        return "author deleted";
+        return genreService.deleteById(id) ? "жанр удален" : "жанр не найден";
     }
 }

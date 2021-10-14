@@ -38,12 +38,12 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Override
-    public void update(Genre genre) {
-        genreDao.update(genre);
+    public boolean update(Genre genre) {
+        return genreDao.update(genre);
     }
 
     @Override
-    public void deleteById(Long id) {
-        genreDao.deleteById(id);
+    public boolean deleteById(Long id) {
+        return genreDao.deleteById(id);
     }
 }
