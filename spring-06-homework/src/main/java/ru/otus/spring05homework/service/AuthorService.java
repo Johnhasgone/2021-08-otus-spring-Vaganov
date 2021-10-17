@@ -3,18 +3,19 @@ package ru.otus.spring05homework.service;
 import ru.otus.spring05homework.domain.Author;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface AuthorService {
 
-    Author getById(Long id);
+    Optional<Author> findById(Long id);
 
-    Author getByName(String name);
+    List<Author> findByName(String name);
 
-    List<Author> getAll();
+    List<Author> findAll();
 
-    Long create(Author author);
+    Author save(Author author);
 
-    boolean update(Author author);
+    boolean updateNameById(Long id, String name);
 
     boolean deleteById(Long id);
 }

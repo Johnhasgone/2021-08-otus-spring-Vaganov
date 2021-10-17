@@ -11,6 +11,7 @@ import ru.otus.spring05homework.service.BookService;
 import ru.otus.spring05homework.service.GenreService;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @ShellComponent
@@ -62,11 +63,11 @@ public class BookServiceCommands {
     }
 
     private Author getAuthor(String authorName) {
-        Author author = authorService.getByName(authorName);
-        if (author == null) {
-            author = new Author(authorService.create(new Author(authorName)), authorName);
+        List<Author> authors = authorService.findByName(authorName);
+        if (authors.isEmpty()) {
+            return authorService.save(new Author(authorName));
         }
-        return author;
+        return authors.get(0);
     }
 
     @ShellMethod(value = "deleting book", key = {"book-delete"})
@@ -76,13 +77,13 @@ public class BookServiceCommands {
 
     @ShellMethod(value = "getting author by id", key = {"author-get"})
     public String getAuthorById(Long id) {
-        Author author = authorService.getById(id);
-        return author != null ? author.toString() : "автор не найден";
+        Optional<Author> author = authorService.findById(id);
+        return author.isPresent() ? author.get().toString() : "автор не найден";
     }
 
     @ShellMethod(value = "getting all authors", key = {"author-get-all"})
     public String getAllAuthors() {
-        List<Author> authors = authorService.getAll();
+        List<Author> authors = authorService.findAll();
         return !authors.isEmpty()
                 ? authors.stream()
                         .map(Author::toString)
@@ -92,12 +93,12 @@ public class BookServiceCommands {
 
     @ShellMethod(value = "creating author", key = {"author-create"})
     public String createAuthor(String name) {
-        return "создан автор с id = " + authorService.create(new Author(name));
+        return "создан автор с id = " + authorService.save(new Author(name));
     }
 
     @ShellMethod(value = "updating author", key = {"author-update"})
     public String updateAuthor(Long id, String name) {
-        return authorService.update(new Author(id, name)) ? "автор обновлен" : "автор не найден";
+        return authorService.updateNameById(id, name) ? "автор обновлен" : "автор не найден";
     }
 
     @ShellMethod(value = "deleting author", key = {"author-delete"})

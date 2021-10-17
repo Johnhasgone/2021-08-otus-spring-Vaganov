@@ -15,18 +15,18 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("DAO для работы с авторами книг должно ")
 @JdbcTest
-@Import(AuthorDaoJdbc.class)
-class AuthorDaoJdbcTest {
+@Import(AuthorDaoJpa.class)
+class AuthorDaoJpaTest {
 
     @Autowired
-    private AuthorDaoJdbc authorDaoJdbc;
+    private AuthorDaoJpa authorDaoJpa;
 
     @DisplayName("добавлять автора в БД")
     @Test
     void shouldInsertAuthor() {
         Author expectedAuthor = new Author("Николай Васильевич Гоголь");
-        Long id = authorDaoJdbc.insert(expectedAuthor);
-        Author actualAuthor = authorDaoJdbc.getById(id);
+        Long id = authorDaoJpa.insert(expectedAuthor);
+        Author actualAuthor = authorDaoJpa.getById(id);
         assertThat(actualAuthor.getName()).isEqualTo(expectedAuthor.getName());
     }
 
@@ -34,9 +34,9 @@ class AuthorDaoJdbcTest {
     @Test
     void shouldUpdateAuthor() {
         String expectedName = "Осип Мандельштам";
-        Author updatableAuthor = authorDaoJdbc.getAll().get(0);
-        authorDaoJdbc.update(new Author(updatableAuthor.getId(), expectedName));
-        Author actualAuthor = authorDaoJdbc.getById(updatableAuthor.getId());
+        Author updatableAuthor = authorDaoJpa.getAll().get(0);
+        authorDaoJpa.update(new Author(updatableAuthor.getId(), expectedName));
+        Author actualAuthor = authorDaoJpa.getById(updatableAuthor.getId());
         assertThat(actualAuthor.getName()).isEqualTo(expectedName);
     }
 
@@ -44,7 +44,7 @@ class AuthorDaoJdbcTest {
     @Test
     void shouldGetExpectedAuthorById() {
         Author expectedAuthor = new Author(1L, "Афанасий Афанасьевич Фет");
-        Author actualAuthor = authorDaoJdbc.getById(1L);
+        Author actualAuthor = authorDaoJpa.getById(1L);
         assertThat(actualAuthor).usingRecursiveComparison().isEqualTo(expectedAuthor);
     }
 
@@ -52,7 +52,7 @@ class AuthorDaoJdbcTest {
     @Test
     void shouldGetAuthorByName() {
         Author expectedAuthor = new Author(1L, "Афанасий Афанасьевич Фет");
-        Author actualAuthor = authorDaoJdbc.getByName(expectedAuthor.getName());
+        Author actualAuthor = authorDaoJpa.getByName(expectedAuthor.getName());
         assertThat(actualAuthor).usingRecursiveComparison().isEqualTo(expectedAuthor);
     }
 
@@ -64,7 +64,7 @@ class AuthorDaoJdbcTest {
                 new Author(2L, "Сергей Михалков"),
                 new Author(3L, "Алексей Толстой")
         );
-        List<Author> actualAuthors = authorDaoJdbc.getAll();
+        List<Author> actualAuthors = authorDaoJpa.getAll();
         assertThat(actualAuthors)
                 .containsExactlyInAnyOrderElementsOf(expectedAuthors);
     }
@@ -72,13 +72,13 @@ class AuthorDaoJdbcTest {
     @DisplayName("удалять автора по ID")
     @Test
     void shouldDeleteAuthorById() {
-        authorDaoJdbc.deleteById(3L);
-        assertThat(authorDaoJdbc.getById(3L)).isNull();
+        authorDaoJpa.deleteById(3L);
+        assertThat(authorDaoJpa.getById(3L)).isNull();
     }
 
     @DisplayName("выбросить исключение при удалении автора, на которого имеются ссылки из других таблиц")
     @Test
     void shouldThrowExeptionOnDeletingLinkedAuthor() {
-        assertThrows(DataIntegrityViolationException.class, () -> authorDaoJdbc.deleteById(2L));
+        assertThrows(DataIntegrityViolationException.class, () -> authorDaoJpa.deleteById(2L));
     }
 }

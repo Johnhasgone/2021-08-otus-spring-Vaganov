@@ -25,3 +25,13 @@ create table if not exists book(
             references genre(id)
             on delete restrict
 );
+
+create table if not exists comment(
+    id bigint auto_increment primary key,
+    comment varchar(2048),
+    book_id bigint,
+    constraint fk_book
+        foreign key (book_id)
+            references book(id)
+            on delete cascade
+);

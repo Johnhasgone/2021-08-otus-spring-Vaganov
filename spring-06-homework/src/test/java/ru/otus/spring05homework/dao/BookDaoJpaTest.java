@@ -16,12 +16,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("DAO для работы с книгами должно ")
 @JdbcTest
-@Import(BookDaoJdbc.class)
+@Import(BookDaoJpa.class)
 @ActiveProfiles("test")
-class BookDaoJdbcTest {
+class BookDaoJpaTest {
 
     @Autowired
-    private BookDaoJdbc bookDaoJdbc;
+    private BookDaoJpa bookDaoJpa;
 
 
 
@@ -34,8 +34,8 @@ class BookDaoJdbcTest {
                 new Genre(2L, "поэзия"),
                 new Author(1L, "Афанасий Афанасьевич Фет")
         );
-        Long id = bookDaoJdbc.insert(expectedBook);
-        Book actualBook = bookDaoJdbc.getById(id);
+        Long id = bookDaoJpa.insert(expectedBook);
+        Book actualBook = bookDaoJpa.getById(id);
         assertThat(actualBook).isEqualTo(expectedBook);
     }
 
@@ -43,8 +43,8 @@ class BookDaoJdbcTest {
     @Test
     void shouldUpdateBook() {
         String expectedName = "Lyrics";
-        Book updatableBook = bookDaoJdbc.getAll().get(0);
-        bookDaoJdbc.update(
+        Book updatableBook = bookDaoJpa.getAll().get(0);
+        bookDaoJpa.update(
                 new Book(
                         updatableBook.getId(),
                         expectedName,
@@ -52,7 +52,7 @@ class BookDaoJdbcTest {
                         updatableBook.getAuthor()
                 )
         );
-        Book actualBook = bookDaoJdbc.getById(updatableBook.getId());
+        Book actualBook = bookDaoJpa.getById(updatableBook.getId());
         assertThat(actualBook.getTitle()).isEqualTo(expectedName);
     }
 
@@ -65,7 +65,7 @@ class BookDaoJdbcTest {
                 new Genre(2L, "поэзия"),
                 new Author(1L, "Афанасий Афанасьевич Фет")
         );
-        Book actualBook = bookDaoJdbc.getById(1L);
+        Book actualBook = bookDaoJpa.getById(1L);
         assertThat(actualBook).usingRecursiveComparison().isEqualTo(expectedBook);
     }
 
@@ -78,7 +78,7 @@ class BookDaoJdbcTest {
                 new Genre(2L, "поэзия"),
                 new Author(1L, "Афанасий Афанасьевич Фет")
         );
-        Book actualBook = bookDaoJdbc.getByTitle(expectedBook.getTitle());
+        Book actualBook = bookDaoJpa.getByTitle(expectedBook.getTitle());
         assertThat(actualBook).usingRecursiveComparison().isEqualTo(expectedBook);
     }
 
@@ -89,7 +89,7 @@ class BookDaoJdbcTest {
                 new Book(1L, "Стихотворения", new Genre(2L, "поэзия"), new Author(1L, "Афанасий Афанасьевич Фет")),
                 new Book(2L, "Сборник рассказов", new Genre(1L, "проза"), new Author(2L, "Сергей Михалков"))
         );
-        List<Book> actualBooks = bookDaoJdbc.getAll();
+        List<Book> actualBooks = bookDaoJpa.getAll();
         assertThat(actualBooks)
                 .containsExactlyInAnyOrderElementsOf(expectedBooks);
     }
@@ -97,7 +97,7 @@ class BookDaoJdbcTest {
     @DisplayName("удалять книгу по ID")
     @Test
     void shouldDeleteBookById() {
-        bookDaoJdbc.deleteById(2L);
-        assertThat(bookDaoJdbc.getById(2L)).isNull();
+        bookDaoJpa.deleteById(2L);
+        assertThat(bookDaoJpa.getById(2L)).isNull();
     }
 }
