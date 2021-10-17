@@ -5,11 +5,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.dao.DataIntegrityViolationException;
 import ru.otus.spring05homework.domain.Author;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("DAO для работы с авторами книг должно ")
 @JdbcTest
@@ -57,7 +59,11 @@ class AuthorDaoJdbcTest {
     @DisplayName("получать всех авторов из БД")
     @Test
     void shouldGetAllAuthors() {
-        List<Author> expectedAuthors = List.of(new Author(1L, "Афанасий Афанасьевич Фет"), new Author(2L, "Сергей Михалков"));
+        List<Author> expectedAuthors = List.of(
+                new Author(1L, "Афанасий Афанасьевич Фет"),
+                new Author(2L, "Сергей Михалков"),
+                new Author(3L, "Алексей Толстой")
+        );
         List<Author> actualAuthors = authorDaoJdbc.getAll();
         assertThat(actualAuthors)
                 .containsExactlyInAnyOrderElementsOf(expectedAuthors);
@@ -66,7 +72,13 @@ class AuthorDaoJdbcTest {
     @DisplayName("удалять автора по ID")
     @Test
     void shouldDeleteAuthorById() {
-        authorDaoJdbc.deleteById(2L);
-        assertThat(authorDaoJdbc.getById(2L)).isNull();
+        authorDaoJdbc.deleteById(3L);
+        assertThat(authorDaoJdbc.getById(3L)).isNull();
+    }
+
+    @DisplayName("выбросить исключение при удалении автора, на которого имеются ссылки из других таблиц")
+    @Test
+    void shouldThrowExeptionOnDeletingLinkedAuthor() {
+        assertThrows(DataIntegrityViolationException.class, () -> authorDaoJdbc.deleteById(2L));
     }
 }

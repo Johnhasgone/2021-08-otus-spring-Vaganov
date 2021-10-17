@@ -46,19 +46,19 @@ public class AuthorDaoJdbc implements AuthorDao {
 
     @Override
     public Author getById(Long id) {
-        List<Author> authors = jdbc.query("select * from author where id = :id", Map.of("id", id), new AuthorRowMapper());
+        List<Author> authors = jdbc.query("select id, name from author where id = :id", Map.of("id", id), new AuthorRowMapper());
         return authors.isEmpty() ? null : authors.get(0);
     }
 
     @Override
     public Author getByName(String name) {
-        List<Author> authors = jdbc.query("select * from author where name = :name", Map.of("name", name), new AuthorRowMapper());
+        List<Author> authors = jdbc.query("select id, name from author where name = :name", Map.of("name", name), new AuthorRowMapper());
         return authors.isEmpty() ? null : authors.get(0);
     }
 
     @Override
     public List<Author> getAll() {
-        return jdbc.query("select * from author", new AuthorRowMapper());
+        return jdbc.query("select id, name from author", new AuthorRowMapper());
     }
 
     @Override

@@ -19,9 +19,9 @@ create table if not exists book(
     constraint fk_author
         foreign key (author_id)
             references author(id)
-            on delete set null,
+            on delete restrict,
     constraint fk_genre
         foreign key (genre_id)
             references genre(id)
-            on delete set null
+            on delete restrict
 );

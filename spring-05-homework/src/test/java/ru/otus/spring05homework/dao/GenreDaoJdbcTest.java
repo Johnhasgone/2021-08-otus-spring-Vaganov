@@ -5,11 +5,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.dao.DataIntegrityViolationException;
 import ru.otus.spring05homework.domain.Genre;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("DAO для работы с жанрами книг должно ")
 @JdbcTest
@@ -57,7 +59,11 @@ class GenreDaoJdbcTest {
     @DisplayName("получать все жанры из БД")
     @Test
     void shouldGetAllGenres() {
-        List<Genre> expectedGenres = List.of(new Genre(1L, "проза"), new Genre(2L, "поэзия"));
+        List<Genre> expectedGenres = List.of(
+                new Genre(1L, "проза"),
+                new Genre(2L, "поэзия"),
+                new Genre(3L, "комедия")
+        );
         List<Genre> actualGenres = genreDaoJdbc.getAll();
         System.out.println(actualGenres.get(0).getId());
         System.out.println(expectedGenres.get(0).getId());
@@ -68,7 +74,13 @@ class GenreDaoJdbcTest {
     @DisplayName("удалять жанр по ID")
     @Test
     void shouldDeleteGenreById() {
-        genreDaoJdbc.deleteById(2L);
-        assertThat(genreDaoJdbc.getById(2L)).isNull();
+        genreDaoJdbc.deleteById(3L);
+        assertThat(genreDaoJdbc.getById(3L)).isNull();
+    }
+
+    @DisplayName("выбрасывать исключение при удалении жанра на который имеются ссылки из других таблиц")
+    @Test
+    void  shouldThrowExceptionOnDeletingLinkedGenre() {
+        assertThrows(DataIntegrityViolationException.class, () -> genreDaoJdbc.deleteById(2L));
     }
 }
