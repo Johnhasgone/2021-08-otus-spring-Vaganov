@@ -1,19 +1,18 @@
 package ru.otus.spring05homework.domain;
 
 import lombok.Data;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 import javax.persistence.*;
 
 @Data
-@EntityScan
+@Entity
 @Table(name = "comment")
 public class Comment {
     @Id
     private Long id;
 
-    @Column(name = "comment")
-    private String comment;
+    @Column(name = "text")
+    private String text;
 
     @ManyToOne
     @JoinColumn(name = "book_id")

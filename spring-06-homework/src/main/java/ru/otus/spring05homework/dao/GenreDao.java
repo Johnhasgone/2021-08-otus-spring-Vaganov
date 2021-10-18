@@ -3,17 +3,18 @@ package ru.otus.spring05homework.dao;
 import ru.otus.spring05homework.domain.Genre;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface GenreDao {
-    Long insert(Genre genre);
+    Genre save(Genre genre);
 
-    boolean update(Genre genre);
+    int updateNameById(Long id, String name);
 
-    Genre getById(Long id);
+    Optional<Genre> findById(Long id);
 
-    Genre getByName(String name);
+    List<Genre> findByName(String name);
 
-    List<Genre> getAll();
+    List<Genre> findAll();
 
-    boolean deleteById(Long id);
+    int deleteById(Long id);
 }

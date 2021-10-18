@@ -15,18 +15,18 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("DAO для работы с жанрами книг должно ")
 @JdbcTest
-@Import(GenreDaoJdbc.class)
-class GenreDaoJdbcTest {
+@Import(GenreDaoJpa.class)
+class GenreDaoJpaTest {
 
     @Autowired
-    private GenreDaoJdbc genreDaoJdbc;
+    private GenreDaoJpa genreDaoJpa;
 
     @DisplayName("добавлять жанр в БД")
     @Test
     void shouldInsertGenre() {
         Genre expectedGenre = new Genre("пьеса");
-        Long id = genreDaoJdbc.insert(expectedGenre);
-        Genre actualGenre = genreDaoJdbc.getById(id);
+        Long id = genreDaoJpa.insert(expectedGenre);
+        Genre actualGenre = genreDaoJpa.findById(id);
         assertThat(actualGenre.getName()).isEqualTo(expectedGenre.getName());
     }
 
@@ -34,9 +34,9 @@ class GenreDaoJdbcTest {
     @Test
     void shouldUpdateGenre() {
         String expectedName = "роман";
-        Genre updatableGenre = genreDaoJdbc.getAll().get(0);
-        genreDaoJdbc.update(new Genre(updatableGenre.getId(), expectedName));
-        Genre actualGenre = genreDaoJdbc.getById(updatableGenre.getId());
+        Genre updatableGenre = genreDaoJpa.getAll().get(0);
+        genreDaoJpa.update(new Genre(updatableGenre.getId(), expectedName));
+        Genre actualGenre = genreDaoJpa.findById(updatableGenre.getId());
         assertThat(actualGenre.getName()).isEqualTo(expectedName);
     }
 
@@ -44,7 +44,7 @@ class GenreDaoJdbcTest {
     @Test
     void shouldGetExpectedGenreById() {
         Genre expectedGenre = new Genre(1L, "проза");
-        Genre actualGenre = genreDaoJdbc.getById(1L);
+        Genre actualGenre = genreDaoJpa.findById(1L);
         assertThat(actualGenre).usingRecursiveComparison().isEqualTo(expectedGenre);
     }
 
@@ -52,7 +52,7 @@ class GenreDaoJdbcTest {
     @Test
     void shouldGetGenreByName() {
         Genre expectedGenre = new Genre(1L, "проза");
-        Genre actualGenre = genreDaoJdbc.getByName(expectedGenre.getName());
+        Genre actualGenre = genreDaoJpa.getByName(expectedGenre.getName());
         assertThat(actualGenre).usingRecursiveComparison().isEqualTo(expectedGenre);
     }
 
@@ -64,7 +64,7 @@ class GenreDaoJdbcTest {
                 new Genre(2L, "поэзия"),
                 new Genre(3L, "комедия")
         );
-        List<Genre> actualGenres = genreDaoJdbc.getAll();
+        List<Genre> actualGenres = genreDaoJpa.getAll();
         System.out.println(actualGenres.get(0).getId());
         System.out.println(expectedGenres.get(0).getId());
         assertThat(actualGenres)
@@ -74,13 +74,13 @@ class GenreDaoJdbcTest {
     @DisplayName("удалять жанр по ID")
     @Test
     void shouldDeleteGenreById() {
-        genreDaoJdbc.deleteById(3L);
-        assertThat(genreDaoJdbc.getById(3L)).isNull();
+        genreDaoJpa.deleteById(3L);
+        assertThat(genreDaoJpa.findById(3L)).isNull();
     }
 
     @DisplayName("выбрасывать исключение при удалении жанра на который имеются ссылки из других таблиц")
     @Test
     void  shouldThrowExceptionOnDeletingLinkedGenre() {
-        assertThrows(DataIntegrityViolationException.class, () -> genreDaoJdbc.deleteById(2L));
+        assertThrows(DataIntegrityViolationException.class, () -> genreDaoJpa.deleteById(2L));
     }
 }

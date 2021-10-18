@@ -4,33 +4,36 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
 @EqualsAndHashCode
 @AllArgsConstructor
 @RequiredArgsConstructor
+@NoArgsConstructor
+@Entity
 @Table(name = "book")
 public class Book {
     @Id
     private Long id;
 
     @Column(name = "title")
-    private final String title;
+    private String title;
 
     @Column(name = "genre_id")
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "book_genre",
             joinColumns = {@JoinColumn(name = "book_id")},
             inverseJoinColumns = {@JoinColumn(name = "genre_id")})
-    private final Genre genre;
+    private List<Genre> genres;
 
     @Column(name = "author_id")
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "book_author",
             joinColumns = {@JoinColumn(name = "book_id")},
             inverseJoinColumns = {@JoinColumn(name = "author_id")})
-    private final Author author;
+    private List<Author> authors;
 
     @Column(name = "comment_id")
     @OneToMany(mappedBy = "book")
@@ -38,6 +41,12 @@ public class Book {
 
     @Override
     public String toString() {
-        return id + " | " + title + " | " + author.getName() + " | " + genre.getName();
+        return id + " | " + title + " | " +
+                authors.stream()
+                        .map(Author::getName)
+                        .collect(Collectors.joining(", ")) + " | " +
+                genres.stream()
+                        .map(Genre::getName)
+                        .collect(Collectors.joining(", "));
     }
 }

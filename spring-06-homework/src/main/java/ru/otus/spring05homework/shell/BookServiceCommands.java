@@ -5,6 +5,7 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import ru.otus.spring05homework.domain.Author;
 import ru.otus.spring05homework.domain.Book;
+import ru.otus.spring05homework.domain.Comment;
 import ru.otus.spring05homework.domain.Genre;
 import ru.otus.spring05homework.service.AuthorService;
 import ru.otus.spring05homework.service.BookService;
@@ -26,18 +27,18 @@ public class BookServiceCommands {
         Genre genre = getGenre(genreName);
         Author author = getAuthor(authorName);
         Book book = new Book(title, genre, author);
-        return  "создана книга с id = " + bookService.create(book);
+        return  "создана книга с id = " + bookService.save(book).getId();
     }
 
     @ShellMethod(value = "getting book by id", key = {"book-get"})
     public String getBookById(Long id) {
-        Book book = bookService.getById(id);
-        return book != null ? book.toString() : "книга не найдена";
+        Optional<Book> book = bookService.findById(id);
+        return book.isPresent() ? book.get().toString() : "книга не найдена";
     }
 
     @ShellMethod(value = "getting all books", key = {"book-get-all"})
     public String getAllBooks() {
-        List<Book> books = bookService.getAll();
+        List<Book> books = bookService.findAll();
 
         return !books.isEmpty()
                 ? books.stream()
@@ -47,10 +48,11 @@ public class BookServiceCommands {
     }
 
     @ShellMethod(value = "updating book", key = {"book-update"})
-    public String updateBook(Long id, String title, String authorName, String genreName) {
+    public String updateBook(Long id, String title, String authorName, String genreName, String commentText) {
         Genre genre = getGenre(genreName);
         Author author = getAuthor(authorName);
-        Book book = new Book(id, title, genre, author);
+        Comment comment
+        Book book = new Book(id, title, genre, author, );
         return bookService.update(book) ? "книга обновлена" : "книга не найдена";
     }
 

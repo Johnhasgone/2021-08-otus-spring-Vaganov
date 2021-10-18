@@ -3,16 +3,17 @@ package ru.otus.spring05homework.service;
 import ru.otus.spring05homework.domain.Book;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface BookService {
 
-    Book getById(Long id);
+    Optional<Book> findById(Long id);
 
-    Book getByName(String name);
+    List<Book> findByTitle(String title);
 
-    List<Book> getAll();
+    List<Book> findAll();
 
-    Long create(Book book);
+    Book save(Book book);
 
     boolean update(Book book);
 

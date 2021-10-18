@@ -10,6 +10,6 @@ public interface AuthorDao {
     Optional<Author> findById(Long id);
     List<Author> findAll();
     List<Author> findByName(String name);
-    boolean updateNameById(Long id, String name);
-    boolean deleteById(Long id);
+    int updateNameById(Long id, String name);
+    int deleteById(Long id);
 }

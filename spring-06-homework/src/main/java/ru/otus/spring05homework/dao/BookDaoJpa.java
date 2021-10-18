@@ -1,20 +1,13 @@
 package ru.otus.spring05homework.dao;
 
-import liquibase.pro.packaged.B;
 import lombok.RequiredArgsConstructor;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
-import ru.otus.spring05homework.domain.Author;
 import ru.otus.spring05homework.domain.Book;
-import ru.otus.spring05homework.domain.Genre;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -60,25 +53,8 @@ public class BookDaoJpa implements BookDao {
     }
 
     @Override
-    public boolean deleteById(Long id) {
-        int res = jdbc.update("delete from book where id = :id", Map.of("id", id));
-        return res != 0;
-    }
-
-    public static class BookRowMapper implements RowMapper<Book> {
-
-        @Override
-        public Book mapRow(ResultSet rs, int rowNum) throws SQLException {
-            Long id = rs.getLong("book_id");
-            String title = rs.getString("book_title");
-            Long authorId = rs.getLong("author_id");
-            Long genreId = rs.getLong("genre_id");
-            Long commentId = rs.getLong("comment_id");
-            String authorName = rs.getString("author_name");
-            String genreName = rs.getString("genre_name");
-            String comment = rs.getString("comment");
-
-            return new Book(id, title, new Genre(genreId, genreName), new Author(authorId, authorName));
-        }
+    public int deleteById(Long id) {
+        Query query = em.createQuery("delete from Book b where b.id = :id");
+        return query.executeUpdate();
     }
 }

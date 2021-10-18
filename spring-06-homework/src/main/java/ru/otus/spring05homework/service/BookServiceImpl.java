@@ -1,49 +1,46 @@
 package ru.otus.spring05homework.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.otus.spring05homework.dao.BookDao;
 import ru.otus.spring05homework.domain.Book;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
 
     private final BookDao bookDao;
 
-    @Autowired
-    public BookServiceImpl(BookDao dao) {
-        this.bookDao = dao;
+    @Override
+    public Optional<Book> findById(Long id) {
+        return bookDao.findById(id);
     }
 
     @Override
-    public Book getById(Long id) {
-        return bookDao.getById(id);
+    public List<Book> findByTitle(String title) {
+        return bookDao.findByTitle(title);
     }
 
     @Override
-    public Book getByName(String name) {
-        return bookDao.getByTitle(name);
+    public List<Book> findAll() {
+        return bookDao.findAll();
     }
 
     @Override
-    public List<Book> getAll() {
-        return bookDao.getAll();
-    }
-
-    @Override
-    public Long create(Book book) {
-        return bookDao.insert(book);
+    public Book save(Book book) {
+        return bookDao.save(book);
     }
 
     @Override
     public boolean update(Book book) {
-        return bookDao.update(book);
+        return bookDao.update(book) != 0;
     }
 
     @Override
     public boolean deleteById(Long id) {
-        return bookDao.deleteById(id);
+        return bookDao.deleteById(id) != 0;
     }
 }

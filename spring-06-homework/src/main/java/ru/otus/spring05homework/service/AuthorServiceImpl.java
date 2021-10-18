@@ -39,11 +39,11 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     public boolean updateNameById(Long id, String name) {
-        return authorDao.updateNameById(id, name);
+        return authorDao.updateNameById(id, name) != 0;
     }
 
     @Override
     public boolean deleteById(Long id) {
-        return authorDao.deleteById(id);
+        return authorDao.deleteById(id) != 0;
     }
 }

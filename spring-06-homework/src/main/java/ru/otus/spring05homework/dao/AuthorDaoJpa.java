@@ -28,12 +28,11 @@ public class AuthorDaoJpa implements AuthorDao {
     }
 
     @Override
-    public boolean updateNameById(Long id, String name) {
+    public int updateNameById(Long id, String name) {
         Query query = em.createQuery("update Author a set a.name = :name where a.id = :id");
         query.setParameter("id", id);
         query.setParameter("name", name);
-        int res = query.executeUpdate();
-        return res != 0;
+        return query.executeUpdate();
     }
 
     @Override
@@ -55,9 +54,8 @@ public class AuthorDaoJpa implements AuthorDao {
     }
 
     @Override
-    public boolean deleteById(Long id) {
+    public int deleteById(Long id) {
         Query query = em.createQuery("delete from Author a where a.id = :id");
-        int res = query.executeUpdate();
-        return res != 0;
+        return query.executeUpdate();
     }
 }
