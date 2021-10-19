@@ -20,8 +20,9 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Override
-    public List<Genre> findByName(String name) {
-        return genreDao.findByName(name);
+    public Optional<Genre> findByName(String name) {
+        List<Genre> genres = genreDao.findByName(name);
+        return Optional.ofNullable(genres.isEmpty() ? null : genres.get(0));
     }
 
     @Override

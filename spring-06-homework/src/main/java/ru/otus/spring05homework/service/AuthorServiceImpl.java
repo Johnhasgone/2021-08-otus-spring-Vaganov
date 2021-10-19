@@ -24,8 +24,9 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public List<Author> findByName(String name) {
-        return authorDao.findByName(name);
+    public Optional<Author> findByName(String name) {
+        List<Author> authors = authorDao.findByName(name);
+        return Optional.ofNullable(authors.isEmpty() ? null : authors.get(0));
     }
 
     @Override

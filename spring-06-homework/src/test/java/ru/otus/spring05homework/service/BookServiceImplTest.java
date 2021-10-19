@@ -11,6 +11,7 @@ import ru.otus.spring05homework.domain.Book;
 import ru.otus.spring05homework.domain.Genre;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -28,47 +29,47 @@ class BookServiceImplTest {
     @DisplayName("возвращать ожидаемую книгу по ID")
     @Test
     void shouldReturnExpectedBookById() {
-        Book expectedBook = new Book(1L, "Стихотворения", new Genre(1L, "поэзия"), new Author(1L, "Афанасий Афанасьевич Фет"));
-        when(bookDao.getById(any())).thenReturn(expectedBook);
-        Book actualBook = bookService.getById(1L);
+        Book expectedBook = new Book(1L, "Стихотворения", List.of(new Author(1L, "Афанасий Афанасьевич Фет")), List.of(new Genre(1L, "поэзия")));
+        when(bookDao.findById(any())).thenReturn(Optional.of(expectedBook));
+        Book actualBook = bookService.findById(1L).get();
         assertThat(actualBook).usingRecursiveComparison().isEqualTo(expectedBook);
     }
 
     @DisplayName("возвращать ожидаемую книгу по названию")
     @Test
     void shouldReturnExpectedBookByName() {
-        Book expectedBook = new Book(1L, "Стихотворения", new Genre(1L, "поэзия"), new Author(1L, "Афанасий Афанасьевич Фет"));
-        when(bookDao.getByTitle(any())).thenReturn(expectedBook);
-        Book actualBook = bookService.getByName("Стихотворения");
-        assertThat(actualBook).usingRecursiveComparison().isEqualTo(expectedBook);
+        List<Book> expectedBooks = List.of(new Book(1L, "Стихотворения", List.of(new Author(1L, "Афанасий Афанасьевич Фет")), List.of(new Genre(1L, "поэзия"))));
+        when(bookDao.findByTitle(any())).thenReturn(expectedBooks);
+        List<Book> actualBooks = bookService.findByTitle("Стихотворения");
+        assertThat(actualBooks).containsExactlyInAnyOrderElementsOf(expectedBooks);
     }
 
     @DisplayName("возвращать все книги")
     @Test
     void shouldReturnAllBooks() {
         List<Book> expected = List.of(
-                new Book(1L, "Стихотворения", new Genre(1L, "поэзия"), new Author(1L, "Афанасий Афанасьевич Фет")),
-                new Book(2L, "Рассказы", new Genre(2L, "проза"), new Author(2L, "Сергей Михалков"))
+                new Book(1L, "Стихотворения", List.of(new Author(1L, "Афанасий Афанасьевич Фет")), List.of(new Genre(1L, "поэзия"))),
+                new Book(2L, "Рассказы", List.of(new Author(2L, "Сергей Михалков")), List.of(new Genre(2L, "проза")))
         );
-        when(bookDao.getAll()).thenReturn(expected);
-        List<Book> actual = bookService.getAll();
+        when(bookDao.findAll()).thenReturn(expected);
+        List<Book> actual = bookService.findAll();
         assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
     }
 
     @DisplayName("возвращать ID созданной книги")
     @Test
     void shouldCreateBook() {
-        Book creatingBook = new Book(1L, "Стихотворения", new Genre(1L, "поэзия"), new Author(1L, "Афанасий Афанасьевич Фет"));
-        when(bookDao.insert(any())).thenReturn(creatingBook.getId());
-        Long id = bookService.create(creatingBook);
-        assertThat(id).isEqualTo(creatingBook.getId());
+        Book creatingBook = new Book(1L, "Стихотворения", List.of(new Author(1L, "Афанасий Афанасьевич Фет")), List.of(new Genre(1L, "поэзия")));
+        when(bookDao.save(any())).thenReturn(creatingBook);
+        Book actualBook = bookService.save(creatingBook);
+        assertThat(actualBook).isEqualTo(creatingBook);
     }
 
     @DisplayName("вызывать bookDao.update()")
     @Test
     void shouldInvokeUpdateInDao() {
-        Book updatingBook = new Book(1L, "Стихотворения", new Genre(1L, "поэзия"), new Author(1L, "Афанасий Афанасьевич Фет"));
-        when(bookDao.update(updatingBook)).thenReturn(true);
+        Book updatingBook = new Book(1L, "Стихотворения", List.of(new Author(1L, "Афанасий Афанасьевич Фет")), List.of(new Genre(1L, "поэзия")));
+        when(bookDao.update(updatingBook)).thenReturn(1);
         assertThat(bookService.update(updatingBook)).isTrue();
     }
 
@@ -76,7 +77,7 @@ class BookServiceImplTest {
     @Test
     void shouldInvokeDeleteInDao() {
         Long id = 1L;
-        when(bookDao.deleteById(id)).thenReturn(true);
+        when(bookDao.deleteById(id)).thenReturn(1);
         assertThat(bookService.deleteById(id)).isTrue();
     }
 }

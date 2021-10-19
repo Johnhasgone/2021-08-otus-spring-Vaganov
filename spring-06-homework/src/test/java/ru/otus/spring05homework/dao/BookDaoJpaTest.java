@@ -3,7 +3,7 @@ package ru.otus.spring05homework.dao;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import ru.otus.spring05homework.domain.Author;
@@ -15,7 +15,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("DAO для работы с книгами должно ")
-@JdbcTest
+@DataJpaTest
 @Import(BookDaoJpa.class)
 @ActiveProfiles("test")
 class BookDaoJpaTest {
@@ -31,11 +31,10 @@ class BookDaoJpaTest {
         Book expectedBook = new Book(
                 3L,
                 "Стихотворения",
-                new Genre(2L, "поэзия"),
-                new Author(1L, "Афанасий Афанасьевич Фет")
+                List.of(new Author(1L, "Афанасий Афанасьевич Фет")),
+                List.of(new Genre(2L, "поэзия"))
         );
-        Long id = bookDaoJpa.insert(expectedBook);
-        Book actualBook = bookDaoJpa.getById(id);
+        Book actualBook = bookDaoJpa.save(expectedBook);
         assertThat(actualBook).isEqualTo(expectedBook);
     }
 
@@ -43,16 +42,16 @@ class BookDaoJpaTest {
     @Test
     void shouldUpdateBook() {
         String expectedName = "Lyrics";
-        Book updatableBook = bookDaoJpa.getAll().get(0);
+        Book updatableBook = bookDaoJpa.findAll().get(0);
         bookDaoJpa.update(
                 new Book(
                         updatableBook.getId(),
                         expectedName,
-                        updatableBook.getGenre(),
-                        updatableBook.getAuthor()
+                        updatableBook.getAuthors(),
+                        updatableBook.getGenres()
                 )
         );
-        Book actualBook = bookDaoJpa.getById(updatableBook.getId());
+        Book actualBook = bookDaoJpa.findById(updatableBook.getId()).get();
         assertThat(actualBook.getTitle()).isEqualTo(expectedName);
     }
 
@@ -62,34 +61,35 @@ class BookDaoJpaTest {
         Book expectedBook = new Book(
                 1L,
                 "Стихотворения",
-                new Genre(2L, "поэзия"),
-                new Author(1L, "Афанасий Афанасьевич Фет")
+                List.of(new Author(1L, "Афанасий Афанасьевич Фет")),
+                List.of(new Genre(2L, "поэзия"))
+
         );
-        Book actualBook = bookDaoJpa.getById(1L);
+        Book actualBook = bookDaoJpa.findById(1L).get();
         assertThat(actualBook).usingRecursiveComparison().isEqualTo(expectedBook);
     }
 
     @DisplayName("получать книгу по имени")
     @Test
     void shouldGetBookByName() {
-        Book expectedBook = new Book(
+        List<Book> expectedBooks = List.of(new Book(
                 1L,
                 "Стихотворения",
-                new Genre(2L, "поэзия"),
-                new Author(1L, "Афанасий Афанасьевич Фет")
-        );
-        Book actualBook = bookDaoJpa.getByTitle(expectedBook.getTitle());
-        assertThat(actualBook).usingRecursiveComparison().isEqualTo(expectedBook);
+                List.of(new Author(1L, "Афанасий Афанасьевич Фет")),
+                List.of(new Genre(2L, "поэзия"))
+        ));
+        List<Book> actualBooks = bookDaoJpa.findByTitle(expectedBooks.get(0).getTitle());
+        assertThat(actualBooks).containsExactlyInAnyOrderElementsOf(expectedBooks);
     }
 
     @DisplayName("получать всех авторов из БД")
     @Test
     void shouldGetAllBooks() {
         List<Book> expectedBooks = List.of(
-                new Book(1L, "Стихотворения", new Genre(2L, "поэзия"), new Author(1L, "Афанасий Афанасьевич Фет")),
-                new Book(2L, "Сборник рассказов", new Genre(1L, "проза"), new Author(2L, "Сергей Михалков"))
+                new Book(1L, "Стихотворения", List.of(new Author(1L, "Афанасий Афанасьевич Фет")), List.of(new Genre(2L, "поэзия"))),
+                new Book(2L, "Сборник рассказов", List.of(new Author(2L, "Сергей Михалков")), List.of(new Genre(1L, "проза")))
         );
-        List<Book> actualBooks = bookDaoJpa.getAll();
+        List<Book> actualBooks = bookDaoJpa.findAll();
         assertThat(actualBooks)
                 .containsExactlyInAnyOrderElementsOf(expectedBooks);
     }
@@ -98,6 +98,6 @@ class BookDaoJpaTest {
     @Test
     void shouldDeleteBookById() {
         bookDaoJpa.deleteById(2L);
-        assertThat(bookDaoJpa.getById(2L)).isNull();
+        assertThat(bookDaoJpa.findById(2L)).isNull();
     }
 }

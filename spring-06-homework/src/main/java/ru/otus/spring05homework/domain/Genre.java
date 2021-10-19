@@ -11,7 +11,6 @@ import javax.persistence.Table;
 @Setter
 @EqualsAndHashCode
 @AllArgsConstructor
-@RequiredArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "genre")
@@ -21,6 +20,10 @@ public class Genre {
 
     @Column(name = "name")
     private String name;
+
+    public Genre(String name) {
+        this.name = name;
+    }
 
     @Override
     public String toString() {

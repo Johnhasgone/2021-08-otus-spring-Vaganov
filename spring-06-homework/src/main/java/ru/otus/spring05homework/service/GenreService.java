@@ -9,7 +9,7 @@ public interface GenreService {
 
     Optional<Genre> findById(Long id);
 
-    List<Genre> findByName(String name);
+    Optional<Genre> findByName(String name);
 
     List<Genre> findAll();
 

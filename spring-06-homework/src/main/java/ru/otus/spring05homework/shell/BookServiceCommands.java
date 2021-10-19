@@ -5,12 +5,13 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import ru.otus.spring05homework.domain.Author;
 import ru.otus.spring05homework.domain.Book;
-import ru.otus.spring05homework.domain.Comment;
 import ru.otus.spring05homework.domain.Genre;
 import ru.otus.spring05homework.service.AuthorService;
 import ru.otus.spring05homework.service.BookService;
 import ru.otus.spring05homework.service.GenreService;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,10 +24,10 @@ public class BookServiceCommands {
     private final GenreService genreService;
 
     @ShellMethod(value = "creating book", key = {"book-create"})
-    public String createBook(String title, String genreName, String authorName) {
-        Genre genre = getGenre(genreName);
-        Author author = getAuthor(authorName);
-        Book book = new Book(title, genre, author);
+    public String createBook(String title, String genreNames, String authorNames) {
+        List<Author> authors = getAuthors(authorNames);
+        List<Genre> genres = getGenres(genreNames);
+        Book book = new Book(null, title, authors, genres);
         return  "создана книга с id = " + bookService.save(book).getId();
     }
 
@@ -48,28 +49,35 @@ public class BookServiceCommands {
     }
 
     @ShellMethod(value = "updating book", key = {"book-update"})
-    public String updateBook(Long id, String title, String authorName, String genreName, String commentText) {
-        Genre genre = getGenre(genreName);
-        Author author = getAuthor(authorName);
-        Comment comment
-        Book book = new Book(id, title, genre, author, );
+    public String updateBook(Long id, String title, String authorNames, String genreNames, String commentText) {
+        List<Author> authors = getAuthors(authorNames);
+        List<Genre> genres = getGenres(genreNames);
+        Book book = new Book(id, title, authors, genres);
         return bookService.update(book) ? "книга обновлена" : "книга не найдена";
     }
 
-    private Genre getGenre(String genreName) {
-        Genre genre = genreService.getByName(genreName);
-        if (genre == null) {
-            genre = new Genre(genreService.create(new Genre(genreName)), genreName);
+    private List<Genre> getGenres(String genreNames) {
+        List<String> genreNameArray = Arrays.stream(genreNames.split(","))
+                .map(String::trim)
+                .collect(Collectors.toList());
+        List<Genre> genres = new ArrayList<>();
+        for (String genreName : genreNameArray) {
+            Genre genre = genreService.findByName(genreName).orElse(genreService.save(new Genre(genreName)));
+            genres.add(genre);
         }
-        return genre;
+        return genres;
     }
 
-    private Author getAuthor(String authorName) {
-        List<Author> authors = authorService.findByName(authorName);
-        if (authors.isEmpty()) {
-            return authorService.save(new Author(authorName));
+    private List<Author> getAuthors(String authorNames) {
+        List<String> authorNamesArray = Arrays.stream(authorNames.split(","))
+                .map(String::trim)
+                .collect(Collectors.toList());
+        List<Author> authors = new ArrayList<>();
+        for (String authorName : authorNamesArray) {
+            Author author = authorService.findByName(authorName).orElse(authorService.save(new Author(authorName)));
+            authors.add(author);
         }
-        return authors.get(0);
+        return authors;
     }
 
     @ShellMethod(value = "deleting book", key = {"book-delete"})
@@ -110,13 +118,13 @@ public class BookServiceCommands {
 
     @ShellMethod(value = "getting genre by id", key = {"genre-get"})
     public String getGenreById(Long id) {
-        Genre genre = genreService.getById(id);
-        return genre != null ? genre.toString() : "жанр не найден";
+        Optional<Genre> genre = genreService.findById(id);
+        return genre.isPresent() ? genre.get().toString() : "жанр не найден";
     }
 
     @ShellMethod(value = "getting all genres", key = {"genre-get-all"})
     public String getAllGenres() {
-        List<Genre> genres = genreService.getAll();
+        List<Genre> genres = genreService.findAll();
         return !genres.isEmpty()
                 ? genres.stream()
                         .map(Genre::toString)
@@ -126,12 +134,12 @@ public class BookServiceCommands {
 
     @ShellMethod(value = "creating genre", key = {"genre-create"})
     public String createGenre(String name) {
-        return "создан жанр с id = " + genreService.create(new Genre(name));
+        return "создан жанр с id = " + genreService.save(new Genre(name));
     }
 
     @ShellMethod(value = "updating genre", key = {"genre-update"})
     public String updateGenre(Long id, String name) {
-        return genreService.update(new Genre(id, name)) ? "жанр обновлен" : "жанр не найден";
+        return genreService.updateNameById(id, name) ? "жанр обновлен" : "жанр не найден";
     }
 
     @ShellMethod(value = "deleting genre", key = {"genre-delete"})

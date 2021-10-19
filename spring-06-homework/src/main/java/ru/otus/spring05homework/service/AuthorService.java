@@ -9,7 +9,7 @@ public interface AuthorService {
 
     Optional<Author> findById(Long id);
 
-    List<Author> findByName(String name);
+    Optional<Author> findByName(String name);
 
     List<Author> findAll();
 
