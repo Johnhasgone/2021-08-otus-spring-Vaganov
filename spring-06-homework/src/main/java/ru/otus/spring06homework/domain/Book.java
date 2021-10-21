@@ -29,14 +29,14 @@ public class Book {
     private List<Genre> genres;
 
     @Column(name = "author_id")
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "book_author",
             joinColumns = {@JoinColumn(name = "book_id")},
             inverseJoinColumns = {@JoinColumn(name = "author_id")})
     private List<Author> authors;
 
     @Column(name = "comment_id")
-    @OneToMany(mappedBy = "book")
+    @OneToMany(mappedBy = "book", fetch = FetchType.LAZY)
     private List<Comment> comments;
 
     public Book(Long id, String title, List<Author> authors, List<Genre> genres) {

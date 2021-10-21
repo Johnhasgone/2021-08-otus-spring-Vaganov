@@ -41,6 +41,7 @@ public class BookDaoJpa implements BookDao {
     @Override
     public List<Book> findByTitle(String title) {
         TypedQuery<Book> query = em.createQuery("select b from Book b where b.title = :title", Book.class);
+        query.setParameter("title", title);
         return query.getResultList();
     }
 
@@ -53,6 +54,7 @@ public class BookDaoJpa implements BookDao {
     @Override
     public int deleteById(Long id) {
         Query query = em.createQuery("delete from Book b where b.id = :id");
+        query.setParameter("id", id);
         return query.executeUpdate();
     }
 }

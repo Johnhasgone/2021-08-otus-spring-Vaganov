@@ -27,6 +27,8 @@ class BookDaoJpaTest {
     private static final String CREATING_GENRE_NAME_2 = "Автобиография";
 
     private static final Long FIRST_BOOK_ID = 1L;
+    private static final Long SECOND_BOOK_ID = 2L;
+    private static final Long THIRD_BOOK_ID = 3L;
 
 
 
@@ -48,57 +50,63 @@ class BookDaoJpaTest {
         );
         bookDaoJpa.save(expectedBook);
         Book actualBook = em.find(Book.class, expectedBook.getId());
-        assertThat(actualBook).usingRecursiveComparison().isEqualTo(expectedBook);
+        assertThat(actualBook).isNotNull()
+                .matches(s -> s.getTitle().equals(CREATING_BOOK_TITLE))
+                .matches(s -> s.getAuthors().get(0).getName().equals(CREATING_AUTHOR_NAME))
+                .matches(s -> s.getGenres().size() == 2)
+        ;
     }
 
     @DisplayName("обновлять книгу в БД")
     @Test
     void shouldUpdateBook() {
         String expectedName = "Lyrics";
-        Book updatableBook = em.find(Book.class, FIRST_BOOK_ID);
-        bookDaoJpa.updateNameById(FIRST_BOOK_ID, expectedName);
+        Book updatableBook = em.find(Book.class, THIRD_BOOK_ID);
+        bookDaoJpa.updateNameById(THIRD_BOOK_ID, expectedName);
         em.detach(updatableBook);
-        Book actualBook = em.find(Book.class, FIRST_BOOK_ID);
+        Book actualBook = em.find(Book.class, THIRD_BOOK_ID);
         assertThat(actualBook.getTitle()).isEqualTo(expectedName);
     }
 
     @DisplayName("получать книгу по ID")
     @Test
     void shouldGetExpectedBookById() {
-        Book expectedBook = em.find(Book.class, FIRST_BOOK_ID);
-        Optional<Book> actualBook = bookDaoJpa.findById(1L);
+        Book expectedBook = em.find(Book.class, THIRD_BOOK_ID);
+        Optional<Book> actualBook = bookDaoJpa.findById(THIRD_BOOK_ID);
         assertThat(actualBook).isPresent().get().usingRecursiveComparison().isEqualTo(expectedBook);
     }
 
     @DisplayName("получать книгу по имени")
     @Test
     void shouldGetBookByName() {
-        List<Book> expectedBooks = List.of(new Book(
-                1L,
-                "Стихотворения",
-                List.of(new Author(1L, "Афанасий Афанасьевич Фет")),
-                List.of(new Genre(2L, "поэзия"))
-        ));
+        List<Book> expectedBooks = List.of(em.find(Book.class, THIRD_BOOK_ID));
         List<Book> actualBooks = bookDaoJpa.findByTitle(expectedBooks.get(0).getTitle());
         assertThat(actualBooks).containsExactlyInAnyOrderElementsOf(expectedBooks);
     }
 
-    @DisplayName("получать всех авторов из БД")
+    @DisplayName("получать все книги из БД")
     @Test
     void shouldGetAllBooks() {
         List<Book> expectedBooks = List.of(
-                new Book(1L, "Стихотворения", List.of(new Author(1L, "Афанасий Афанасьевич Фет")), List.of(new Genre(2L, "поэзия"))),
-                new Book(2L, "Сборник рассказов", List.of(new Author(2L, "Сергей Михалков")), List.of(new Genre(1L, "проза")))
+                em.find(Book.class, FIRST_BOOK_ID),
+                em.find(Book.class, SECOND_BOOK_ID),
+                em.find(Book.class, THIRD_BOOK_ID)
         );
         List<Book> actualBooks = bookDaoJpa.findAll();
-        assertThat(actualBooks)
+        assertThat(actualBooks).isNotNull()
+                .allMatch(book -> book.getTitle() != null)
+                .allMatch(book -> book.getAuthors()!= null && !book.getAuthors().isEmpty())
+                .allMatch(book -> book.getGenres() != null && !book.getGenres().isEmpty())
                 .containsExactlyInAnyOrderElementsOf(expectedBooks);
     }
 
     @DisplayName("удалять книгу по ID")
     @Test
     void shouldDeleteBookById() {
-        bookDaoJpa.deleteById(2L);
-        assertThat(bookDaoJpa.findById(2L)).isNull();
+        Book deletingBook = em.find(Book.class, SECOND_BOOK_ID);
+        bookDaoJpa.deleteById(SECOND_BOOK_ID);
+        em.detach(deletingBook);
+        Book deletedBook = em.find(Book.class, SECOND_BOOK_ID);
+        assertThat(deletedBook).isNull();
     }
 }
