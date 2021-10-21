@@ -69,8 +69,8 @@ class BookServiceImplTest {
     @Test
     void shouldInvokeUpdateInDao() {
         Book updatingBook = new Book(1L, "Стихотворения", List.of(new Author(1L, "Афанасий Афанасьевич Фет")), List.of(new Genre(1L, "поэзия")));
-        when(bookDao.update(updatingBook)).thenReturn(1);
-        assertThat(bookService.update(updatingBook)).isTrue();
+        when(bookDao.updateNameById(1L, "LYRICS")).thenReturn(1);
+        assertThat(bookService.updateNameById(1L, "LYRICS")).isTrue();
     }
 
     @DisplayName("вызывать bookDao.delete()")

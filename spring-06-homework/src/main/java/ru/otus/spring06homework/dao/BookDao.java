@@ -10,6 +10,6 @@ public interface BookDao {
     Optional<Book> findById(Long id);
     List<Book> findAll();
     List<Book> findByTitle(String name);
-    int update(Book book);
+    int updateNameById(Long id, String title);
     int deleteById(Long id);
 }

@@ -13,22 +13,43 @@ create table if not exists  genre(
 
 create table if not exists book(
     id bigint auto_increment primary key,
-    title varchar(200),
+    title varchar(200)
+);
+
+create table if not exists book_author(
+    book_id bigint,
     author_id bigint,
-    genre_id bigint,
+
+    constraint fk_book_author_book
+        foreign key (book_id)
+        references book(id)
+        on delete cascade,
+
     constraint fk_author
         foreign key (author_id)
-            references author(id)
-            on delete restrict,
+        references author(id)
+        on delete restrict
+);
+
+create table if not exists book_genre(
+    book_id bigint,
+    genre_id bigint,
+
+    constraint fk_book_genre_book
+        foreign key (book_id)
+        references book(id)
+        on delete cascade,
+
     constraint fk_genre
         foreign key (genre_id)
-            references genre(id)
-            on delete restrict
+        references genre(id)
+        on delete restrict
 );
+
 
 create table if not exists comment(
     id bigint auto_increment primary key,
-    comment varchar(2048),
+    text varchar(2048),
     book_id bigint,
     constraint fk_book
         foreign key (book_id)

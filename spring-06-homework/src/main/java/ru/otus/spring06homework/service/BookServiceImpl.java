@@ -35,8 +35,8 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public boolean update(Book book) {
-        return bookDao.update(book) != 0;
+    public boolean updateNameById(Long id, String title) {
+        return bookDao.updateNameById(id, title) != 0;
     }
 
     @Override

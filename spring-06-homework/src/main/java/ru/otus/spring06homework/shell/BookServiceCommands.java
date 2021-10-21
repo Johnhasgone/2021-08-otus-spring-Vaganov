@@ -49,11 +49,8 @@ public class BookServiceCommands {
     }
 
     @ShellMethod(value = "updating book", key = {"book-update"})
-    public String updateBook(Long id, String title, String authorNames, String genreNames, String commentText) {
-        List<Author> authors = getAuthors(authorNames);
-        List<Genre> genres = getGenres(genreNames);
-        Book book = new Book(id, title, authors, genres);
-        return bookService.update(book) ? "книга обновлена" : "книга не найдена";
+    public String updateBook(Long id, String title) {
+        return bookService.updateNameById(id, title) ? "книга обновлена" : "книга не найдена";
     }
 
     private List<Genre> getGenres(String genreNames) {

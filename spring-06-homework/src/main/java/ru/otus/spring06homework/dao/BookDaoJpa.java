@@ -26,12 +26,10 @@ public class BookDaoJpa implements BookDao {
     }
 
     @Override
-    public int update(Book book) {
-        Query query = em.createQuery("update Book b set b.title = :title, b.authors = :authors, b.genres = :genres where b.id = :id");
-        query.setParameter("title", book.getTitle());
-        query.setParameter("authors", book.getAuthors());
-        query.setParameter("genres", book.getGenres());
-        query.setParameter("id", book.getId());
+    public int updateNameById(Long id, String title) {
+        Query query = em.createQuery("update Book b set b.title = :title where b.id = :id");
+        query.setParameter("title", title);
+        query.setParameter("id", id);
         return query.executeUpdate();
     }
 

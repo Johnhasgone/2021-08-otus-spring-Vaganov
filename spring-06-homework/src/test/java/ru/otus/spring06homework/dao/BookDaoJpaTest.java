@@ -12,6 +12,7 @@ import ru.otus.spring06homework.domain.Book;
 import ru.otus.spring06homework.domain.Genre;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -20,15 +21,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Import(BookDaoJpa.class)
 @ActiveProfiles("test")
 class BookDaoJpaTest {
-    private static final String FIRST_BOOK_TITLE = "";
-    private static final String SECOND_BOOK_TITLE = "";
-    private static final String THIRD_BOOK_TITLE = "Стихотворения";
-    private static final String FIRST_AUTHOR_NAME = "Афанасий Афанасьевич Фет";
-    private static final String THIRD_AUTHOR_NAME = "Стихотворения";
-    private static final String SECOND_GENRE_NAME = "поэзия";
-    private static final Long FIRST_AUTHOR_ID = 1L;
-    private static final Long SECOND_AUTHOR_ID = 2L;
-    private static final Long THIRD_AUTHOR_ID = 3L;
+    private static final String CREATING_BOOK_TITLE = "Размышления";
+    private static final String CREATING_AUTHOR_NAME = "Марк Аврелий";
+    private static final String CREATING_GENRE_NAME_1 = "Философия";
+    private static final String CREATING_GENRE_NAME_2 = "Автобиография";
+
+    private static final Long FIRST_BOOK_ID = 1L;
+
+
+
 
     @Autowired
     private BookDaoJpa bookDaoJpa;
@@ -41,12 +42,12 @@ class BookDaoJpaTest {
     void shouldInsertBook() {
         Book expectedBook = new Book(
                 null,
-                "Стихотворения",
-                List.of(new Author(null, FIRST_AUTHOR_NAME)),
-                List.of(new Genre(null, SECOND_GENRE_NAME))
+                CREATING_BOOK_TITLE,
+                List.of(new Author(null, CREATING_AUTHOR_NAME)),
+                List.of(new Genre(null, CREATING_GENRE_NAME_1), new Genre(null, CREATING_GENRE_NAME_2))
         );
         bookDaoJpa.save(expectedBook);
-        Book actualBook = em.find(Book.class, THIRD_AUTHOR_ID);
+        Book actualBook = em.find(Book.class, expectedBook.getId());
         assertThat(actualBook).usingRecursiveComparison().isEqualTo(expectedBook);
     }
 
@@ -54,32 +55,19 @@ class BookDaoJpaTest {
     @Test
     void shouldUpdateBook() {
         String expectedName = "Lyrics";
-        Book updatableBook = em.find(Book.class, FIRST_AUTHOR_ID);
-        bookDaoJpa.update(
-                new Book(
-                        FIRST_AUTHOR_ID,
-                        expectedName,
-                        updatableBook.getAuthors(),
-                        updatableBook.getGenres()
-                )
-        );
+        Book updatableBook = em.find(Book.class, FIRST_BOOK_ID);
+        bookDaoJpa.updateNameById(FIRST_BOOK_ID, expectedName);
         em.detach(updatableBook);
-        Book actualBook = em.find(Book.class, FIRST_AUTHOR_ID);
+        Book actualBook = em.find(Book.class, FIRST_BOOK_ID);
         assertThat(actualBook.getTitle()).isEqualTo(expectedName);
     }
 
     @DisplayName("получать книгу по ID")
     @Test
     void shouldGetExpectedBookById() {
-        Book expectedBook = new Book(
-                1L,
-                "Стихотворения",
-                List.of(new Author(1L, "Афанасий Афанасьевич Фет")),
-                List.of(new Genre(2L, "поэзия"))
-
-        );
-        Book actualBook = bookDaoJpa.findById(1L).get();
-        assertThat(actualBook).usingRecursiveComparison().isEqualTo(expectedBook);
+        Book expectedBook = em.find(Book.class, FIRST_BOOK_ID);
+        Optional<Book> actualBook = bookDaoJpa.findById(1L);
+        assertThat(actualBook).isPresent().get().usingRecursiveComparison().isEqualTo(expectedBook);
     }
 
     @DisplayName("получать книгу по имени")
