@@ -2,6 +2,7 @@ package ru.otus.spring06homework.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.otus.spring06homework.dao.AuthorDao;
 import ru.otus.spring06homework.domain.Author;
 
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class AuthorServiceImpl implements AuthorService {
 
     private final AuthorDao authorDao;

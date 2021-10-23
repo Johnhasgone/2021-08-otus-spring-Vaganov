@@ -1,8 +1,11 @@
 package ru.otus.spring06homework.domain;
 
 import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,6 +25,7 @@ public class Book {
     private String title;
 
     @Column(name = "genre_id")
+    @Fetch(FetchMode.SUBSELECT)
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "book_genre",
             joinColumns = {@JoinColumn(name = "book_id")},
@@ -29,15 +33,17 @@ public class Book {
     private List<Genre> genres;
 
     @Column(name = "author_id")
-    @ManyToMany(fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SUBSELECT)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "book_author",
             joinColumns = {@JoinColumn(name = "book_id")},
             inverseJoinColumns = {@JoinColumn(name = "author_id")})
     private List<Author> authors;
 
     @Column(name = "comment_id")
+    @Fetch(FetchMode.SUBSELECT)
     @OneToMany(mappedBy = "book", fetch = FetchType.LAZY)
-    private List<Comment> comments;
+    private List<Comment> comments = new ArrayList<>();
 
     public Book(Long id, String title, List<Author> authors, List<Genre> genres) {
         this.id = id;
@@ -58,6 +64,13 @@ public class Book {
                 " | " +
                 genres.stream()
                         .map(Genre::getName)
-                        .collect(Collectors.joining(", "));
+                        .collect(Collectors.joining(", ")) +
+                "\nComments: " +
+                (comments.isEmpty()
+                        ? "-"
+                        : comments.stream()
+                                .map(e -> "\"" + e.getText() + "\"")
+                                .collect(Collectors.joining(", "))
+                );
     }
 }

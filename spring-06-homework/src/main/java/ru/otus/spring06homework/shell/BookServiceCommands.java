@@ -3,11 +3,14 @@ package ru.otus.spring06homework.shell;
 import lombok.RequiredArgsConstructor;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
+import org.springframework.transaction.annotation.Transactional;
 import ru.otus.spring06homework.domain.Author;
 import ru.otus.spring06homework.domain.Book;
+import ru.otus.spring06homework.domain.Comment;
 import ru.otus.spring06homework.domain.Genre;
 import ru.otus.spring06homework.service.AuthorService;
 import ru.otus.spring06homework.service.BookService;
+import ru.otus.spring06homework.service.CommentService;
 import ru.otus.spring06homework.service.GenreService;
 
 import java.util.ArrayList;
@@ -22,6 +25,8 @@ public class BookServiceCommands {
     private final BookService bookService;
     private final AuthorService authorService;
     private final GenreService genreService;
+    private final CommentService commentService;
+
 
     @ShellMethod(value = "creating book", key = {"book-create"})
     public String createBook(String title, String genreNames, String authorNames) {
@@ -31,12 +36,15 @@ public class BookServiceCommands {
         return  "создана книга с id = " + bookService.save(book).getId();
     }
 
+    @Transactional
     @ShellMethod(value = "getting book by id", key = {"book-get"})
     public String getBookById(Long id) {
         Optional<Book> book = bookService.findById(id);
         return book.isPresent() ? book.get().toString() : "книга не найдена";
     }
 
+
+    @Transactional
     @ShellMethod(value = "getting all books", key = {"book-get-all"})
     public String getAllBooks() {
         List<Book> books = bookService.findAll();
@@ -47,6 +55,7 @@ public class BookServiceCommands {
                         .collect(Collectors.joining("\n"))
                 : "книги не найдены";
     }
+
 
     @ShellMethod(value = "updating book", key = {"book-update"})
     public String updateBook(Long id, String title) {
@@ -77,9 +86,56 @@ public class BookServiceCommands {
         return authors;
     }
 
+
     @ShellMethod(value = "deleting book", key = {"book-delete"})
     public String deleteBook(Long id) {
         return bookService.deleteById(id) ? "книга удалена" : "книга не найдена";
+    }
+
+
+    @ShellMethod(value = "adding comment to book", key = {"book-add-comment"})
+    public String addCommentToBook(Long id, String text) {
+        Optional<Book> book = bookService.findById(id);
+
+        if (book.isEmpty()) {
+            return "Книга с id = " + id + "не найдена";
+        }
+
+        Comment comment = commentService.save(new Comment(null, text, book.get()));
+        return comment.getId() != null ? "Комментарий сохранен" : "Не удалось сохранить комментарий";
+    }
+
+
+    @Transactional
+    @ShellMethod(value = "getting all comments for book", key = {"book-get-comments"})
+    public String getCommentsByBookId(Long id) {
+        Optional<Book> book = bookService.findById(id);
+
+        if (book.isEmpty()) {
+            return "Книга с id = " + id + " не найдена";
+        }
+
+        return book.get().getComments()
+                .stream()
+                .map(Comment::toString)
+                .collect(Collectors.joining("\n"));
+    }
+
+    @ShellMethod(value = "get comment by id", key = {"comment-get"})
+    public String getCommentById(Long id) {
+        Optional<Comment> comment =  commentService.findById(id);
+        return comment.isPresent() ? comment.get().toString() : "Комментарий не найден";
+    }
+
+    @ShellMethod(value = "deleting comment by id", key = {"comment-delete"})
+    public String deleteCommentById(Long id) {
+        return commentService.deleteById(id) ? "Комментарий удален" : "Комментарий не найден";
+    }
+
+
+    @ShellMethod(value = "update comment by id", key = {"comment-update"})
+    public String updateCommentById(Long id, String text) {
+        return commentService.updateTextById(id, text) ? "Комментарий обновлен" : "Комментарий не найден";
     }
 
     @ShellMethod(value = "getting author by id", key = {"author-get"})

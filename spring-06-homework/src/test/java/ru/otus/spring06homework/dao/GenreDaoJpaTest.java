@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Import;
 import ru.otus.spring06homework.domain.Genre;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -19,6 +20,7 @@ class GenreDaoJpaTest {
     private static final Long FIRST_GENRE_ID = 1L;
     private static final Long SECOND_GENRE_ID = 2L;
     private static final Long THIRD_GENRE_ID = 3L;
+    private static final Long FORTH_GENRE_ID = 4L;
     private static final String CREATED_GENRE_NAME = "пьеса";
     private static final String FIRST_GENRE_NAME = "проза";
     private static final String EXPECTED_GENRE_NAME = "роман";
@@ -53,8 +55,8 @@ class GenreDaoJpaTest {
     @Test
     void shouldGetExpectedGenreById() {
         Genre expectedGenre = em.find(Genre.class, FIRST_GENRE_ID);
-        Genre actualGenre = genreDaoJpa.findById(FIRST_GENRE_ID).get();
-        assertThat(actualGenre).usingRecursiveComparison().isEqualTo(expectedGenre);
+        Optional<Genre> actualGenre = genreDaoJpa.findById(FIRST_GENRE_ID);
+        assertThat(actualGenre).isPresent().get().usingRecursiveComparison().isEqualTo(expectedGenre);
     }
 
     @DisplayName("получать жанр по имени")
@@ -71,7 +73,8 @@ class GenreDaoJpaTest {
         List<Genre> expectedGenres = List.of(
                 em.find(Genre.class, FIRST_GENRE_ID),
                 em.find(Genre.class, SECOND_GENRE_ID),
-                em.find(Genre.class, THIRD_GENRE_ID)
+                em.find(Genre.class, THIRD_GENRE_ID),
+                em.find(Genre.class, FORTH_GENRE_ID)
         );
         List<Genre> actualGenres = genreDaoJpa.findAll();
         assertThat(actualGenres).containsExactlyInAnyOrderElementsOf(expectedGenres);
@@ -80,11 +83,11 @@ class GenreDaoJpaTest {
     @DisplayName("удалять жанр по ID")
     @Test
     void shouldDeleteGenreById() {
-        Genre deletingGenre = em.find(Genre.class, THIRD_GENRE_ID);
+        Genre deletingGenre = em.find(Genre.class, FORTH_GENRE_ID);
         assertThat(deletingGenre).isNotNull();
-        genreDaoJpa.deleteById(3L);
+        genreDaoJpa.deleteById(FORTH_GENRE_ID);
         em.detach(deletingGenre);
-        Genre deletedGenre = em.find(Genre.class, THIRD_GENRE_ID);
+        Genre deletedGenre = em.find(Genre.class, FORTH_GENRE_ID);
         assertThat(deletedGenre).isNull();
     }
 }

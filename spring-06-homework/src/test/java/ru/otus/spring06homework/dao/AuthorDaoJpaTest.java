@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Import;
 import ru.otus.spring06homework.domain.Author;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -20,6 +21,8 @@ class AuthorDaoJpaTest {
     private static final Long FIRST_AUTHOR_ID = 1L;
     private static final Long SECOND_AUTHOR_ID = 2L;
     private static final Long THIRD_AUTHOR_ID = 3L;
+    private static final Long FORTH_AUTHOR_ID = 4L;
+    private static final Long FIFTH_AUTHOR_ID = 5L;
     private static final String CREATED_AUTHOR_NAME = "Николай Васильевич Гоголь";
     private static final String FIRST_AUTHOR_NAME = "Афанасий Афанасьевич Фет";
     private static final String EXPECTED_AUTHOR_NAME = "Осип Мандельштам";
@@ -54,8 +57,8 @@ class AuthorDaoJpaTest {
     @Test
     void shouldGetExpectedAuthorById() {
         Author expectedAuthor = em.find(Author.class, FIRST_AUTHOR_ID);
-        Author actualAuthor = authorDaoJpa.findById(FIRST_AUTHOR_ID).get();
-        assertThat(actualAuthor).usingRecursiveComparison().isEqualTo(expectedAuthor);
+        Optional<Author> actualAuthor = authorDaoJpa.findById(FIRST_AUTHOR_ID);
+        assertThat(actualAuthor).isPresent().get().usingRecursiveComparison().isEqualTo(expectedAuthor);
     }
 
     @DisplayName("получать автора по имени")
@@ -72,7 +75,9 @@ class AuthorDaoJpaTest {
         List<Author> expectedAuthors = List.of(
                 em.find(Author.class, FIRST_AUTHOR_ID),
                 em.find(Author.class, SECOND_AUTHOR_ID),
-                em.find(Author.class, THIRD_AUTHOR_ID)
+                em.find(Author.class, THIRD_AUTHOR_ID),
+                em.find(Author.class, FORTH_AUTHOR_ID),
+                em.find(Author.class, FIFTH_AUTHOR_ID)
         );
         List<Author> actualAuthors = authorDaoJpa.findAll();
         assertThat(actualAuthors).containsExactlyInAnyOrderElementsOf(expectedAuthors);

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import ru.otus.spring06homework.domain.Book;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class BookDaoJpa implements BookDao {
 
+    @PersistenceContext
     private final EntityManager em;
 
     @Override
