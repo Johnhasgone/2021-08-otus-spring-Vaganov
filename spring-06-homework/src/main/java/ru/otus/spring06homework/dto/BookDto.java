@@ -1,12 +1,16 @@
 package ru.otus.spring06homework.dto;
 
 import com.googlecode.jmapper.annotations.JGlobalMap;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @JGlobalMap
 public class BookDto {
     private Long id;

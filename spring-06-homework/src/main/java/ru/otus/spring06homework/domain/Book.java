@@ -25,14 +25,6 @@ public class Book {
     @Column(name = "title")
     private String title;
 
-    @Column(name = "genre_id")
-    @Fetch(FetchMode.SUBSELECT)
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "book_genre",
-            joinColumns = {@JoinColumn(name = "book_id")},
-            inverseJoinColumns = {@JoinColumn(name = "genre_id")})
-    private List<Genre> genres;
-
     @Column(name = "author_id")
     @Fetch(FetchMode.SUBSELECT)
     @ManyToMany(fetch = FetchType.LAZY)
@@ -41,15 +33,16 @@ public class Book {
             inverseJoinColumns = {@JoinColumn(name = "author_id")})
     private List<Author> authors;
 
+    @Column(name = "genre_id")
+    @Fetch(FetchMode.SUBSELECT)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "book_genre",
+            joinColumns = {@JoinColumn(name = "book_id")},
+            inverseJoinColumns = {@JoinColumn(name = "genre_id")})
+    private List<Genre> genres;
+
     @Column(name = "comment_id")
     @Fetch(FetchMode.SUBSELECT)
     @OneToMany(mappedBy = "book", fetch = FetchType.LAZY)
     private List<Comment> comments = new ArrayList<>();
-
-    public Book(Long id, String title, List<Author> authors, List<Genre> genres) {
-        this.id = id;
-        this.title = title;
-        this.authors = authors;
-        this.genres = genres;
-    }
 }

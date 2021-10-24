@@ -1,20 +1,18 @@
 package ru.otus.spring06homework.service;
 
-import ru.otus.spring06homework.domain.Book;
-import ru.otus.spring06homework.domain.Comment;
+import ru.otus.spring06homework.dto.BookDto;
+import ru.otus.spring06homework.dto.CommentDto;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface CommentService {
 
-    Optional<Comment> findById(Long id);
+    Optional<CommentDto> findById(Long id);
 
-    List<Comment> findByBook(Book book);
+    List<CommentDto> findAll();
 
-    List<Comment> findAll();
-
-    Comment save(Comment comment);
+    CommentDto save(String text, BookDto bookDto);
 
     boolean updateTextById(Long id, String text);
 

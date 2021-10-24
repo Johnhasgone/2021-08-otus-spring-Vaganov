@@ -1,19 +1,19 @@
 package ru.otus.spring06homework.service;
 
-import ru.otus.spring06homework.domain.Genre;
+import ru.otus.spring06homework.dto.GenreDto;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface GenreService {
 
-    Optional<Genre> findById(Long id);
+    Optional<GenreDto> findById(Long id);
 
-    Optional<Genre> findByName(String name);
+    Optional<GenreDto> findByName(String name);
 
-    List<Genre> findAll();
+    List<GenreDto> findAll();
 
-    Genre save(Genre author);
+    GenreDto save(String name);
 
     boolean updateNameById(Long id, String name);
 
