@@ -17,6 +17,7 @@ public class BookServiceImpl implements BookService {
     private final BookDao bookDao;
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Book> findById(Long id) {
         return bookDao.findById(id);
     }

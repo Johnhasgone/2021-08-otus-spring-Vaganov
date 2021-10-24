@@ -1,14 +1,14 @@
 package ru.otus.spring06homework.domain;
 
+import com.googlecode.jmapper.annotations.JGlobalMap;
 import lombok.*;
 
 import javax.persistence.*;
 
-@Getter
-@Setter
-@EqualsAndHashCode
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@JGlobalMap
 @Entity
 @Table(name = "author")
 public class Author {
@@ -21,11 +21,6 @@ public class Author {
 
     public Author(String authorName) {
         this.name = authorName;
-    }
-
-    @Override
-    public String toString() {
-        return id + " | " + name;
     }
 
 }

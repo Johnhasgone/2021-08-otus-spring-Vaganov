@@ -36,7 +36,7 @@ public class BookServiceCommands {
         return  "создана книга с id = " + bookService.save(book).getId();
     }
 
-    @Transactional
+    //@Transactional
     @ShellMethod(value = "getting book by id", key = {"book-get"})
     public String getBookById(Long id) {
         Optional<Book> book = bookService.findById(id);
@@ -106,7 +106,7 @@ public class BookServiceCommands {
     }
 
 
-    @Transactional
+    //@Transactional
     @ShellMethod(value = "getting all comments for book", key = {"book-get-comments"})
     public String getCommentsByBookId(Long id) {
         Optional<Book> book = bookService.findById(id);

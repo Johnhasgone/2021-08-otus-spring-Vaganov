@@ -4,9 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 
-@Getter
-@Setter
-@EqualsAndHashCode
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -21,10 +19,5 @@ public class Genre {
 
     public Genre(String name) {
         this.name = name;
-    }
-
-    @Override
-    public String toString() {
-        return id + " | " + name;
     }
 }
