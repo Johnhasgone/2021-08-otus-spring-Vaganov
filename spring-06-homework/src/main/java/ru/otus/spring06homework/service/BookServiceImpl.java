@@ -55,7 +55,7 @@ public class BookServiceImpl implements BookService {
     public BookDto save(String title, List<String> authorNames, List<String> genreNames) {
         List<Author> authors = getAuthors(authorNames);
         List<Genre> genres = getGenres(genreNames);
-        Book book = new Book(null, title, authors, genres, List.of());
+        Book book = new Book(null, title, authors, genres);
         return mapper.toDto(bookDao.save(book));
     }
 

@@ -89,7 +89,7 @@ public class BookServiceCommands {
             return "Книга с id = " + id + " не найдена";
         }
 
-        return book.get().getComments()
+        return commentService.findByBook(book.get())
                 .stream()
                 .map(CommentDto::toString)
                 .collect(Collectors.joining("\n"));

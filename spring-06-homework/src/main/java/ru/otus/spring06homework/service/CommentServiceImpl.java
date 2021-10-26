@@ -31,6 +31,14 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional(readOnly = true)
+    public List<CommentDto> findByBook(BookDto bookDto) {
+        return commentDao.findByBook(bookMapper.toEntity(bookDto)).stream()
+                .map(commentMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<CommentDto> findAll() {
         return commentDao.findAll().stream()
                 .map(commentMapper::toDto)

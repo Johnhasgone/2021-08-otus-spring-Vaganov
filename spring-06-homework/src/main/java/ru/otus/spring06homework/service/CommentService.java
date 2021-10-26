@@ -10,6 +10,8 @@ public interface CommentService {
 
     Optional<CommentDto> findById(Long id);
 
+    List<CommentDto> findByBook(BookDto bookDto);
+
     List<CommentDto> findAll();
 
     CommentDto save(String text, BookDto bookDto);

@@ -46,8 +46,7 @@ class BookDaoJpaTest {
                 null,
                 CREATING_BOOK_TITLE,
                 List.of(new Author(null, CREATING_AUTHOR_NAME)),
-                List.of(new Genre(null, CREATING_GENRE_NAME_1), new Genre(null, CREATING_GENRE_NAME_2)),
-                List.of()
+                List.of(new Genre(null, CREATING_GENRE_NAME_1), new Genre(null, CREATING_GENRE_NAME_2))
         );
         bookDaoJpa.save(expectedBook);
         Book actualBook = em.find(Book.class, expectedBook.getId());

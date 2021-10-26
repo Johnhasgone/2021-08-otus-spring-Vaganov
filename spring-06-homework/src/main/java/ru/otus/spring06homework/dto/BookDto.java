@@ -17,7 +17,6 @@ public class BookDto {
     private String title;
     private List<AuthorDto> authors;
     private List<GenreDto> genres;
-    private List<CommentDto> comments;
 
     @Override
     public String toString() {
@@ -31,13 +30,6 @@ public class BookDto {
                 " | " +
                 genres.stream()
                         .map(GenreDto::getName)
-                        .collect(Collectors.joining(", ")) +
-                "\nComments: " +
-                (comments.isEmpty()
-                        ? "-"
-                        : comments.stream()
-                        .map(e -> "\"" + e.getText() + "\"")
-                        .collect(Collectors.joining(", "))
-                );
+                        .collect(Collectors.joining(", "));
     }
 }

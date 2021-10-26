@@ -54,15 +54,14 @@ class BookServiceImplTest {
                 FIRST_BOOK_ID,
                 FIRST_BOOK_TITLE,
                 List.of(new Author(FIRST_AUTHOR_ID, FIRST_AUTHOR_NAME)),
-                List.of(new Genre(FIRST_GENRE_ID, FIRST_GENRE_NAME)),
-                List.of()
+                List.of(new Genre(FIRST_GENRE_ID, FIRST_GENRE_NAME))
         );
         BookDto expectedBookDto = new BookDto(
                 FIRST_BOOK_ID,
                 FIRST_BOOK_TITLE,
                 List.of(new AuthorDto(FIRST_AUTHOR_ID, FIRST_AUTHOR_NAME)),
-                List.of(new GenreDto(FIRST_GENRE_ID, FIRST_GENRE_NAME)),
-                List.of());
+                List.of(new GenreDto(FIRST_GENRE_ID, FIRST_GENRE_NAME))
+        );
 
         when(bookDao.findById(any())).thenReturn(Optional.of(book));
         Optional<BookDto> actualBook = bookService.findById(FIRST_BOOK_ID);
@@ -77,8 +76,7 @@ class BookServiceImplTest {
                         FIRST_BOOK_ID,
                         FIRST_BOOK_TITLE,
                         List.of(new Author(FIRST_AUTHOR_ID, FIRST_AUTHOR_NAME)),
-                        List.of(new Genre(FIRST_GENRE_ID, FIRST_GENRE_NAME)),
-                        List.of()
+                        List.of(new Genre(FIRST_GENRE_ID, FIRST_GENRE_NAME))
                 )
         );
 
@@ -87,8 +85,7 @@ class BookServiceImplTest {
                         FIRST_BOOK_ID,
                         FIRST_BOOK_TITLE,
                         List.of(new AuthorDto(FIRST_AUTHOR_ID, FIRST_AUTHOR_NAME)),
-                        List.of(new GenreDto(FIRST_GENRE_ID, FIRST_GENRE_NAME)),
-                        List.of()
+                        List.of(new GenreDto(FIRST_GENRE_ID, FIRST_GENRE_NAME))
                 )
         );
         when(bookDao.findByTitle(any())).thenReturn(expectedBooks);
@@ -104,15 +101,13 @@ class BookServiceImplTest {
                         FIRST_BOOK_ID,
                         FIRST_BOOK_TITLE,
                         List.of(new Author(FIRST_AUTHOR_ID, FIRST_AUTHOR_NAME)),
-                        List.of(new Genre(FIRST_GENRE_ID, FIRST_GENRE_NAME)),
-                        List.of()
+                        List.of(new Genre(FIRST_GENRE_ID, FIRST_GENRE_NAME))
                 ),
                 new Book(
                         SECOND_BOOK_ID,
                         SECOND_BOOK_TITLE,
                         List.of(new Author(SECOND_AUTHOR_ID, SECOND_AUTHOR_NAME)),
-                        List.of(new Genre(SECOND_GENRE_ID, SECOND_GENRE_NAME)),
-                        List.of()
+                        List.of(new Genre(SECOND_GENRE_ID, SECOND_GENRE_NAME))
                 )
         );
 
@@ -121,15 +116,13 @@ class BookServiceImplTest {
                         FIRST_BOOK_ID,
                         FIRST_BOOK_TITLE,
                         List.of(new AuthorDto(FIRST_AUTHOR_ID, FIRST_AUTHOR_NAME)),
-                        List.of(new GenreDto(FIRST_GENRE_ID, FIRST_GENRE_NAME)),
-                        List.of()
+                        List.of(new GenreDto(FIRST_GENRE_ID, FIRST_GENRE_NAME))
                 ),
                 new BookDto(
                         SECOND_BOOK_ID,
                         SECOND_BOOK_TITLE,
                         List.of(new AuthorDto(SECOND_AUTHOR_ID, SECOND_AUTHOR_NAME)),
-                        List.of(new GenreDto(SECOND_GENRE_ID, SECOND_GENRE_NAME)),
-                        List.of()
+                        List.of(new GenreDto(SECOND_GENRE_ID, SECOND_GENRE_NAME))
                 )
         );
         when(bookDao.findAll()).thenReturn(expectedBooks);
@@ -144,16 +137,14 @@ class BookServiceImplTest {
                 FIRST_BOOK_ID,
                 FIRST_BOOK_TITLE,
                 List.of(new Author(FIRST_AUTHOR_ID, FIRST_AUTHOR_NAME)),
-                List.of(new Genre(FIRST_GENRE_ID, FIRST_GENRE_NAME)),
-                List.of()
+                List.of(new Genre(FIRST_GENRE_ID, FIRST_GENRE_NAME))
         );
 
         BookDto createdBookDto = new BookDto(
                 FIRST_BOOK_ID,
                 FIRST_BOOK_TITLE,
                 List.of(new AuthorDto(FIRST_AUTHOR_ID, FIRST_AUTHOR_NAME)),
-                List.of(new GenreDto(FIRST_GENRE_ID, FIRST_GENRE_NAME)),
-                List.of()
+                List.of(new GenreDto(FIRST_GENRE_ID, FIRST_GENRE_NAME))
         );
         when(bookDao.save(any())).thenReturn(creatingBook);
         BookDto actualBook = bookService.save(FIRST_BOOK_TITLE, List.of(FIRST_AUTHOR_NAME), List.of(FIRST_GENRE_NAME));
