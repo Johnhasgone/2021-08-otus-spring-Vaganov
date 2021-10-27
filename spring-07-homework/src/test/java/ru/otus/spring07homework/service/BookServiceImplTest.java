@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import ru.otus.spring07homework.dao.BookDao;
+import ru.otus.spring07homework.dao.BookRepository;
 import ru.otus.spring07homework.domain.Author;
 import ru.otus.spring07homework.domain.Book;
 import ru.otus.spring07homework.domain.Genre;
@@ -18,7 +18,6 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @DisplayName("Сервис для работы с книгами должен ")
@@ -45,7 +44,7 @@ class BookServiceImplTest {
     @Autowired
     BookService bookService;
     @MockBean
-    BookDao bookDao;
+    BookRepository bookRepository;
 
     @DisplayName("возвращать ожидаемую книгу по ID")
     @Test
@@ -63,7 +62,7 @@ class BookServiceImplTest {
                 List.of(new GenreDto(FIRST_GENRE_ID, FIRST_GENRE_NAME))
         );
 
-        when(bookDao.findById(any())).thenReturn(Optional.of(book));
+        when(bookRepository.findById(any())).thenReturn(Optional.of(book));
         Optional<BookDto> actualBook = bookService.findById(FIRST_BOOK_ID);
         assertThat(actualBook).isPresent().get().usingRecursiveComparison().isEqualTo(expectedBookDto);
     }
@@ -88,7 +87,7 @@ class BookServiceImplTest {
                         List.of(new GenreDto(FIRST_GENRE_ID, FIRST_GENRE_NAME))
                 )
         );
-        when(bookDao.findByTitle(any())).thenReturn(expectedBooks);
+        when(bookRepository.findByTitle(any())).thenReturn(expectedBooks);
         List<BookDto> actualBooks = bookService.findByTitle(FIRST_BOOK_TITLE);
         assertThat(actualBooks).containsExactlyInAnyOrderElementsOf(expectedBookDtos);
     }
@@ -125,7 +124,7 @@ class BookServiceImplTest {
                         List.of(new GenreDto(SECOND_GENRE_ID, SECOND_GENRE_NAME))
                 )
         );
-        when(bookDao.findAll()).thenReturn(expectedBooks);
+        when(bookRepository.findAll()).thenReturn(expectedBooks);
         List<BookDto> actual = bookService.findAll();
         assertThat(actual).containsExactlyInAnyOrderElementsOf(expectedBookDtos);
     }
@@ -146,24 +145,8 @@ class BookServiceImplTest {
                 List.of(new AuthorDto(FIRST_AUTHOR_ID, FIRST_AUTHOR_NAME)),
                 List.of(new GenreDto(FIRST_GENRE_ID, FIRST_GENRE_NAME))
         );
-        when(bookDao.save(any())).thenReturn(creatingBook);
+        when(bookRepository.save(any())).thenReturn(creatingBook);
         BookDto actualBook = bookService.save(FIRST_BOOK_TITLE, List.of(FIRST_AUTHOR_NAME), List.of(FIRST_GENRE_NAME));
         assertThat(actualBook).isEqualTo(createdBookDto);
-    }
-
-    @DisplayName("возвращать true при обновлении названия книги")
-    @Test
-    void shouldReturnTrueForSuccessfulBookUpdate() {
-        when(bookDao.updateNameById(FIRST_BOOK_ID, EXPECTED_TITLE)).thenReturn(1);
-        assertThat(bookService.updateNameById(FIRST_BOOK_ID, EXPECTED_TITLE)).isTrue();
-        verify(bookDao).updateNameById(FIRST_BOOK_ID, EXPECTED_TITLE);
-
-    }
-
-    @DisplayName("возвращать true при успешном удалении книги")
-    @Test
-    void shouldInvokeDeleteInDao() {
-        when(bookDao.deleteById(FIRST_BOOK_ID)).thenReturn(1);
-        assertThat(bookService.deleteById(FIRST_BOOK_ID)).isTrue();
     }
 }

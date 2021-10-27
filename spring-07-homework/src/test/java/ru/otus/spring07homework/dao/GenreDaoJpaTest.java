@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.context.annotation.Import;
 import ru.otus.spring07homework.domain.Genre;
 
 import java.util.List;
@@ -15,7 +14,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("DAO для работы с жанрами книг должно ")
 @DataJpaTest
-@Import(GenreDaoJpa.class)
 class GenreDaoJpaTest {
     private static final Long FIRST_GENRE_ID = 1L;
     private static final Long SECOND_GENRE_ID = 2L;
@@ -26,7 +24,7 @@ class GenreDaoJpaTest {
     private static final String EXPECTED_GENRE_NAME = "роман";
 
     @Autowired
-    private GenreDaoJpa genreDaoJpa;
+    private GenreRepository genreRepository;
 
     @Autowired
     private TestEntityManager em;
@@ -35,7 +33,7 @@ class GenreDaoJpaTest {
     @Test
     void shouldInsertGenre() {
         Genre expectedGenre = new Genre(null,CREATED_GENRE_NAME);
-        genreDaoJpa.save(expectedGenre);
+        genreRepository.save(expectedGenre);
         Genre actualGenre = em.find(Genre.class, expectedGenre.getId());
         assertThat(actualGenre.getId()).isNotNull().isGreaterThan(0);
         assertThat(actualGenre.getName()).isEqualTo(expectedGenre.getName());
@@ -44,9 +42,8 @@ class GenreDaoJpaTest {
     @DisplayName("обновлять жанр в БД")
     @Test
     void shouldUpdateGenre() {
-        Genre updatingGenre = genreDaoJpa.findAll().get(0);
-        em.detach(updatingGenre);
-        genreDaoJpa.updateNameById(updatingGenre.getId(), EXPECTED_GENRE_NAME);
+        Genre updatingGenre = genreRepository.findAll().get(0);
+        genreRepository.updateNameById(updatingGenre.getId(), EXPECTED_GENRE_NAME);
         Genre actualGenre = em.find(Genre.class, updatingGenre.getId());
         assertThat(actualGenre.getName()).isEqualTo(EXPECTED_GENRE_NAME);
     }
@@ -55,7 +52,7 @@ class GenreDaoJpaTest {
     @Test
     void shouldGetExpectedGenreById() {
         Genre expectedGenre = em.find(Genre.class, FIRST_GENRE_ID);
-        Optional<Genre> actualGenre = genreDaoJpa.findById(FIRST_GENRE_ID);
+        Optional<Genre> actualGenre = genreRepository.findById(FIRST_GENRE_ID);
         assertThat(actualGenre).isPresent().get().usingRecursiveComparison().isEqualTo(expectedGenre);
     }
 
@@ -63,7 +60,7 @@ class GenreDaoJpaTest {
     @Test
     void shouldGetGenreByName() {
         List<Genre> expectedGenres = List.of(em.find(Genre.class, FIRST_GENRE_ID));
-        List<Genre> actualGenres = genreDaoJpa.findByName(FIRST_GENRE_NAME);
+        List<Genre> actualGenres = genreRepository.findByName(FIRST_GENRE_NAME);
         assertThat(actualGenres).containsExactlyInAnyOrderElementsOf(expectedGenres);
     }
 
@@ -76,7 +73,7 @@ class GenreDaoJpaTest {
                 em.find(Genre.class, THIRD_GENRE_ID),
                 em.find(Genre.class, FORTH_GENRE_ID)
         );
-        List<Genre> actualGenres = genreDaoJpa.findAll();
+        List<Genre> actualGenres = genreRepository.findAll();
         assertThat(actualGenres).containsExactlyInAnyOrderElementsOf(expectedGenres);
     }
 
@@ -85,8 +82,7 @@ class GenreDaoJpaTest {
     void shouldDeleteGenreById() {
         Genre deletingGenre = em.find(Genre.class, FORTH_GENRE_ID);
         assertThat(deletingGenre).isNotNull();
-        genreDaoJpa.deleteById(FORTH_GENRE_ID);
-        em.detach(deletingGenre);
+        genreRepository.deleteById(FORTH_GENRE_ID);
         Genre deletedGenre = em.find(Genre.class, FORTH_GENRE_ID);
         assertThat(deletedGenre).isNull();
     }

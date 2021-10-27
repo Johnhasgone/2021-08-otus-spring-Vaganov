@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.context.annotation.Import;
 import ru.otus.spring07homework.domain.Book;
 import ru.otus.spring07homework.domain.Comment;
 
@@ -16,8 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("DAO для работы с жанрами книг должно ")
 @DataJpaTest
-@Import(CommentDaoJpa.class)
-class CommentDaoJpaTest {
+class CommentRepositoryJpaTest {
     private static final Long FIRST_BOOK_ID = 1L;
 
     private static final Long FIRST_COMMENT_ID = 1L;
@@ -32,7 +30,7 @@ class CommentDaoJpaTest {
     private static final String EXPECTED_COMMENT_TEXT = "Замечательная книгга";
 
     @Autowired
-    private CommentDaoJpa commentDaoJpa;
+    private CommentRepository commentRepository;
 
     @Autowired
     private TestEntityManager em;
@@ -42,7 +40,7 @@ class CommentDaoJpaTest {
     void shouldInsertComment() {
         Book book = em.find(Book.class, FIRST_BOOK_ID);
         Comment expectedComment = new Comment(null, CREATED_COMMENT_TEXT, book);
-        commentDaoJpa.save(expectedComment);
+        commentRepository.save(expectedComment);
         Comment actualComment = em.find(Comment.class, expectedComment.getId());
         assertThat(actualComment.getId()).isNotNull().isGreaterThan(0);
         assertThat(actualComment).usingRecursiveComparison().isEqualTo(expectedComment);
@@ -51,9 +49,8 @@ class CommentDaoJpaTest {
     @DisplayName("обновлять комментарий в БД")
     @Test
     void shouldUpdateComment() {
-        Comment updatingComment = commentDaoJpa.findAll().get(0);
-        em.detach(updatingComment);
-        commentDaoJpa.updateTextById(updatingComment.getId(), EXPECTED_COMMENT_TEXT);
+        Comment updatingComment = commentRepository.findAll().get(0);
+        commentRepository.updateTextById(updatingComment.getId(), EXPECTED_COMMENT_TEXT);
         Comment actualComment = em.find(Comment.class, updatingComment.getId());
         assertThat(actualComment.getText()).isEqualTo(EXPECTED_COMMENT_TEXT);
     }
@@ -62,7 +59,7 @@ class CommentDaoJpaTest {
     @Test
     void shouldGetExpectedCommentById() {
         Comment expectedComment = em.find(Comment.class, FIRST_COMMENT_ID);
-        Optional<Comment> actualComment = commentDaoJpa.findById(FIRST_COMMENT_ID);
+        Optional<Comment> actualComment = commentRepository.findById(FIRST_COMMENT_ID);
         assertThat(actualComment).isPresent().get().usingRecursiveComparison().isEqualTo(expectedComment);
     }
 
@@ -75,7 +72,7 @@ class CommentDaoJpaTest {
                 em.find(Comment.class, THIRD_COMMENT_ID)
         );
         Book book = em.find(Book.class, FIRST_BOOK_ID);
-        List<Comment> actualComments = commentDaoJpa.findByBook(book);
+        List<Comment> actualComments = commentRepository.findByBook(book);
         assertThat(actualComments).containsExactlyInAnyOrderElementsOf(expectedComments);
     }
 
@@ -92,7 +89,7 @@ class CommentDaoJpaTest {
                 em.find(Comment.class, SEVENTH_COMMENT_ID)
 
         );
-        List<Comment> actualComments = commentDaoJpa.findAll();
+        List<Comment> actualComments = commentRepository.findAll();
         assertThat(actualComments).containsExactlyInAnyOrderElementsOf(expectedComments);
     }
 
@@ -101,8 +98,7 @@ class CommentDaoJpaTest {
     void shouldDeleteCommentById() {
         Comment deletingComment = em.find(Comment.class, SEVENTH_COMMENT_ID);
         assertThat(deletingComment).isNotNull();
-        commentDaoJpa.deleteById(SEVENTH_COMMENT_ID);
-        em.detach(deletingComment);
+        commentRepository.deleteById(SEVENTH_COMMENT_ID);
         Comment deletedComment = em.find(Comment.class, SEVENTH_COMMENT_ID);
         assertThat(deletedComment).isNull();
     }

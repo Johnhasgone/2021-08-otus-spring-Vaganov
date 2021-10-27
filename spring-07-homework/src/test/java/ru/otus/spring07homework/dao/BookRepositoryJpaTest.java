@@ -5,8 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
 import ru.otus.spring07homework.domain.Author;
 import ru.otus.spring07homework.domain.Book;
 import ru.otus.spring07homework.domain.Genre;
@@ -18,9 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("DAO для работы с книгами должно ")
 @DataJpaTest
-@Import(BookDaoJpa.class)
-@ActiveProfiles("test")
-class BookDaoJpaTest {
+class BookRepositoryJpaTest {
     private static final String CREATING_BOOK_TITLE = "Размышления";
     private static final String CREATING_AUTHOR_NAME = "Марк Аврелий";
     private static final String CREATING_GENRE_NAME_1 = "Философия";
@@ -34,7 +30,7 @@ class BookDaoJpaTest {
 
 
     @Autowired
-    private BookDaoJpa bookDaoJpa;
+    private BookRepository bookRepository;
 
     @Autowired
     private TestEntityManager em;
@@ -48,7 +44,7 @@ class BookDaoJpaTest {
                 List.of(new Author(null, CREATING_AUTHOR_NAME)),
                 List.of(new Genre(null, CREATING_GENRE_NAME_1), new Genre(null, CREATING_GENRE_NAME_2))
         );
-        bookDaoJpa.save(expectedBook);
+        bookRepository.save(expectedBook);
         Book actualBook = em.find(Book.class, expectedBook.getId());
         assertThat(actualBook).isNotNull()
                 .matches(s -> s.getTitle().equals(CREATING_BOOK_TITLE))
@@ -62,8 +58,7 @@ class BookDaoJpaTest {
     void shouldUpdateBook() {
         String expectedName = "Lyrics";
         Book updatableBook = em.find(Book.class, THIRD_BOOK_ID);
-        bookDaoJpa.updateNameById(THIRD_BOOK_ID, expectedName);
-        em.detach(updatableBook);
+        bookRepository.updateNameById(THIRD_BOOK_ID, expectedName);
         Book actualBook = em.find(Book.class, THIRD_BOOK_ID);
         assertThat(actualBook.getTitle()).isEqualTo(expectedName);
     }
@@ -72,7 +67,7 @@ class BookDaoJpaTest {
     @Test
     void shouldGetExpectedBookById() {
         Book expectedBook = em.find(Book.class, THIRD_BOOK_ID);
-        Optional<Book> actualBook = bookDaoJpa.findById(THIRD_BOOK_ID);
+        Optional<Book> actualBook = bookRepository.findById(THIRD_BOOK_ID);
         assertThat(actualBook).isPresent().get().usingRecursiveComparison().isEqualTo(expectedBook);
     }
 
@@ -80,7 +75,7 @@ class BookDaoJpaTest {
     @Test
     void shouldGetBookByName() {
         List<Book> expectedBooks = List.of(em.find(Book.class, THIRD_BOOK_ID));
-        List<Book> actualBooks = bookDaoJpa.findByTitle(expectedBooks.get(0).getTitle());
+        List<Book> actualBooks = bookRepository.findByTitle(expectedBooks.get(0).getTitle());
         assertThat(actualBooks).containsExactlyInAnyOrderElementsOf(expectedBooks);
     }
 
@@ -92,7 +87,7 @@ class BookDaoJpaTest {
                 em.find(Book.class, SECOND_BOOK_ID),
                 em.find(Book.class, THIRD_BOOK_ID)
         );
-        List<Book> actualBooks = bookDaoJpa.findAll();
+        List<Book> actualBooks = bookRepository.findAll();
         assertThat(actualBooks).isNotNull()
                 .allMatch(book -> book.getTitle() != null)
                 .allMatch(book -> book.getAuthors()!= null && !book.getAuthors().isEmpty())
@@ -104,8 +99,7 @@ class BookDaoJpaTest {
     @Test
     void shouldDeleteBookById() {
         Book deletingBook = em.find(Book.class, SECOND_BOOK_ID);
-        bookDaoJpa.deleteById(SECOND_BOOK_ID);
-        em.detach(deletingBook);
+        bookRepository.deleteById(SECOND_BOOK_ID);
         Book deletedBook = em.find(Book.class, SECOND_BOOK_ID);
         assertThat(deletedBook).isNull();
     }

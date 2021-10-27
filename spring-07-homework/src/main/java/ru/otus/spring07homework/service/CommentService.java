@@ -16,7 +16,9 @@ public interface CommentService {
 
     CommentDto save(String text, BookDto bookDto);
 
-    boolean updateTextById(Long id, String text);
+    void updateTextById(Long id, String text);
 
-    boolean deleteById(Long id);
+    void deleteById(Long id);
+
+    boolean existsById(Long id);
 }

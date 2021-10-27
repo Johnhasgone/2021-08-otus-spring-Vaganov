@@ -15,7 +15,9 @@ public interface GenreService {
 
     GenreDto save(String name);
 
-    boolean updateNameById(Long id, String name);
+    void updateNameById(Long id, String name);
 
-    boolean deleteById(Long id);
+    void deleteById(Long id);
+
+    boolean existsById(Long id);
 }

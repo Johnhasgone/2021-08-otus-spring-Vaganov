@@ -15,7 +15,9 @@ public interface BookService {
 
     BookDto save(String title, List<String> authorNames, List<String> genreNames);
 
-    boolean updateNameById(Long id, String title);
+    void updateNameById(Long id, String title);
 
-    boolean deleteById(Long id);
+    void deleteById(Long id);
+
+    boolean existsById(Long id);
 }

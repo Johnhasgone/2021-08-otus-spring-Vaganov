@@ -3,7 +3,7 @@ package ru.otus.spring07homework.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.otus.spring07homework.dao.BookDao;
+import ru.otus.spring07homework.dao.BookRepository;
 import ru.otus.spring07homework.domain.Author;
 import ru.otus.spring07homework.domain.Book;
 import ru.otus.spring07homework.domain.Genre;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
 
-    private final BookDao bookDao;
+    private final BookRepository bookRepository;
     private final BookMapper mapper;
     private final GenreService genreService;
     private final AuthorService authorService;
@@ -31,13 +31,13 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional(readOnly = true)
     public Optional<BookDto> findById(Long id) {
-        return Optional.ofNullable(mapper.toDto(bookDao.findById(id).orElse(null)));
+        return Optional.ofNullable(mapper.toDto(bookRepository.findById(id).orElse(null)));
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<BookDto> findByTitle(String title) {
-        return bookDao.findByTitle(title).stream()
+        return bookRepository.findByTitle(title).stream()
                 .map(mapper::toDto)
                 .collect(Collectors.toList());
     }
@@ -45,7 +45,7 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional(readOnly = true)
     public List<BookDto> findAll() {
-        return bookDao.findAll().stream()
+        return bookRepository.findAll().stream()
                 .map(mapper::toDto)
                 .collect(Collectors.toList());
     }
@@ -56,7 +56,7 @@ public class BookServiceImpl implements BookService {
         List<Author> authors = getAuthors(authorNames);
         List<Genre> genres = getGenres(genreNames);
         Book book = new Book(null, title, authors, genres);
-        return mapper.toDto(bookDao.save(book));
+        return mapper.toDto(bookRepository.save(book));
     }
 
 
@@ -86,13 +86,18 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public boolean updateNameById(Long id, String title) {
-        return bookDao.updateNameById(id, title) != 0;
+    public void updateNameById(Long id, String title) {
+        bookRepository.updateNameById(id, title);
     }
 
     @Override
     @Transactional
-    public boolean deleteById(Long id) {
-        return bookDao.deleteById(id) != 0;
+    public void deleteById(Long id) {
+        bookRepository.deleteById(id);
+    }
+
+    @Override
+    public boolean existsById(Long id) {
+        return bookRepository.existsById(id);
     }
 }

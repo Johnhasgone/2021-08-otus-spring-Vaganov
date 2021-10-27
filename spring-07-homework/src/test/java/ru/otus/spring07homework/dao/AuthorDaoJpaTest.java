@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.context.annotation.Import;
 import ru.otus.spring07homework.domain.Author;
 
 import java.util.List;
@@ -16,7 +15,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("DAO для работы с авторами книг должно ")
 @DataJpaTest
-@Import(AuthorDaoJpa.class)
 class AuthorDaoJpaTest {
     private static final Long FIRST_AUTHOR_ID = 1L;
     private static final Long SECOND_AUTHOR_ID = 2L;
@@ -28,7 +26,7 @@ class AuthorDaoJpaTest {
     private static final String EXPECTED_AUTHOR_NAME = "Осип Мандельштам";
 
     @Autowired
-    private AuthorDaoJpa authorDaoJpa;
+    private AuthorRepository authorRepository;
 
     @Autowired
     private TestEntityManager em;
@@ -37,7 +35,7 @@ class AuthorDaoJpaTest {
     @Test
     void shouldInsertAuthor() {
         Author expectedAuthor = new Author(null, CREATED_AUTHOR_NAME);
-        authorDaoJpa.save(expectedAuthor);
+        authorRepository.save(expectedAuthor);
         Author actualAuthor = em.find(Author.class, expectedAuthor.getId());
         assertThat(actualAuthor.getId()).isNotNull().isGreaterThan(0L);
         assertThat(actualAuthor.getName()).isEqualTo(expectedAuthor.getName());
@@ -47,8 +45,7 @@ class AuthorDaoJpaTest {
     @Test
     void shouldUpdateAuthor() {
         Author updatableAuthor = em.find(Author.class, FIRST_AUTHOR_ID);
-        authorDaoJpa.updateNameById(FIRST_AUTHOR_ID, EXPECTED_AUTHOR_NAME);
-        em.detach(updatableAuthor);
+        authorRepository.updateNameById(FIRST_AUTHOR_ID, EXPECTED_AUTHOR_NAME);
         Author actualAuthor = em.find(Author.class, FIRST_AUTHOR_ID);
         assertThat(actualAuthor.getName()).isEqualTo(EXPECTED_AUTHOR_NAME);
     }
@@ -57,7 +54,7 @@ class AuthorDaoJpaTest {
     @Test
     void shouldGetExpectedAuthorById() {
         Author expectedAuthor = em.find(Author.class, FIRST_AUTHOR_ID);
-        Optional<Author> actualAuthor = authorDaoJpa.findById(FIRST_AUTHOR_ID);
+        Optional<Author> actualAuthor = authorRepository.findById(FIRST_AUTHOR_ID);
         assertThat(actualAuthor).isPresent().get().usingRecursiveComparison().isEqualTo(expectedAuthor);
     }
 
@@ -65,7 +62,7 @@ class AuthorDaoJpaTest {
     @Test
     void shouldGetAuthorByName() {
         List<Author> expectedAuthor = List.of(em.find(Author.class, FIRST_AUTHOR_ID));
-        List<Author> actualAuthor = authorDaoJpa.findByName(FIRST_AUTHOR_NAME);
+        List<Author> actualAuthor = authorRepository.findByName(FIRST_AUTHOR_NAME);
         assertThat(actualAuthor).containsExactlyInAnyOrderElementsOf(expectedAuthor);
     }
 
@@ -79,7 +76,7 @@ class AuthorDaoJpaTest {
                 em.find(Author.class, FORTH_AUTHOR_ID),
                 em.find(Author.class, FIFTH_AUTHOR_ID)
         );
-        List<Author> actualAuthors = authorDaoJpa.findAll();
+        List<Author> actualAuthors = authorRepository.findAll();
         assertThat(actualAuthors).containsExactlyInAnyOrderElementsOf(expectedAuthors);
     }
 
@@ -88,8 +85,7 @@ class AuthorDaoJpaTest {
     void shouldDeleteAuthorById() {
         Author deletingAuthor = em.find(Author.class, THIRD_AUTHOR_ID);
         assertThat(deletingAuthor).isNotNull();
-        em.detach(deletingAuthor);
-        authorDaoJpa.deleteById(THIRD_AUTHOR_ID);
+        authorRepository.deleteById(THIRD_AUTHOR_ID);
         Author deletedAuthor = em.find(Author.class, THIRD_AUTHOR_ID);
         Assertions.assertThat(deletedAuthor).isNull();
     }

@@ -60,12 +60,21 @@ public class BookServiceCommands {
 
     @ShellMethod(value = "updating book", key = {"book-update"})
     public String updateBook(Long id, String title) {
-        return bookService.updateNameById(id, title) ? "книга обновлена" : "книга не найдена";
+        if (!bookService.existsById(id)) {
+            return "книга не найдена";
+        }
+        bookService.updateNameById(id, title);
+        return "книга обновлена";
     }
 
     @ShellMethod(value = "deleting book", key = {"book-delete"})
     public String deleteBook(Long id) {
-        return bookService.deleteById(id) ? "книга удалена" : "книга не найдена";
+        if (!bookService.existsById(id)) {
+            return "книга не найдена";
+        }
+        bookService.deleteById(id);
+
+        return "книга удалена";
     }
 
 
@@ -103,13 +112,21 @@ public class BookServiceCommands {
 
     @ShellMethod(value = "deleting comment by id", key = {"comment-delete"})
     public String deleteCommentById(Long id) {
-        return commentService.deleteById(id) ? "Комментарий удален" : "Комментарий не найден";
+        if (!commentService.existsById(id)) {
+            return "Комментарий не найден";
+        }
+        commentService.deleteById(id);
+        return "Комментарий удален";
     }
 
 
     @ShellMethod(value = "update comment by id", key = {"comment-update"})
     public String updateCommentById(Long id, String text) {
-        return commentService.updateTextById(id, text) ? "Комментарий обновлен" : "Комментарий не найден";
+        if (!commentService.existsById(id)) {
+            return "Комментарий не найден";
+        }
+        commentService.updateTextById(id, text);
+        return "Комментарий обновлен";
     }
 
     @ShellMethod(value = "getting author by id", key = {"author-get"})
@@ -135,12 +152,20 @@ public class BookServiceCommands {
 
     @ShellMethod(value = "updating author", key = {"author-update"})
     public String updateAuthor(Long id, String name) {
-        return authorService.updateNameById(id, name) ? "автор обновлен" : "автор не найден";
+        if (!authorService.existsById(id)) {
+            return "автор не найден";
+        }
+        authorService.updateNameById(id, name);
+        return "автор обновлен";
     }
 
     @ShellMethod(value = "deleting author", key = {"author-delete"})
     public String deleteAuthor(Long id) {
-        return authorService.deleteById(id) ? "автор удален" : "автор не найден";
+        if (!authorService.existsById(id)) {
+            return "автор не найден";
+        }
+        authorService.deleteById(id);
+        return "автор удален";
     }
 
     @ShellMethod(value = "getting genre by id", key = {"genre-get"})
@@ -166,11 +191,19 @@ public class BookServiceCommands {
 
     @ShellMethod(value = "updating genre", key = {"genre-update"})
     public String updateGenre(Long id, String name) {
-        return genreService.updateNameById(id, name) ? "жанр обновлен" : "жанр не найден";
+        if (!genreService.existsById(id)) {
+            return "жанр не найден";
+        }
+        genreService.updateNameById(id, name);
+        return "жанр обновлен";
     }
 
     @ShellMethod(value = "deleting genre", key = {"genre-delete"})
     public String deleteGenre(Long id) {
-        return genreService.deleteById(id) ? "жанр удален" : "жанр не найден";
+        if (!genreService.existsById(id)) {
+            return "жанр не найден";
+        }
+        genreService.deleteById(id);
+        return "жанр удален";
     }
 }

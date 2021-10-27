@@ -3,7 +3,7 @@ package ru.otus.spring07homework.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.otus.spring07homework.dao.GenreDao;
+import ru.otus.spring07homework.dao.GenreRepository;
 import ru.otus.spring07homework.domain.Genre;
 import ru.otus.spring07homework.dto.GenreDto;
 import ru.otus.spring07homework.mapper.GenreMapper;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class GenreServiceImpl implements GenreService {
 
-    private final GenreDao genreDao;
+    private final GenreRepository genreRepository;
     private final GenreMapper mapper;
 
     @Override
@@ -24,7 +24,7 @@ public class GenreServiceImpl implements GenreService {
     public Optional<GenreDto> findById(Long id) {
         return Optional.ofNullable(
                 mapper.toDto(
-                        genreDao.findById(id).orElse(null)
+                        genreRepository.findById(id).orElse(null)
                 )
         );
     }
@@ -32,14 +32,14 @@ public class GenreServiceImpl implements GenreService {
     @Override
     @Transactional(readOnly = true)
     public Optional<GenreDto> findByName(String name) {
-        List<Genre> genres = genreDao.findByName(name);
+        List<Genre> genres = genreRepository.findByName(name);
         return Optional.ofNullable(genres.isEmpty() ? null : mapper.toDto(genres.get(0)));
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<GenreDto> findAll() {
-        return genreDao.findAll().stream()
+        return genreRepository.findAll().stream()
                 .map(mapper::toDto)
                 .collect(Collectors.toList());
     }
@@ -48,18 +48,23 @@ public class GenreServiceImpl implements GenreService {
     @Transactional
     public GenreDto save(String name) {
         Genre genre = new Genre(name);
-        return mapper.toDto(genreDao.save(genre));
+        return mapper.toDto(genreRepository.save(genre));
     }
 
     @Override
     @Transactional
-    public boolean updateNameById(Long id, String name) {
-        return genreDao.updateNameById(id, name) != 0;
+    public void updateNameById(Long id, String name) {
+        genreRepository.updateNameById(id, name);
     }
 
     @Override
     @Transactional
-    public boolean deleteById(Long id) {
-        return genreDao.deleteById(id) != 0;
+    public void deleteById(Long id) {
+        genreRepository.deleteById(id);
+    }
+
+    @Override
+    public boolean existsById(Long id) {
+        return genreRepository.existsById(id);
     }
 }
