@@ -60,6 +60,7 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean existsById(Long id) {
         return repository.existsById(id);
     }

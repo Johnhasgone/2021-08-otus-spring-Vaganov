@@ -10,7 +10,7 @@ public interface CommentService {
 
     Optional<CommentDto> findById(Long id);
 
-    List<CommentDto> findByBook(BookDto bookDto);
+    List<CommentDto> findByBookId(Long bookId);
 
     List<CommentDto> findAll();
 

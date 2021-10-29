@@ -4,13 +4,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import ru.otus.spring07homework.domain.Book;
 import ru.otus.spring07homework.domain.Comment;
 
 import java.util.List;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
-    List<Comment> findByBook(Book book);
+    List<Comment> findByBookId(Long bookId);
 
     @Modifying
     @Query("update Comment c set c.text = :text where c.id = :id")

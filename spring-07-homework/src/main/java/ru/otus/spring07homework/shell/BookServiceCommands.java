@@ -57,7 +57,6 @@ public class BookServiceCommands {
                 : "книги не найдены";
     }
 
-
     @ShellMethod(value = "updating book", key = {"book-update"})
     public String updateBook(Long id, String title) {
         if (!bookService.existsById(id)) {
@@ -77,7 +76,6 @@ public class BookServiceCommands {
         return "книга удалена";
     }
 
-
     @ShellMethod(value = "adding comment to book", key = {"book-add-comment"})
     public String addCommentToBook(Long id, String text) {
         Optional<BookDto> book = bookService.findById(id);
@@ -92,13 +90,12 @@ public class BookServiceCommands {
 
     @ShellMethod(value = "getting all comments for book", key = {"book-get-comments"})
     public String getCommentsByBookId(Long id) {
-        Optional<BookDto> book = bookService.findById(id);
 
-        if (book.isEmpty()) {
+        if (!bookService.existsById(id)) {
             return "Книга с id = " + id + " не найдена";
         }
 
-        return commentService.findByBook(book.get())
+        return commentService.findByBookId(id)
                 .stream()
                 .map(CommentDto::toString)
                 .collect(Collectors.joining("\n"));
@@ -118,7 +115,6 @@ public class BookServiceCommands {
         commentService.deleteById(id);
         return "Комментарий удален";
     }
-
 
     @ShellMethod(value = "update comment by id", key = {"comment-update"})
     public String updateCommentById(Long id, String text) {
