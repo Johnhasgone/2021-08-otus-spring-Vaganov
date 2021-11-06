@@ -30,7 +30,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<BookDto> findById(Long id) {
+    public Optional<BookDto> findById(String id) {
         return Optional.ofNullable(mapper.toDto(bookRepository.findById(id).orElse(null)));
     }
 
@@ -86,18 +86,23 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public void updateNameById(Long id, String title) {
-        bookRepository.updateNameById(id, title);
+    public void updateNameById(String id, String title) {
+        Optional<Book> bookOptional = bookRepository.findById(id);
+        if (bookOptional.isPresent()) {
+            Book book = bookOptional.get();
+            book.setTitle(title);
+            bookRepository.save(book);
+        }
     }
 
     @Override
     @Transactional
-    public void deleteById(Long id) {
+    public void deleteById(String id) {
         bookRepository.deleteById(id);
     }
 
     @Override
-    public boolean existsById(Long id) {
+    public boolean existsById(String id) {
         return bookRepository.existsById(id);
     }
 }

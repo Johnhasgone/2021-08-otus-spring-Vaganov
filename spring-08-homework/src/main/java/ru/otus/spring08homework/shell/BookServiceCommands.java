@@ -41,7 +41,7 @@ public class BookServiceCommands {
     }
 
     @ShellMethod(value = "getting book by id", key = {"book-get"})
-    public String getBookById(Long id) {
+    public String getBookById(String id) {
         Optional<BookDto> book = bookService.findById(id);
         return book.isPresent() ? book.get().toString() : "книга не найдена";
     }
@@ -58,7 +58,7 @@ public class BookServiceCommands {
     }
 
     @ShellMethod(value = "updating book", key = {"book-update"})
-    public String updateBook(Long id, String title) {
+    public String updateBook(String id, String title) {
         if (!bookService.existsById(id)) {
             return "книга не найдена";
         }
@@ -67,7 +67,7 @@ public class BookServiceCommands {
     }
 
     @ShellMethod(value = "deleting book", key = {"book-delete"})
-    public String deleteBook(Long id) {
+    public String deleteBook(String id) {
         if (!bookService.existsById(id)) {
             return "книга не найдена";
         }
@@ -77,7 +77,7 @@ public class BookServiceCommands {
     }
 
     @ShellMethod(value = "adding comment to book", key = {"book-add-comment"})
-    public String addCommentToBook(Long id, String text) {
+    public String addCommentToBook(String id, String text) {
         Optional<BookDto> book = bookService.findById(id);
 
         if (book.isEmpty()) {
@@ -89,7 +89,7 @@ public class BookServiceCommands {
     }
 
     @ShellMethod(value = "getting all comments for book", key = {"book-get-comments"})
-    public String getCommentsByBookId(Long id) {
+    public String getCommentsByBookId(String id) {
 
         if (!bookService.existsById(id)) {
             return "Книга с id = " + id + " не найдена";
@@ -102,13 +102,13 @@ public class BookServiceCommands {
     }
 
     @ShellMethod(value = "get comment by id", key = {"comment-get"})
-    public String getCommentById(Long id) {
+    public String getCommentById(String id) {
         Optional<CommentDto> comment =  commentService.findById(id);
         return comment.isPresent() ? comment.get().toString() : "Комментарий не найден";
     }
 
     @ShellMethod(value = "deleting comment by id", key = {"comment-delete"})
-    public String deleteCommentById(Long id) {
+    public String deleteCommentById(String id) {
         if (!commentService.existsById(id)) {
             return "Комментарий не найден";
         }
@@ -117,7 +117,7 @@ public class BookServiceCommands {
     }
 
     @ShellMethod(value = "update comment by id", key = {"comment-update"})
-    public String updateCommentById(Long id, String text) {
+    public String updateCommentById(String id, String text) {
         if (!commentService.existsById(id)) {
             return "Комментарий не найден";
         }
@@ -126,7 +126,7 @@ public class BookServiceCommands {
     }
 
     @ShellMethod(value = "getting author by id", key = {"author-get"})
-    public String getAuthorById(Long id) {
+    public String getAuthorById(String id) {
         Optional<AuthorDto> author = authorService.findById(id);
         return author.isPresent() ? author.get().toString() : "автор не найден";
     }
@@ -147,7 +147,7 @@ public class BookServiceCommands {
     }
 
     @ShellMethod(value = "updating author", key = {"author-update"})
-    public String updateAuthor(Long id, String name) {
+    public String updateAuthor(String id, String name) {
         if (!authorService.existsById(id)) {
             return "автор не найден";
         }
@@ -156,7 +156,7 @@ public class BookServiceCommands {
     }
 
     @ShellMethod(value = "deleting author", key = {"author-delete"})
-    public String deleteAuthor(Long id) {
+    public String deleteAuthor(String id) {
         if (!authorService.existsById(id)) {
             return "автор не найден";
         }
@@ -165,7 +165,7 @@ public class BookServiceCommands {
     }
 
     @ShellMethod(value = "getting genre by id", key = {"genre-get"})
-    public String getGenreById(Long id) {
+    public String getGenreById(String id) {
         Optional<GenreDto> genre = genreService.findById(id);
         return genre.isPresent() ? genre.get().toString() : "жанр не найден";
     }
@@ -186,7 +186,7 @@ public class BookServiceCommands {
     }
 
     @ShellMethod(value = "updating genre", key = {"genre-update"})
-    public String updateGenre(Long id, String name) {
+    public String updateGenre(String id, String name) {
         if (!genreService.existsById(id)) {
             return "жанр не найден";
         }
@@ -195,7 +195,7 @@ public class BookServiceCommands {
     }
 
     @ShellMethod(value = "deleting genre", key = {"genre-delete"})
-    public String deleteGenre(Long id) {
+    public String deleteGenre(String id) {
         if (!genreService.existsById(id)) {
             return "жанр не найден";
         }

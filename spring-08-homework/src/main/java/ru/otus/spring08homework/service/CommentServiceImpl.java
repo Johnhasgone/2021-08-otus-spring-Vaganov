@@ -24,13 +24,13 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<CommentDto> findById(Long id) {
+    public Optional<CommentDto> findById(String id) {
         return Optional.ofNullable(commentMapper.toDto(commentRepository.findById(id).orElse(null)));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<CommentDto> findByBookId(Long bookId) {
+    public List<CommentDto> findByBookId(String bookId) {
         return commentRepository.findByBookId(bookId).stream()
                 .map(commentMapper::toDto)
                 .collect(Collectors.toList());
@@ -53,18 +53,23 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public void updateTextById(Long id, String text) {
-        commentRepository.updateTextById(id, text);
+    public void updateTextById(String id, String text) {
+        Optional<Comment> commentOptional = commentRepository.findById(id);
+        if (commentOptional.isPresent()) {
+            Comment comment = commentOptional.get();
+            comment.setText(text);
+            commentRepository.save(comment);
+        }
     }
 
     @Override
     @Transactional
-    public void deleteById(Long id) {
+    public void deleteById(String id) {
         commentRepository.deleteById(id);
     }
 
     @Override
-    public boolean existsById(Long id) {
+    public boolean existsById(String id) {
         return commentRepository.existsById(id);
     }
 }

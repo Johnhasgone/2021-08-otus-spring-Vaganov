@@ -21,7 +21,7 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<AuthorDto> findById(Long id) {
+    public Optional<AuthorDto> findById(String id) {
         return Optional.ofNullable(mapper.toDto(repository.findById(id).orElse(null)));
     }
 
@@ -49,19 +49,24 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     @Transactional
-    public void updateNameById(Long id, String name) {
-        repository.updateNameById(id, name);
+    public void updateNameById(String id, String name) {
+        Optional<Author> authorOptional = repository.findById(id);
+        if (authorOptional.isPresent()) {
+            Author author = authorOptional.get();
+            author.setName(name);
+            repository.save(author);
+        }
     }
 
     @Override
     @Transactional
-    public void deleteById(Long id) {
+    public void deleteById(String id) {
         repository.deleteById(id);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public boolean existsById(Long id) {
+    public boolean existsById(String id) {
         return repository.existsById(id);
     }
 }

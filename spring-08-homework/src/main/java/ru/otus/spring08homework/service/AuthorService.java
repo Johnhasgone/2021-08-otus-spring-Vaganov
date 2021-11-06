@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface AuthorService {
 
-    Optional<AuthorDto> findById(Long id);
+    Optional<AuthorDto> findById(String id);
 
     Optional<AuthorDto> findByName(String name);
 
@@ -15,9 +15,9 @@ public interface AuthorService {
 
     AuthorDto save(String name);
 
-    void updateNameById(Long id, String name);
+    void updateNameById(String id, String name);
 
-    void deleteById(Long id);
+    void deleteById(String id);
 
-    boolean existsById(Long id);
+    boolean existsById(String id);
 }

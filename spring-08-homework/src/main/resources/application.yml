@@ -1,22 +1,20 @@
 spring:
-  datasource:
-    url: jdbc:h2:mem:bookdb
+  data:
+    mongodb:
+      host: localhost
+      port:2717
+      database: bookdb
 
-  jpa:
-    show-sql: true
+mongock:
+  runner-type: "ApplicationRunner" # default
+  #runner-type: "InitializingBean"
+  change-logs-scan-package:
+    - ru.otus.spring08homework.changelogs
+  mongo-db:
+    write-concern:
+      journal: false
+    read-concern: local
 
-    hibernate:
-      ddl-auto: none
-
-    properties:
-      hibernate:
-        format-sql: true
-
-  h2:
-    console:
-      path: /h2-console
-      settings:
-        web-allow-others: true
-  liquibase:
-    enabled: true
-    drop-first: true
+logging:
+  level:
+    root: ERROR

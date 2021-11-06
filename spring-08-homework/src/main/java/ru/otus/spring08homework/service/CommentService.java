@@ -8,17 +8,17 @@ import java.util.Optional;
 
 public interface CommentService {
 
-    Optional<CommentDto> findById(Long id);
+    Optional<CommentDto> findById(String id);
 
-    List<CommentDto> findByBookId(Long bookId);
+    List<CommentDto> findByBookId(String bookId);
 
     List<CommentDto> findAll();
 
     CommentDto save(String text, BookDto bookDto);
 
-    void updateTextById(Long id, String text);
+    void updateTextById(String id, String text);
 
-    void deleteById(Long id);
+    void deleteById(String id);
 
-    boolean existsById(Long id);
+    boolean existsById(String id);
 }

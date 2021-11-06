@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface BookService {
 
-    Optional<BookDto> findById(Long id);
+    Optional<BookDto> findById(String id);
 
     List<BookDto> findByTitle(String title);
 
@@ -15,9 +15,9 @@ public interface BookService {
 
     BookDto save(String title, List<String> authorNames, List<String> genreNames);
 
-    void updateNameById(Long id, String title);
+    void updateNameById(String id, String title);
 
-    void deleteById(Long id);
+    void deleteById(String id);
 
-    boolean existsById(Long id);
+    boolean existsById(String id);
 }

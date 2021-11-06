@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface GenreService {
 
-    Optional<GenreDto> findById(Long id);
+    Optional<GenreDto> findById(String id);
 
     Optional<GenreDto> findByName(String name);
 
@@ -15,9 +15,9 @@ public interface GenreService {
 
     GenreDto save(String name);
 
-    void updateNameById(Long id, String name);
+    void updateNameById(String id, String name);
 
-    void deleteById(Long id);
+    void deleteById(String id);
 
-    boolean existsById(Long id);
+    boolean existsById(String id);
 }

@@ -21,7 +21,7 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<GenreDto> findById(Long id) {
+    public Optional<GenreDto> findById(String id) {
         return Optional.ofNullable(
                 mapper.toDto(
                         genreRepository.findById(id).orElse(null)
@@ -53,18 +53,23 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     @Transactional
-    public void updateNameById(Long id, String name) {
-        genreRepository.updateNameById(id, name);
+    public void updateNameById(String id, String name) {
+        Optional<Genre> genreOptional = genreRepository.findById(id);
+        if (genreOptional.isPresent()) {
+            Genre genre = genreOptional.get();
+            genre.setName(name);
+            genreRepository.save(genre);
+        }
     }
 
     @Override
     @Transactional
-    public void deleteById(Long id) {
+    public void deleteById(String id) {
         genreRepository.deleteById(id);
     }
 
     @Override
-    public boolean existsById(Long id) {
+    public boolean existsById(String id) {
         return genreRepository.existsById(id);
     }
 }

@@ -4,21 +4,17 @@ import com.googlecode.jmapper.annotations.JGlobalMap;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @JGlobalMap
-@Entity
-@Table(name = "author")
+@Document
 public class Author {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "name")
+    private String id;
     private String name;
 
     public Author(String authorName) {
