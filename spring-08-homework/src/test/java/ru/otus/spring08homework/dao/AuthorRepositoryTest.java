@@ -24,16 +24,6 @@ class AuthorRepositoryTest {
     @Autowired
     private TestEntityManager em;
 
-    @DisplayName("обновлять автора в БД")
-    @Test
-    void shouldUpdateAuthor() {
-        Author updatableAuthor = em.find(Author.class, FIRST_AUTHOR_ID);
-        authorRepository.updateNameById(FIRST_AUTHOR_ID, EXPECTED_AUTHOR_NAME);
-        em.detach(updatableAuthor);
-        Author actualAuthor = em.find(Author.class, FIRST_AUTHOR_ID);
-        assertThat(actualAuthor.getName()).isEqualTo(EXPECTED_AUTHOR_NAME);
-    }
-
     @DisplayName("получать автора по имени")
     @Test
     void shouldGetAuthorByName() {

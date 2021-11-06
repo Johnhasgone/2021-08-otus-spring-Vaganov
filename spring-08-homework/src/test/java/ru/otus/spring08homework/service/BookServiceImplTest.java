@@ -24,19 +24,19 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 class BookServiceImplTest {
 
-    private static final Long FIRST_BOOK_ID = 1L;
-    private static final Long SECOND_BOOK_ID = 2L;
+    private static final String FIRST_BOOK_ID = "1";
+    private static final String SECOND_BOOK_ID = "2";
     private static final String FIRST_BOOK_TITLE = "Стихотворения";
     private static final String SECOND_BOOK_TITLE = "Рассказы";
     private static final String EXPECTED_TITLE = "LYRICS";
 
-    private static final Long FIRST_AUTHOR_ID = 1L;
-    private static final Long SECOND_AUTHOR_ID = 2L;
+    private static final String FIRST_AUTHOR_ID = "1";
+    private static final String SECOND_AUTHOR_ID = "2";
     private static final String FIRST_AUTHOR_NAME = "Афанасий Афанасьевич Фет";
     private static final String SECOND_AUTHOR_NAME = "Сергей Михалков";
 
-    private static final Long FIRST_GENRE_ID = 1L;
-    private static final Long SECOND_GENRE_ID = 2L;
+    private static final String FIRST_GENRE_ID = "1";
+    private static final String SECOND_GENRE_ID = "2";
     private static final String FIRST_GENRE_NAME = "поэзия";
     private static final String SECOND_GENRE_NAME = "проза";
 

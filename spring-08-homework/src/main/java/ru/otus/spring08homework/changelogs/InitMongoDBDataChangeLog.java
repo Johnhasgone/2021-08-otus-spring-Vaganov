@@ -3,41 +3,48 @@ package ru.otus.spring08homework.changelogs;
 import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;
 import com.mongodb.client.MongoDatabase;
-import lombok.val;
-import ru.otus.example.mongodbdemo.model.Knowledge;
-import ru.otus.example.mongodbdemo.model.Student;
-import ru.otus.example.mongodbdemo.model.Teacher;
-import ru.otus.example.mongodbdemo.repositories.KnowledgeRepository;
-import ru.otus.example.mongodbdemo.repositories.StudentRepository;
-import ru.otus.example.mongodbdemo.repositories.TeacherRepository;
+import ru.otus.spring08homework.dao.AuthorRepository;
+import ru.otus.spring08homework.dao.BookRepository;
+import ru.otus.spring08homework.dao.GenreRepository;
+import ru.otus.spring08homework.domain.Author;
+import ru.otus.spring08homework.domain.Book;
+import ru.otus.spring08homework.domain.Genre;
+
+import java.util.List;
 
 @ChangeLog(order = "001")
 public class InitMongoDBDataChangeLog {
 
-    private Knowledge springDataKnowledge;
-    private Knowledge mongockKnowledge;
-    private Knowledge aggregationApiKnowledge;
+    private Author ans;
+    private Author bns;
+    private Author asp;
 
-    @ChangeSet(order = "000", id = "dropDB", author = "stvort", runAlways = true)
+    private Genre novel;
+    private Genre lyrics;
+    private Genre fantazy;
+
+    @ChangeSet(order = "000", id = "dropDB", author = "johnhasgone", runAlways = true)
     public void dropDB(MongoDatabase database){
         database.drop();
     }
 
-    @ChangeSet(order = "001", id = "initKnowledges", author = "stvort", runAlways = true)
-    public void initKnowledges(KnowledgeRepository repository){
-        springDataKnowledge = repository.save(new Knowledge("Spring Data"));
-        mongockKnowledge = repository.save(new Knowledge("Mongock"));
-        aggregationApiKnowledge = repository.save(new Knowledge("AggregationApi"));
+    @ChangeSet(order = "001", id = "initAuthors", author = "johnhasgone", runAlways = true)
+    public void initAuthors(AuthorRepository repository){
+        ans = repository.save(new Author("Аркадий Стругацкий"));
+        bns = repository.save(new Author("Борис Стругацкий"));
+        asp = repository.save(new Author("Александр Пушкин"));
     }
 
-    @ChangeSet(order = "002", id = "initStudents", author = "stvort", runAlways = true)
-    public void initStudents(StudentRepository repository){
-        repository.save(new Student("Student #1", springDataKnowledge, mongockKnowledge));
+    @ChangeSet(order = "002", id = "initGenres", author = "johnhasgone", runAlways = true)
+    public void initGenres(GenreRepository repository) {
+        novel = repository.save(new Genre("роман"));
+        lyrics = repository.save(new Genre("поэзия"));
+        fantazy = repository.save(new Genre("фантастика"));
     }
 
-    @ChangeSet(order = "003", id = "Teacher", author = "stvort", runAlways = true)
-    public void initTeachers(TeacherRepository repository){
-        val teacher = new Teacher("Teacher #1", springDataKnowledge, mongockKnowledge, aggregationApiKnowledge);
-        repository.save(teacher);
+    @ChangeSet(order = "003", id = "initBooks", author = "johnhasgone", runAlways = true)
+    public void initBooks(BookRepository repository){
+        repository.save(new Book("1", "Улитка на склоне", List.of(ans, bns), List.of(novel, fantazy)));
+        repository.save(new Book("2", "Стихотворения и поэмы", List.of(asp), List.of(lyrics)));
     }
 }

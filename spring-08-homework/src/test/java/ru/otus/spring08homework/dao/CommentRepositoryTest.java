@@ -14,9 +14,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("DAO для работы с жанрами книг должно ")
 @DataJpaTest
 class CommentRepositoryTest {
-    private static final Long FIRST_BOOK_ID = 1L;
+    private static final String FIRST_BOOK_ID = "1";
 
-    private static final Long FIRST_COMMENT_ID = 1L;
+    private static final String FIRST_COMMENT_ID = "1";
     private static final Long SECOND_COMMENT_ID = 2L;
     private static final Long THIRD_COMMENT_ID = 3L;
     private static final Long FORTH_COMMENT_ID = 4L;
@@ -32,16 +32,6 @@ class CommentRepositoryTest {
 
     @Autowired
     private TestEntityManager em;
-
-    @DisplayName("обновлять комментарий в БД")
-    @Test
-    void shouldUpdateComment() {
-        Comment updatingComment = em.find(Comment.class, FIRST_COMMENT_ID);
-        commentRepository.updateTextById(FIRST_COMMENT_ID, EXPECTED_COMMENT_TEXT);
-        em.detach(updatingComment);
-        Comment actualComment = em.find(Comment.class, FIRST_COMMENT_ID);
-        assertThat(actualComment.getText()).isEqualTo(EXPECTED_COMMENT_TEXT);
-    }
 
     @DisplayName("получать комментарии по книге")
     @Test

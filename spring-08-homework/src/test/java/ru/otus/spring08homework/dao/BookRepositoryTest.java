@@ -24,16 +24,6 @@ class BookRepositoryTest {
     @Autowired
     private TestEntityManager em;
 
-    @DisplayName("обновлять книгу в БД")
-    @Test
-    void shouldUpdateBook() {
-        Book updatableBook = em.find(Book.class, BOOK_ID);
-        bookRepository.updateNameById(BOOK_ID, EXPECTED_BOOK_TITLE);
-        em.detach(updatableBook);
-        Book actualBook = em.find(Book.class, BOOK_ID);
-        assertThat(actualBook.getTitle()).isEqualTo(EXPECTED_BOOK_TITLE);
-    }
-
     @DisplayName("получать книгу по имени")
     @Test
     void shouldGetBookByName() {

@@ -24,17 +24,6 @@ class GenreRepositoryTest {
     @Autowired
     private TestEntityManager em;
 
-
-    @DisplayName("обновлять жанр в БД")
-    @Test
-    void shouldUpdateGenre() {
-        Genre updatingGenre = em.find(Genre.class, GENRE_ID);
-        genreRepository.updateNameById(GENRE_ID, EXPECTED_GENRE_NAME);
-        em.detach(updatingGenre);
-        Genre actualGenre = em.find(Genre.class, GENRE_ID);
-        assertThat(actualGenre.getName()).isEqualTo(EXPECTED_GENRE_NAME);
-    }
-
     @DisplayName("получать жанр по имени")
     @Test
     void shouldGetGenreByName() {
