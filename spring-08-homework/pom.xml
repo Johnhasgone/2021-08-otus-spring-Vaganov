@@ -59,12 +59,22 @@
             <artifactId>mongodb-springdata-v3-driver</artifactId>
             <version>4.3.8</version>
         </dependency>
-
         <dependency>
-            <groupId>de.flapdoodle.embed</groupId>
-            <artifactId>de.flapdoodle.embed.mongo</artifactId>
-            <scope>test</scope>
+            <groupId>com.github.cloudyrock.mongock</groupId>
+            <artifactId>mongock-core</artifactId>
+            <version>3.2.8</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.cloudyrock.mongock</groupId>
+            <artifactId>mongock-spring</artifactId>
+            <version>3.2.8</version>
+        </dependency>
+
+        <!--        <dependency>-->
+<!--            <groupId>de.flapdoodle.embed</groupId>-->
+<!--            <artifactId>de.flapdoodle.embed.mongo</artifactId>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
 
     </dependencies>
 
