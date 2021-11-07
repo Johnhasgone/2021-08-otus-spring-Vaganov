@@ -1,4 +1,4 @@
-package ru.otus.spring08homework.changelogs;
+package ru.otus.spring08homework.mongock.changelogs;
 
 import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;
@@ -21,7 +21,7 @@ public class InitMongoDBDataChangeLog {
 
     private Genre novel;
     private Genre lyrics;
-    private Genre fantazy;
+    private Genre scienceFiction;
 
     @ChangeSet(order = "000", id = "dropDB", author = "johnhasgone", runAlways = true)
     public void dropDB(MongoDatabase database){
@@ -39,12 +39,12 @@ public class InitMongoDBDataChangeLog {
     public void initGenres(GenreRepository repository) {
         novel = repository.save(new Genre("роман"));
         lyrics = repository.save(new Genre("поэзия"));
-        fantazy = repository.save(new Genre("фантастика"));
+        scienceFiction = repository.save(new Genre("фантастика"));
     }
 
     @ChangeSet(order = "003", id = "initBooks", author = "johnhasgone", runAlways = true)
     public void initBooks(BookRepository repository){
-        repository.save(new Book("1", "Улитка на склоне", List.of(ans, bns), List.of(novel, fantazy)));
+        repository.save(new Book("1", "Улитка на склоне", List.of(ans, bns), List.of(novel, scienceFiction)));
         repository.save(new Book("2", "Стихотворения и поэмы", List.of(asp), List.of(lyrics)));
     }
 }

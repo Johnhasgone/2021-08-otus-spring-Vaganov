@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @JGlobalMap
 public class BookDto {
-    private Long id;
+    private String id;
     private String title;
     private List<AuthorDto> authors;
     private List<GenreDto> genres;

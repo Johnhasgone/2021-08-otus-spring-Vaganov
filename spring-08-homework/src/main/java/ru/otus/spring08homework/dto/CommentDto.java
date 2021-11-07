@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @JGlobalMap
 public class CommentDto {
-    private Long id;
+    private String id;
     private String text;
 
     @Override

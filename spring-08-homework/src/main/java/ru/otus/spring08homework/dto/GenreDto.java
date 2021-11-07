@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @JGlobalMap
 public class GenreDto {
-    private Long id;
+    private String id;
     private String name;
 
     @Override

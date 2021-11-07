@@ -3,32 +3,28 @@ package ru.otus.spring08homework.dao;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import ru.otus.spring08homework.domain.Book;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @DisplayName("DAO для работы с книгами должно ")
-@DataJpaTest
+@DataMongoTest
+@EnableConfigurationProperties
+//@ComponentScan({"ru.otus.example.mongodbdemo.config", "ru.otus.example.mongodbdemo.repositories"})
 class BookRepositoryTest {
     private static final String EXPECTED_BOOK_TITLE = "Lyrics";
-    private static final Long BOOK_ID = 3L;
+    private static final String BOOK_ID = "618798e353e7dc368d2a49f9";
 
 
     @Autowired
     private BookRepository bookRepository;
 
-    @Autowired
-    private TestEntityManager em;
-
     @DisplayName("получать книгу по имени")
     @Test
     void shouldGetBookByName() {
-        List<Book> expectedBooks = List.of(em.find(Book.class, BOOK_ID));
-        List<Book> actualBooks = bookRepository.findByTitle(expectedBooks.get(0).getTitle());
-        assertThat(actualBooks).containsExactlyInAnyOrderElementsOf(expectedBooks);
+        List<Book> actualBooks = bookRepository.findByTitle("alug");
+        actualBooks.stream().map(Book::getTitle).forEach(System.out::println);
     }
 }

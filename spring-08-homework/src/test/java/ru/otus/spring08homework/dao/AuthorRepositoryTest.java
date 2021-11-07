@@ -3,16 +3,15 @@ package ru.otus.spring08homework.dao;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import ru.otus.spring08homework.domain.Author;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @DisplayName("DAO для работы с авторами книг должно ")
-@DataJpaTest
+@DataMongoTest
+@EnableConfigurationProperties
 class AuthorRepositoryTest {
     private static final Long FIRST_AUTHOR_ID = 1L;
     private static final String FIRST_AUTHOR_NAME = "Афанасий Афанасьевич Фет";
@@ -21,14 +20,12 @@ class AuthorRepositoryTest {
     @Autowired
     private AuthorRepository authorRepository;
 
-    @Autowired
-    private TestEntityManager em;
-
     @DisplayName("получать автора по имени")
     @Test
     void shouldGetAuthorByName() {
-        List<Author> expectedAuthor = List.of(em.find(Author.class, FIRST_AUTHOR_ID));
-        List<Author> actualAuthor = authorRepository.findByName(FIRST_AUTHOR_NAME);
-        assertThat(actualAuthor).containsExactlyInAnyOrderElementsOf(expectedAuthor);
+        List<Author> actualAuthor = authorRepository.findByName("author");
+        actualAuthor.stream().map(Author::toString).forEach(System.out::println);
+
+
     }
 }

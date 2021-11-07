@@ -3,16 +3,15 @@ package ru.otus.spring08homework.dao;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import ru.otus.spring08homework.domain.Comment;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @DisplayName("DAO для работы с жанрами книг должно ")
-@DataJpaTest
+@DataMongoTest
+@EnableConfigurationProperties
 class CommentRepositoryTest {
     private static final String FIRST_BOOK_ID = "1";
 
@@ -30,18 +29,10 @@ class CommentRepositoryTest {
     @Autowired
     private CommentRepository commentRepository;
 
-    @Autowired
-    private TestEntityManager em;
-
     @DisplayName("получать комментарии по книге")
     @Test
     void shouldGetExpectedCommentByBookId() {
-        List<Comment> expectedComments = List.of(
-                em.find(Comment.class, FIRST_COMMENT_ID),
-                em.find(Comment.class, SECOND_COMMENT_ID),
-                em.find(Comment.class, THIRD_COMMENT_ID)
-        );
+
         List<Comment> actualComments = commentRepository.findByBookId(FIRST_BOOK_ID);
-        assertThat(actualComments).containsExactlyInAnyOrderElementsOf(expectedComments);
     }
 }

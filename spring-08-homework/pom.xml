@@ -59,6 +59,13 @@
             <artifactId>mongodb-springdata-v3-driver</artifactId>
             <version>4.3.8</version>
         </dependency>
+
+        <dependency>
+            <groupId>de.flapdoodle.embed</groupId>
+            <artifactId>de.flapdoodle.embed.mongo</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
