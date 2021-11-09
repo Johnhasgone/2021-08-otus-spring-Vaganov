@@ -105,4 +105,22 @@ public class BookServiceImpl implements BookService {
     public boolean existsById(String id) {
         return bookRepository.existsById(id);
     }
+
+    @Override
+    public List<BookDto> findByAuthorsContaining(String id) {
+        Author author = authorMapper.toEntity(authorService.findById(id).orElse(null));
+        return bookRepository.findByAuthorsContaining(author)
+                .stream()
+                .map(mapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<BookDto> findByGenresContaining(String id) {
+        Genre genre = genreMapper.toEntity(genreService.findById(id).orElse(null));
+        return bookRepository.findByGenresContaining(genre)
+                .stream()
+                .map(mapper::toDto)
+                .collect(Collectors.toList());
+    }
 }

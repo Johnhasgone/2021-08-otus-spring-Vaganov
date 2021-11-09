@@ -20,4 +20,8 @@ public interface BookService {
     void deleteById(String id);
 
     boolean existsById(String id);
+
+    List<BookDto> findByAuthorsContaining(String id);
+
+    List<BookDto> findByGenresContaining(String id);
 }

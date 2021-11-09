@@ -6,7 +6,7 @@ spring:
       database: bookdb
 
 mongock:
-  runner-type: "ApplicationRunner"
+  runner-type: "InitializingBean"
   change-logs-scan-package:
     - ru.otus.spring08homework.mongock.changelogs
   mongo-db:
