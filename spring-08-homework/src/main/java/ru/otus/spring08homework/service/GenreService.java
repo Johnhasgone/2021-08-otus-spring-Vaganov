@@ -17,7 +17,7 @@ public interface GenreService {
 
     void updateNameById(String id, String name);
 
-    void deleteById(String id);
+    boolean deleteById(String id);
 
     boolean existsById(String id);
 }

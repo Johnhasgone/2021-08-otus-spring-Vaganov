@@ -98,6 +98,7 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional
     public void deleteById(String id) {
+        //TODO add cascade delete comments
         bookRepository.deleteById(id);
     }
 

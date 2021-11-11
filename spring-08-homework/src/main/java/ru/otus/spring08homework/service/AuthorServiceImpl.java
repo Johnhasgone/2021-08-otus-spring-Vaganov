@@ -62,9 +62,16 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     @Transactional
-    public void deleteById(String id) {
-
+    public boolean deleteById(String id) {
+        Author author = authorRepository.findById(id).orElse(null);
+        if (author == null) {
+            return false;
+        }
+        if (!bookRepository.findByAuthorsContaining(author).isEmpty()) {
+            return false;
+        }
         authorRepository.deleteById(id);
+        return true;
     }
 
     @Override

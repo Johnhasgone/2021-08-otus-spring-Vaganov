@@ -161,7 +161,7 @@ public class BookServiceCommands {
             return "автор не найден";
         }
         if (!bookService.findByAuthorsContaining(id).isEmpty()) {
-            return ""
+            return "";
         }
         authorService.deleteById(id);
         return "автор удален";

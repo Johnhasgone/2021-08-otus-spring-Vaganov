@@ -3,6 +3,7 @@ package ru.otus.spring08homework.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.otus.spring08homework.dao.BookRepository;
 import ru.otus.spring08homework.dao.GenreRepository;
 import ru.otus.spring08homework.domain.Genre;
 import ru.otus.spring08homework.dto.GenreDto;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 public class GenreServiceImpl implements GenreService {
 
     private final GenreRepository genreRepository;
+    private final BookRepository bookRepository;
     private final GenreMapper mapper;
 
     @Override
@@ -64,8 +66,16 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     @Transactional
-    public void deleteById(String id) {
+    public boolean deleteById(String id) {
+        Genre genre = genreRepository.findById(id).orElse(null);
+        if (genre == null) {
+            return false;
+        }
+        if (!bookRepository.findByGenresContaining(genre).isEmpty()) {
+            return false;
+        }
         genreRepository.deleteById(id);
+        return true;
     }
 
     @Override
