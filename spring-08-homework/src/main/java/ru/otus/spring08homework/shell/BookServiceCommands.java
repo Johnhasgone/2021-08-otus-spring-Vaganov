@@ -161,7 +161,7 @@ public class BookServiceCommands {
             return "автор не найден";
         }
         if (!bookService.findByAuthorsContaining(id).isEmpty()) {
-            return "";
+            return "удаление отклонено - в базе имеются книги автора";
         }
         authorService.deleteById(id);
         return "автор удален";
@@ -201,6 +201,9 @@ public class BookServiceCommands {
     public String deleteGenre(String id) {
         if (!genreService.existsById(id)) {
             return "жанр не найден";
+        }
+        if (!bookService.findByGenresContaining(id).isEmpty()) {
+            return "удаление отклонено - в базе имеются книги c указанным жанром";
         }
         genreService.deleteById(id);
         return "жанр удален";

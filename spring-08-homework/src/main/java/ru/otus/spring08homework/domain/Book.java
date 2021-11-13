@@ -20,10 +20,6 @@ public class Book {
     @Id
     private String id;
     private String title;
-
-    //@DBRef
     private List<Author> authors;
-
-    //@DBRef
     private List<Genre> genres;
 }

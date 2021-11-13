@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.spring08homework.dao.BookRepository;
+import ru.otus.spring08homework.dao.CommentRepository;
 import ru.otus.spring08homework.domain.Author;
 import ru.otus.spring08homework.domain.Book;
 import ru.otus.spring08homework.domain.Genre;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
+    private final CommentRepository commentRepository;
     private final BookMapper mapper;
     private final GenreService genreService;
     private final AuthorService authorService;
@@ -98,7 +100,7 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional
     public void deleteById(String id) {
-        //TODO add cascade delete comments
+        commentRepository.deleteAll(commentRepository.findByBookId(id));
         bookRepository.deleteById(id);
     }
 

@@ -5,9 +5,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import ru.otus.spring08homework.dao.AuthorRepository;
 import ru.otus.spring08homework.dao.BookRepository;
+import ru.otus.spring08homework.dao.CommentRepository;
+import ru.otus.spring08homework.dao.GenreRepository;
 import ru.otus.spring08homework.domain.Author;
 import ru.otus.spring08homework.domain.Book;
+import ru.otus.spring08homework.domain.Comment;
 import ru.otus.spring08homework.domain.Genre;
 import ru.otus.spring08homework.dto.AuthorDto;
 import ru.otus.spring08homework.dto.BookDto;
@@ -18,7 +22,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @DisplayName("Сервис для работы с книгами должен ")
 @SpringBootTest
@@ -45,6 +49,13 @@ class BookServiceImplTest {
     BookService bookService;
     @MockBean
     BookRepository bookRepository;
+    @MockBean
+    AuthorRepository authorRepository;
+    @MockBean
+    GenreRepository genreRepository;
+    @MockBean
+    CommentRepository commentRepository;
+
 
     @DisplayName("возвращать ожидаемую книгу по ID")
     @Test
@@ -132,11 +143,13 @@ class BookServiceImplTest {
     @DisplayName("возвращать ДТО созданной книги")
     @Test
     void shouldCreateBook() {
+        Author author = new Author(FIRST_AUTHOR_ID, FIRST_AUTHOR_NAME);
+        Genre genre = new Genre(FIRST_GENRE_ID, FIRST_GENRE_NAME);
         Book creatingBook = new Book(
                 FIRST_BOOK_ID,
                 FIRST_BOOK_TITLE,
-                List.of(new Author(FIRST_AUTHOR_ID, FIRST_AUTHOR_NAME)),
-                List.of(new Genre(FIRST_GENRE_ID, FIRST_GENRE_NAME))
+                List.of(author),
+                List.of(genre)
         );
 
         BookDto createdBookDto = new BookDto(
@@ -146,7 +159,66 @@ class BookServiceImplTest {
                 List.of(new GenreDto(FIRST_GENRE_ID, FIRST_GENRE_NAME))
         );
         when(bookRepository.save(any())).thenReturn(creatingBook);
+        when(authorRepository.findByName(FIRST_AUTHOR_NAME)).thenReturn(List.of(author));
+        when(genreRepository.findByName(FIRST_GENRE_NAME)).thenReturn(List.of(genre));
         BookDto actualBook = bookService.save(FIRST_BOOK_TITLE, List.of(FIRST_AUTHOR_NAME), List.of(FIRST_GENRE_NAME));
         assertThat(actualBook).isEqualTo(createdBookDto);
+    }
+
+    @DisplayName("при удалении книги удалять и ее комментарии")
+    @Test
+    void shouldDeleteBookWithComments() {
+        List<Comment> comments = List.of(new Comment());
+        when(commentRepository.findByBookId(any())).thenReturn(comments);
+        doNothing().when(commentRepository).deleteAll(any());
+        doNothing().when(bookRepository).deleteById(any());
+
+        bookService.deleteById(FIRST_BOOK_ID);
+
+        verify(commentRepository, times(1)).findByBookId(FIRST_BOOK_ID);
+        verify(commentRepository, times(1)).deleteAll(comments);
+        verify(bookRepository, times(1)).deleteById(FIRST_BOOK_ID);
+    }
+
+    @DisplayName("находить книги по id автора")
+    @Test
+    void shouldFindBooksByAuthor() {
+        Book book = new Book(
+                FIRST_BOOK_ID,
+                FIRST_BOOK_TITLE,
+                List.of(new Author(FIRST_AUTHOR_ID, FIRST_AUTHOR_NAME)),
+                List.of(new Genre(FIRST_GENRE_ID, FIRST_GENRE_NAME))
+        );
+        List<BookDto> expected = List.of(new BookDto(
+                FIRST_BOOK_ID,
+                FIRST_BOOK_TITLE,
+                List.of(new AuthorDto(FIRST_AUTHOR_ID, FIRST_AUTHOR_NAME)),
+                List.of(new GenreDto(FIRST_GENRE_ID, FIRST_GENRE_NAME))
+        ));
+
+        when(bookRepository.findByAuthorsContaining(any())).thenReturn(List.of(book));
+        List<BookDto> actual = bookService.findByAuthorsContaining(FIRST_AUTHOR_ID);
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @DisplayName("находить книги по id жанра")
+    @Test
+    void shouldFindBooksByGenre() {
+        Book book = new Book(
+                FIRST_BOOK_ID,
+                FIRST_BOOK_TITLE,
+                List.of(new Author(FIRST_AUTHOR_ID, FIRST_AUTHOR_NAME)),
+                List.of(new Genre(FIRST_GENRE_ID, FIRST_GENRE_NAME))
+        );
+        List<BookDto> expected = List.of(new BookDto(
+                FIRST_BOOK_ID,
+                FIRST_BOOK_TITLE,
+                List.of(new AuthorDto(FIRST_AUTHOR_ID, FIRST_AUTHOR_NAME)),
+                List.of(new GenreDto(FIRST_GENRE_ID, FIRST_GENRE_NAME))
+        ));
+
+        when(bookRepository.findByGenresContaining(any())).thenReturn(List.of(book));
+        List<BookDto> actual = bookService.findByGenresContaining(FIRST_GENRE_ID);
+        assertThat(actual).isEqualTo(expected);
     }
 }
