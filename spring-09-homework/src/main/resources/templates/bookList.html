@@ -34,7 +34,7 @@
         <td th:text="${book.authors}">Authors</td>
         <td th:text="${book.genres}">Genres</td>
         <td>
-            <a th:href="@{/book/${book.id}/edit}" href="bookEdit.html">Edit</a>
+            <a th:href="@{/book/edit(id = ${book.id})}" href="bookEdit.html">Edit</a>
         </td>
     </tr>
     </tbody>

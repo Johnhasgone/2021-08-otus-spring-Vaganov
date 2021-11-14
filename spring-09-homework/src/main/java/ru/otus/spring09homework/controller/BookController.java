@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import ru.otus.spring09homework.domain.Book;
 import ru.otus.spring09homework.dto.AuthorDto;
 import ru.otus.spring09homework.dto.BookDto;
@@ -35,24 +36,26 @@ public class BookController {
         return "bookList";
     }
 
-    @GetMapping("/book/{id}/edit")
-    public String bookEditPage(@PathVariable Long id, Model model) {
+    @GetMapping("/book/edit")
+    public String bookEditPage(@RequestParam Long id, Model model) {
         BookDto book = bookService.findById(id)
                 .orElseThrow(() -> new EmptyResultDataAccessException("Не найдена книга с id " + id, 1));
         model.addAttribute("book", book);
         return "bookEdit";
     }
 
-    @PostMapping("book/{id}/edit")
+    @PostMapping("/book/edit")
     public String bookEdit(BookDto book, Model model) {
-        BookDto saved = bookService.save(
-                book.getTitle(),
-                book.getAuthors().stream().map(AuthorDto::getName).collect(Collectors.toList()),
-                book.getGenres().stream().map(GenreDto::getName).collect(Collectors.toList())
-        );
+//        BookDto saved = bookService.save(
+//                book.getTitle(),
+//                null,
+//                null
+//        );
+        System.out.println("book id" + " " + book.getId() + " " + book.getTitle());
+        bookService.updateNameById(book.getId(), book.getTitle());
         // TODO fix service method - should save entity by getting entity as parameter
-        model.addAttribute(saved);
+        model.addAttribute("book", bookService.findById(book.getId()).get());
         // TODO add redirection
-        return "bookList";
+        return "bookEdit";
     }
 }
