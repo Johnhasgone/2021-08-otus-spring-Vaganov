@@ -1,23 +1,17 @@
 package ru.otus.spring09homework.controller;
 
-import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import ru.otus.spring09homework.domain.Book;
-import ru.otus.spring09homework.dto.AuthorDto;
 import ru.otus.spring09homework.dto.BookDto;
-import ru.otus.spring09homework.dto.GenreDto;
 import ru.otus.spring09homework.service.BookService;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 public class BookController {
@@ -36,26 +30,35 @@ public class BookController {
         return "bookList";
     }
 
-    @GetMapping("/book/edit")
-    public String bookEditPage(@RequestParam Long id, Model model) {
+    @GetMapping("/book/{id}/edit")
+    public String bookEditPage(@PathVariable Long id, Model model) {
         BookDto book = bookService.findById(id)
                 .orElseThrow(() -> new EmptyResultDataAccessException("Не найдена книга с id " + id, 1));
         model.addAttribute("book", book);
         return "bookEdit";
     }
 
-    @PostMapping("/book/edit")
-    public String bookEdit(BookDto book, Model model) {
-//        BookDto saved = bookService.save(
-//                book.getTitle(),
-//                null,
-//                null
-//        );
-        System.out.println("book id" + " " + book.getId() + " " + book.getTitle());
-        bookService.updateNameById(book.getId(), book.getTitle());
-        // TODO fix service method - should save entity by getting entity as parameter
-        model.addAttribute("book", bookService.findById(book.getId()).get());
-        // TODO add redirection
+    @GetMapping("/book/create")
+    public String bookCreatePage(Model model) {
+        model.addAttribute("book", new BookDto());
         return "bookEdit";
+    }
+
+    @PostMapping("/book/create")
+    public String bookCreate(BookDto book) {
+        bookService.save(book);
+        return "redirect:/book";
+    }
+
+    @PostMapping("/book/edit")
+    public String bookEdit(BookDto book) {
+        BookDto saved = bookService.save(book);
+        return "redirect:/book";
+    }
+
+    @DeleteMapping("/book/{id}")
+    public String bookDelete(@PathVariable Long id) {
+        bookService.deleteById(id);
+        return "redirect:/book";
     }
 }

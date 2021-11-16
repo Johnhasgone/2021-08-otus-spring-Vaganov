@@ -1,6 +1,7 @@
 package ru.otus.spring09homework.domain;
 
 import com.googlecode.jmapper.annotations.JGlobalMap;
+import com.googlecode.jmapper.annotations.JMapConversion;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,6 +11,7 @@ import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -41,4 +43,18 @@ public class Book {
             joinColumns = {@JoinColumn(name = "book_id")},
             inverseJoinColumns = {@JoinColumn(name = "genre_id")})
     private List<Genre> genres;
+
+    @JMapConversion(from = "authors", to = "authors")
+    public String conversionAuthor(List<Author> authors) {
+        return authors.stream()
+                .map(Author::getName)
+                .collect(Collectors.joining(", "));
+    }
+
+    @JMapConversion(from = "genres", to = "genres")
+    public String conversionGenre(List<Genre> genres) {
+        return genres.stream()
+                .map(Genre::getName)
+                .collect(Collectors.joining(", "));
+    }
 }

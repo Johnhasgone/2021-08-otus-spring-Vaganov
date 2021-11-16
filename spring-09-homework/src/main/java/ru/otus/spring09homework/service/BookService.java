@@ -13,7 +13,7 @@ public interface BookService {
 
     List<BookDto> findAll();
 
-    BookDto save(String title, List<String> authorNames, List<String> genreNames);
+    BookDto save(BookDto bookDto);
 
     void updateNameById(Long id, String title);
 

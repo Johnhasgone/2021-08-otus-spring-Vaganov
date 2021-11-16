@@ -13,6 +13,7 @@ import ru.otus.spring09homework.mapper.BookMapper;
 import ru.otus.spring09homework.mapper.GenreMapper;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -52,36 +53,42 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public BookDto save(String title, List<String> authorNames, List<String> genreNames) {
-        List<Author> authors = getAuthors(authorNames);
-        List<Genre> genres = getGenres(genreNames);
-        Book book = new Book(null, title, authors, genres);
+    public BookDto save(BookDto bookDto) {
+        List<Author> authors = getAuthors(bookDto.getAuthors());
+        List<Genre> genres = getGenres(bookDto.getGenres());
+        Book book = new Book(bookDto.getId(), bookDto.getTitle(), authors, genres);
         return mapper.toDto(bookRepository.save(book));
     }
 
 
-    private List<Genre> getGenres(List<String> genreNames) {
-        List<Genre> genres = new ArrayList<>();
+    private List<Genre> getGenres(String genres) {
+        List<String> genreNames = Arrays.stream(genres.split(","))
+                .map(String::trim)
+                .collect(Collectors.toList());
+        List<Genre> genreList = new ArrayList<>();
         for (String genreName : genreNames) {
             Genre genre = genreMapper.toEntity(
                     genreService.findByName(genreName)
                             .orElse(genreService.save(genreName))
             );
-            genres.add(genre);
+            genreList.add(genre);
         }
-        return genres;
+        return genreList;
     }
 
-    private List<Author> getAuthors(List<String> authorNames) {
-        List<Author> authors = new ArrayList<>();
+    private List<Author> getAuthors(String authors) {
+        List<String> authorNames = Arrays.stream(authors.split(","))
+                .map(String::trim)
+                .collect(Collectors.toList());
+        List<Author> authorList = new ArrayList<>();
         for (String authorName : authorNames) {
             Author author = authorMapper.toEntity(
                     authorService.findByName(authorName)
                             .orElse(authorService.save(authorName))
             );
-            authors.add(author);
+            authorList.add(author);
         }
-        return authors;
+        return authorList;
     }
 
     @Override

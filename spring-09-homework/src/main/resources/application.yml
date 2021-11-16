@@ -20,3 +20,9 @@ spring:
   liquibase:
     enabled: true
     drop-first: true
+
+
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true

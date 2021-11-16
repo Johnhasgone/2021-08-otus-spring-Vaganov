@@ -1,6 +1,7 @@
 package ru.otus.spring09homework.mapper;
 
 import com.googlecode.jmapper.JMapper;
+import org.hibernate.cfg.NotYetImplementedException;
 import org.springframework.stereotype.Component;
 import ru.otus.spring09homework.domain.Book;
 import ru.otus.spring09homework.dto.BookDto;
@@ -8,7 +9,6 @@ import ru.otus.spring09homework.dto.BookDto;
 @Component
 public class BookMapper implements Mapper<Book, BookDto>{
     private static final JMapper<BookDto, Book> mapperToDto = new JMapper<>(BookDto.class, Book.class);
-    private static final JMapper<Book, BookDto> mapperToEntity = new JMapper<>(Book.class, BookDto.class);
 
     @Override
     public BookDto toDto(Book entity) {
@@ -17,6 +17,6 @@ public class BookMapper implements Mapper<Book, BookDto>{
 
     @Override
     public Book toEntity(BookDto dto) {
-        return mapperToEntity.getDestination(dto);
+        throw new NotYetImplementedException();
     }
 }
