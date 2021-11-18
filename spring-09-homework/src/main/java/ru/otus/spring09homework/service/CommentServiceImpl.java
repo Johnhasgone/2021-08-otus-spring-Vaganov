@@ -1,8 +1,10 @@
 package ru.otus.spring09homework.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.otus.spring09homework.dao.BookRepository;
 import ru.otus.spring09homework.dao.CommentRepository;
 import ru.otus.spring09homework.domain.Comment;
 import ru.otus.spring09homework.dto.BookDto;
@@ -20,7 +22,7 @@ public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
     private final CommentMapper commentMapper;
-    private final BookMapper bookMapper;
+    private final BookRepository bookRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -46,8 +48,9 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public CommentDto save(String text, BookDto bookDto) {
-        Comment comment = new Comment(null, text, bookMapper.toEntity(bookDto));
+    public CommentDto save(Long bookId, String text) {
+        Comment comment = new Comment(null, text, bookRepository.findById(bookId)
+                .orElseThrow(() -> new EmptyResultDataAccessException("Не найдена книга с id " + bookId, 1)));
         return commentMapper.toDto(commentRepository.save(comment));
     }
 

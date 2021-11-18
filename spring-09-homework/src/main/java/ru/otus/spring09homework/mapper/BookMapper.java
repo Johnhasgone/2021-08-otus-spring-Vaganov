@@ -17,6 +17,6 @@ public class BookMapper implements Mapper<Book, BookDto>{
 
     @Override
     public Book toEntity(BookDto dto) {
-        throw new NotYetImplementedException();
+        throw new UnsupportedOperationException();
     }
 }

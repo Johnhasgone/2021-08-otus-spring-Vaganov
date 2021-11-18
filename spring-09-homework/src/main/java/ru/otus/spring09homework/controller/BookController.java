@@ -9,18 +9,23 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import ru.otus.spring09homework.dto.BookDto;
+import ru.otus.spring09homework.dto.CommentDto;
 import ru.otus.spring09homework.service.BookService;
+import ru.otus.spring09homework.service.CommentService;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class BookController {
 
     private final BookService bookService;
+    private final CommentService commentService;
 
     @Autowired
-    public BookController(BookService bookService) {
+    public BookController(BookService bookService, CommentService commentService) {
         this.bookService = bookService;
+        this.commentService = commentService;
     }
 
     @GetMapping("/book")
@@ -28,6 +33,22 @@ public class BookController {
         List<BookDto> books = bookService.findAll();
         model.addAttribute("books", books);
         return "bookList";
+    }
+
+    @GetMapping("/book/{id}")
+    public String bookPage(Model model, @PathVariable Long id) {
+        BookDto book = bookService.findById(id)
+                .orElseThrow(() -> new EmptyResultDataAccessException("Не найдена книга с id " + id, 1));
+        List<CommentDto> comments = commentService.findByBookId(id);
+        model.addAllAttributes(Map.of("book", book, "comments", comments, "commentNew", new CommentDto()));
+        return "bookOpen";
+    }
+
+    @PostMapping("/book/{id}/comment")
+    public String bookAddComment(Model model, @PathVariable Long id, CommentDto commentNew) {
+        // TODO fix it
+        commentService.save(id, commentNew.getText());
+        return "redirect:/book/{id}";
     }
 
     @GetMapping("/book/{id}/edit")

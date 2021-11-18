@@ -38,8 +38,22 @@
         <td th:text="${book.authors}">Authors</td>
         <td th:text="${book.genres}">Genres</td>
         <td>
-            <a th:href="@{/book/{id}/edit(id = ${book.id})}" href="bookEdit.html">Edit</a>
+            <form action="#" th:action="@{/book/{id}(id=${book.id})}" th:method="get">
+                <button type="submit" class="btn">
+                    Open
+                </button>
+            </form>
         </td>
+        <td>
+            <form action="#" th:action="@{/book/{id}/edit(id=${book.id})}" th:method="get">
+                <button type="submit" class="btn">
+                    Edit
+                </button>
+            </form>
+        </td>
+<!--        <td>-->
+<!--            <a th:href="@{/book/{id}/edit(id = ${book.id})}" href="bookEdit.html">Edit</a>-->
+<!--        </td>-->
         <td>
             <form action="#" th:action="@{/book/{id}(id=${book.id})}" th:method="delete">
                 <button type="submit" class="btn">
