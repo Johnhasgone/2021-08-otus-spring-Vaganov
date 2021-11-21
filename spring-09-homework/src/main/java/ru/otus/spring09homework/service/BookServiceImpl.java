@@ -62,6 +62,9 @@ public class BookServiceImpl implements BookService {
 
 
     private List<Genre> getGenres(String genres) {
+        if (genres == null) {
+            return List.of();
+        }
         List<String> genreNames = Arrays.stream(genres.split(","))
                 .map(String::trim)
                 .collect(Collectors.toList());
@@ -77,6 +80,9 @@ public class BookServiceImpl implements BookService {
     }
 
     private List<Author> getAuthors(String authors) {
+        if (authors == null) {
+            return List.of();
+        }
         List<String> authorNames = Arrays.stream(authors.split(","))
                 .map(String::trim)
                 .collect(Collectors.toList());
@@ -89,12 +95,6 @@ public class BookServiceImpl implements BookService {
             authorList.add(author);
         }
         return authorList;
-    }
-
-    @Override
-    @Transactional
-    public void updateNameById(Long id, String title) {
-        bookRepository.updateNameById(id, title);
     }
 
     @Override

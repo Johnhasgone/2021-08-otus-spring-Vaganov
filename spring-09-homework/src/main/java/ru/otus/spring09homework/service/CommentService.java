@@ -1,6 +1,5 @@
 package ru.otus.spring09homework.service;
 
-import ru.otus.spring09homework.dto.BookDto;
 import ru.otus.spring09homework.dto.CommentDto;
 
 import java.util.List;
@@ -15,8 +14,6 @@ public interface CommentService {
     List<CommentDto> findAll();
 
     CommentDto save(Long bookId, String text);
-
-    void updateTextById(Long id, String text);
 
     void deleteById(Long id);
 

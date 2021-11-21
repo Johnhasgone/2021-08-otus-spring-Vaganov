@@ -49,12 +49,6 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     @Transactional
-    public void updateNameById(Long id, String name) {
-        repository.updateNameById(id, name);
-    }
-
-    @Override
-    @Transactional
     public void deleteById(Long id) {
         repository.deleteById(id);
     }

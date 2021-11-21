@@ -2,56 +2,43 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>Edit book</title>
-    <style type="text/css">
-        body {
-            padding: 50px;
-        }
-
-        label {
-            display: inline-block;
-            width: 100px;
-        }
-
-        input:read-only {
-            background: lightgray;
-        }
-
-        .row {
-            margin-top: 10px;
-        }
-    </style>
+    <title>Редактировать информацию о книге</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/stylesheet.css}">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div class="container">
+        <h1 class="main-title">Редактировать информацию о книге</h1>
 
-<!-- Book edition -->
-<form id="edit-form" th:action="@{/book/edit}" th:method="post" action="bookEdit.html">
-    <h1>Book Edit:</h1>
+        <form id="edit-form" th:action="@{/book/edit}" th:method="post" action="bookEdit.html">
+            <div class="book-info">
+                <div class="row">
+                    <label class="book-label" for="id-input"><b>ID:</b></label>
+                    <input class="book-edit-input" id="id-input" name="id" type="text" readonly="readonly" th:value="${book.id}" value="1"/>
+                </div>
 
-    <div class="row">
-        <label for="id-input">ID:</label>
-        <input id="id-input" name="id" type="text" readonly="readonly" th:value="${book.id}" value="1"/>
+                <div class="row">
+                    <label class="book-label" for="title-input"><b>Название:</b></label>
+                    <input class="book-edit-input" id="title-input" name="title" type="text" th:value="${book.title}" value="John Doe"/>
+                </div>
+
+                <div class="row">
+                    <label class="book-label" for="author-input"><b>Автор(ы):</b></label>
+                    <input class="book-edit-input" id="author-input" name="authors" type="text" th:value="${book.authors}" value="John Doe"/>
+                </div>
+
+                <div class="row">
+                    <label class="book-label" for="genre-input"><b>Жанр(ы):</b></label>
+                    <input class="book-edit-input" id="genre-input" name="genres" type="text" th:value="${book.genres}" value="John Doe"/>
+                </div>
+            </div>
+            <div>
+                <button class="edit-button" type="submit">Сохранить</button>
+            </div>
+        </form>
     </div>
-
-    <div class="row">
-        <label for="title-input">Title:</label>
-        <input id="title-input" name="title" type="text" th:value="${book.title}" value="John Doe"/>
-    </div>
-
-    <div class="row">
-        <label for="author-input">Authors:</label>
-        <input id="author-input" name="authors" type="text" th:value="${book.authors}" value="John Doe"/>
-    </div>
-
-    <div class="row">
-        <label for="genre-input">Genres:</label>
-        <input id="genre-input" name="genres" type="text" th:value="${book.genres}" value="John Doe"/>
-    </div>
-
-    <div class="row">
-        <button type="submit">Save</button>
-    </div>
-</form>
-
 </body>
 </html>

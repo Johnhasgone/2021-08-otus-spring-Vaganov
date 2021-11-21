@@ -53,12 +53,6 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     @Transactional
-    public void updateNameById(Long id, String name) {
-        genreRepository.updateNameById(id, name);
-    }
-
-    @Override
-    @Transactional
     public void deleteById(Long id) {
         genreRepository.deleteById(id);
     }

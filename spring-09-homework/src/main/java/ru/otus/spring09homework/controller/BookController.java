@@ -4,10 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import ru.otus.spring09homework.dto.BookDto;
 import ru.otus.spring09homework.dto.CommentDto;
 import ru.otus.spring09homework.service.BookService;
@@ -40,13 +37,14 @@ public class BookController {
         BookDto book = bookService.findById(id)
                 .orElseThrow(() -> new EmptyResultDataAccessException("Не найдена книга с id " + id, 1));
         List<CommentDto> comments = commentService.findByBookId(id);
-        model.addAllAttributes(Map.of("book", book, "comments", comments, "commentNew", new CommentDto()));
+        model.addAttribute("book", book);
+        model.addAttribute("comments", comments);
+        model.addAttribute("commentNew", new CommentDto());
         return "bookOpen";
     }
 
     @PostMapping("/book/{id}/comment")
-    public String bookAddComment(Model model, @PathVariable Long id, CommentDto commentNew) {
-        // TODO fix it
+    public String bookAddComment(@PathVariable Long id, CommentDto commentNew) {
         commentService.save(id, commentNew.getText());
         return "redirect:/book/{id}";
     }

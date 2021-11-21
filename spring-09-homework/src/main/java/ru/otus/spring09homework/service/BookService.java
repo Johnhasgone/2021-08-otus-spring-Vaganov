@@ -15,8 +15,6 @@ public interface BookService {
 
     BookDto save(BookDto bookDto);
 
-    void updateNameById(Long id, String title);
-
     void deleteById(Long id);
 
     boolean existsById(Long id);
