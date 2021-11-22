@@ -5,8 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.otus.spring09homework.dto.BookDto;
-import ru.otus.spring09homework.dto.CommentDto;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -32,8 +30,7 @@ class BookControllerTest {
 
     @Test
     void bookAddCommentTest() throws Exception {
-        mvc.perform(post("/book/1/comment")
-                .flashAttr("commentNew", new CommentDto(null, "comment")))
+        mvc.perform(post("/book/1/comment"))
                 .andExpect(status().is3xxRedirection());
 
     }
@@ -52,17 +49,14 @@ class BookControllerTest {
 
     @Test
     void bookCreateTest() throws Exception {
-        mvc.perform(post("/book/create")
-                        .flashAttr("book", new BookDto(null, "title", "author", "genre"))
-                )
+        mvc.perform(post("/book/create"))
                 .andExpect(status().is3xxRedirection());
     }
 
     @Test
     void bookEditTest() throws Exception {
-        mvc.perform(post("/book/edit")
-                .flashAttr("book", new BookDto(1L, "title", "author", "genre")))
-        .andExpect(status().is3xxRedirection());
+        mvc.perform(post("/book/edit"))
+                .andExpect(status().is3xxRedirection());
 
     }
 
