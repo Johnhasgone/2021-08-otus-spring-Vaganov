@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Информация о книге</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/stylesheet.css}">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1 class="main-title">Информация о книге</h1>
+
+        <table class="book-info">
+            <tr class="row">
+                <td class="title"><b>ID:</b></td>
+                <td class="value" th:text="${book.id}">1</td>
+            </tr>
+            <tr class="row">
+                <td class="title"><b>Название:</b></td>
+                <td class="value" th:text="${book.title}">title</td>
+            </tr>
+            <tr class="row">
+                <td class="title"><b>Автор(ы):</b></td>
+                <td class="value" th:text="${book.authors}">authors</td>
+            </tr>
+            <tr class="row">
+                <td class="title"><b>Жанр(ы):</b></td>
+                <td class="value" th:text="${book.genres}">genres</td>
+            </tr>
+        </table>
+
+        <div class="comments">
+            <h2>Комментарии:</h2>
+            <div class="add-comment">
+                <form action="#" th:action="@{/book/{id}/comment(id=${book.id})}" th:method="post">
+                    <div class="row">
+                        <label for="text-input">Добавить комментарий:</label>
+                        <input class="add-comment-input" id="text-input" name="text" type="text" th:value="${commentNew.text}" value="John Doe"/>
+                        <button class="comment-button" type="submit">
+                            Добавить
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="comments" th:each="comment : ${comments}">
+                <div class="comment">
+                    <p><b>Аноним:</b></p>
+                    <p th:text="${comment.text}">text</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+</body>
+</html>
