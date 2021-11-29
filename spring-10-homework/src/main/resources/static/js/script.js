@@ -1,43 +1,76 @@
-//let tbody = document.getElementsByTagName('tbody');
 const header = document.getElementById('title');
 const content = document.getElementById('content')
 
 getAllBooks();
 
 function getAllBooks() {
+    const tbodyOld = document.getElementsByTagName('tbody')[0];
+    const tbodyNew = document.createElement('tbody');
     fetch('/rest/book')
         .then(response => response.json())
         .then(books => books.forEach(function (book) {
-            $('tbody').append(`
-                    <tr>
-                        <td>${book.id}</td>
-                        <td>${book.title}</td>
-                        <td>${book.authors}</td>
-                        <td>${book.genres}</td>
-                        <td>
-                            <button type="button" class = "action-button" id="open-button" value=${book.id}>
-                                Открыть
-                            </button>
-                        </td>
-                        <td>
-                            <button type="button" class = "action-button" id="edit-button" value=${book.id}>
-                                Изменить
-                            </button>
-                        </td>
-                        <td>
-                            <button type="button" class = "action-button" id="delete-button" value=${book.id}>
-                                Удалить
-                            </button>
-                        </td>
-                    </tr>
-                `)
+            const tr = document.createElement('tr');
+
+            const id = document.createElement('td');
+            id.innerHTML = book.id;
+            const title = document.createElement('td');
+            title.innerHTML = book.title;
+            const authors = document.createElement('td');
+            authors.innerHTML = book.authors;
+            const genres = document.createElement('td');
+            genres.innerHTML = book.genres;
+
+            const openButton = document.createElement('button');
+            openButton.className = 'action-button';
+            openButton.id = 'open-button';
+            openButton.value = book.id;
+            openButton.innerText = 'Открыть';
+
+            const editButton = document.createElement('button');
+            editButton.className = 'action-button';
+            editButton.id = 'edit-button';
+            editButton.value = book.id;
+            editButton.innerText = 'Изменить';
+
+            const deleteButton = document.createElement('button');
+            deleteButton.className = 'action-button';
+            deleteButton.id = 'delete-button';
+            deleteButton.value = book.id;
+            deleteButton.innerText = 'Удалить';
+
+            tr.append(id, title, authors, genres, openButton, editButton, deleteButton);
+            tbodyNew.append(tr);
+            // tbody.append(`
+            //         <tr>
+            //             <td>${book.id}</td>
+            //             <td>${book.title}</td>
+            //             <td>${book.authors}</td>
+            //             <td>${book.genres}</td>
+            //             <td>
+            //                 <button type="button" class = "action-button" id="open-button" value=${book.id}>
+            //                     Открыть
+            //                 </button>
+            //             </td>
+            //             <td>
+            //                 <button type="button" class = "action-button" id="edit-button" value=${book.id}>
+            //                     Изменить
+            //                 </button>
+            //             </td>
+            //             <td>
+            //                 <button type="button" class = "action-button" id="delete-button" value=${book.id}>
+            //                     Удалить
+            //                 </button>
+            //             </td>
+            //         </tr>
+            //     `)
         }));
+    document.getElementsByTagName('table')[0].replaceChild(tbodyNew, tbodyOld);
 }
 
 
-document.addEventListener('click',e => {
-    switch (e) {
-        case (e.target && e.target.id === 'open-button'):
+document.addEventListener('click',async e => {
+    switch (e.target.id) {
+        case 'open-button':
             fetch('/rest/book/' + e.target.value)
                 .then(response => response.json())
                 .then(book => {
@@ -63,8 +96,8 @@ document.addEventListener('click',e => {
                         </table>`;
                 });
             break;
-        case (e.target && e.target.id === 'delete-button'):
-            fetch('/rest/book', {method: 'DELETE'});
+        case 'delete-button':
+            await fetch('/rest/book/' + e.target.value, {method: 'DELETE'});
             getAllBooks();
             break;
     }
