@@ -5,7 +5,7 @@ const bookEditForm =
             <div class="book-info">
                 
                 <div class="row">
-                    <label class="book-label" for="id-input"><b>Название:</b></label>
+                    <label class="book-label" for="id-input"><b>ID:</b></label>
                     <input class="book-edit-input" id="id-input" readonly name="id" type="text"/>
                 </div>
                 
@@ -108,7 +108,15 @@ function getAllBooks() {
     newContent.append(backDiv);
 
     const table = document.createElement('table');
+    table.className = 'books';
     const head = document.createElement('thead');
+    head.innerHTML =
+        `<tr>
+            <th>ID</th>
+            <th>Название</th>
+            <th>Автор(ы)</th>
+            <th>Жанр(ы)</th>
+        </tr>`;
     const tbody = document.createElement('tbody');
 
     table.append(head);
