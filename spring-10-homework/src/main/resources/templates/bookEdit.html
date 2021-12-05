@@ -13,7 +13,7 @@
     <div class="container">
         <h1 class="main-title">Редактировать информацию о книге</h1>
 
-        <form id="edit-form" th:action="@{/book/edit}" th:method="post" action="bookEdit.html">
+        <form id="edit-form" onsubmit="editBook()">
             <div class="book-info">
                 <div class="row">
                     <label class="book-label" for="id-input"><b>ID:</b></label>

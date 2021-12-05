@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>Список книг</title>
+    <title>Библиотека</title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/stylesheet.css}">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300&display=swap" rel="stylesheet">
@@ -15,27 +15,8 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="main-title" id="title">Список книг</h1>
+        <h1 class="main-title" id="title">Библиотека</h1>
         <div id="content">
-            <div class="book-add">
-                <form action="#" th:action="@{/book/create}" th:method="get">
-                    <button type="submit" class="start-page-button">
-                        Добавить книгу
-                    </button>
-                </form>
-            </div>
-
-            <table class="books">
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Название</th>
-                    <th>Автор(ы)</th>
-                    <th>Жанр(ы)</th>
-                </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
         </div>
     </div>
 <script th:src="@{/js/script.js}"></script>

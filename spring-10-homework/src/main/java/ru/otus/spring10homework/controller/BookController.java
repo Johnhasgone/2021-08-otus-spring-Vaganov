@@ -40,6 +40,11 @@ public class BookController {
         bookService.deleteById(id);
     }
 
+    @PostMapping("/rest/book/save")
+    public BookDto bookSave(@RequestBody BookDto book) {
+        return bookService.save(book);
+    }
+
 
 //    @PostMapping("/book/{id}/comment")
 //    public String bookAddComment(@PathVariable Long id, CommentDto commentNew) {
@@ -47,11 +52,7 @@ public class BookController {
 //        return "redirect:/book/{id}";
 //    }
 //
-//    @PostMapping("/book/create")
-//    public String bookCreate(BookDto book) {
-//        bookService.save(book);
-//        return "redirect:/book";
-//    }
+
 //
 //    @PostMapping("/book/edit")
 //    public String bookEdit(BookDto book) {

@@ -67,14 +67,16 @@ h2, .comment, .add-comment {
     width: 80px;
 }
 
-.book-add {
+.back-button {
     margin-bottom: 3rem;
 }
 
-.book-add-button {
+.page-button {
     font-family: "Roboto Slab", serif;
     font-size: 1.5rem;
     padding: 5px 5px;
+    margin: 5px 5px;
+    width: 300px;
 }
 
 td {

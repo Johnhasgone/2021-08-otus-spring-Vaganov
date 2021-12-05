@@ -26,7 +26,7 @@ public class PageController {
 
     @GetMapping("/book")
     public String bookListPage() {
-        return "bookList";
+        return "bookMain";
     }
 
 
