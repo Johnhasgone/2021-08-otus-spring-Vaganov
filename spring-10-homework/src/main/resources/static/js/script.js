@@ -80,6 +80,32 @@ async function getBookPage(event) {
     const newContent = createNewContentWithBackButton(getAllBooks);
     const tableDiv = document.createElement('div');
     const commentDiv = document.createElement('div');
+    const commentHeader = document.createComment('h2');
+    commentHeader.innerText = 'Комментарии';
+    const commentForm = document.createComment('form');
+
+    var f = document.createElement("form");
+    f.setAttribute('method',"post");
+    f.setAttribute('action',"submit.php");
+
+    var i = document.createElement("input"); //input element, text
+    i.setAttribute('type',"text");
+    i.setAttribute('name',"username");
+
+    var s = document.createElement("input"); //input element, Submit button
+    s.setAttribute('type',"submit");
+    s.setAttribute('value',"Submit");
+
+    f.appendChild(i);
+    f.appendChild(s);
+
+//and some more input elements here
+//and dont forget to add a submit button
+
+    document.getElementsByTagName('body')[0].appendChild(f);
+    commentDiv.append(commentForm);
+    commentDiv.append(commentHeader);
+    document.getE
 
     newContent.append(tableDiv);
 
@@ -125,14 +151,7 @@ async function getEditPage(event) {
 }
 
 async function getAllBooks() {
-    const newContent = document.createElement('div');
-    newContent.id = 'content';
-
-    const backDiv = document.createElement('div');
-    backDiv.className = 'back-button';
-    const backButton = createButton('page-button', 'back-button', null,'Назад', getStartPage);
-    backDiv.append(backButton);
-    newContent.append(backDiv);
+    const newContent = createNewContentWithBackButton(getStartPage);
 
     const table = document.createElement('table');
     table.className = 'books';
@@ -227,7 +246,7 @@ function createButton(className, id, value, innerText, eventOption) {
 
 async function deleteBook(event) {
     await fetch('/rest/book/' + event.target.value, {method: 'DELETE'});
-    getAllBooks();
+    await getAllBooks();
 }
 
 async function getBookInfo(event) {
