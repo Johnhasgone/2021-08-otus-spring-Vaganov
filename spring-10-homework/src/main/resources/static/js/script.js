@@ -79,62 +79,122 @@ function createNewContentWithBackButton(action) {
 async function getBookPage(event) {
     const newContent = createNewContentWithBackButton(getAllBooks);
     const tableDiv = document.createElement('div');
-    const commentDiv = document.createElement('div');
-    const commentHeader = document.createComment('h2');
+
+    const comments = document.createElement('div');
+    comments.className = 'comments';
+
+    const commentAdd = document.createElement('div');
+    commentAdd.className = 'add-comment';
+
+    const commentHeader = document.createElement('h2');
     commentHeader.innerText = 'Комментарии';
-    const commentForm = document.createComment('form');
 
-    var f = document.createElement("form");
-    f.setAttribute('method',"post");
-    f.setAttribute('action',"submit.php");
+    const commentForm = document.createElement('form');
+    commentForm.id = 'add-comment';
+    commentForm.method = 'post';
+    commentForm.action = '/rest/book/' + event.target.value + '/comment';
 
-    var i = document.createElement("input"); //input element, text
-    i.setAttribute('type',"text");
-    i.setAttribute('name',"username");
+    const label = document.createElement('label');
+    label.for = 'text-input';
+    label.innerText = 'Добавить комментарий';
 
-    var s = document.createElement("input"); //input element, Submit button
-    s.setAttribute('type',"submit");
-    s.setAttribute('value',"Submit");
+    const input = document.createElement('input');
+    input.className = 'add-comment-input';
+    input.id = 'text-input';
+    input.name = 'text';
+    input.type = 'text';
 
-    f.appendChild(i);
-    f.appendChild(s);
+    const commentButton = document.createElement('button');
+    commentButton.className = 'comment-button';
+    commentButton.type = 'submit';
+    commentButton.innerText = 'Добавить';
 
-//and some more input elements here
-//and dont forget to add a submit button
+    commentForm.append(label);
+    commentForm.append(input);
+    commentForm.append(commentButton);
 
-    document.getElementsByTagName('body')[0].appendChild(f);
-    commentDiv.append(commentForm);
-    commentDiv.append(commentHeader);
-    document.getE
+    commentAdd.appendChild(commentHeader);
+    commentAdd.appendChild(commentForm);
+
+    const commentList = document.createElement('div');
+    commentList.className = 'comment-list';
+
+    comments.append(commentAdd);
+    comments.append(commentList);
 
     newContent.append(tableDiv);
+    newContent.append(comments);
 
     await fetch('/rest/book/' + event.target.value)
         .then(response => response.json())
         .then(book => {
             tableDiv.innerHTML =
                 `<table class="book-info">
-                            <tr class="row">
-                                <td class="title"><b>ID:</b></td>
-                                <td>${book.id}</td>
-                            </tr>
-                            <tr class="row">
-                                <td class="title"><b>Название:</b></td>
-                                <td class="value">${book.title}</td>
-                            </tr>
-                            <tr class="row">
-                                <td class="title"><b>Автор(ы):</b></td>
-                                <td class="value">${book.authors}</td>
-                            </tr>
-                            <tr class="row">
-                                <td class="title"><b>Жанр(ы):</b></td>
-                                <td class="value">${book.genres}</td>
-                            </tr>
-                        </table>`;
+                    <tr class="row">
+                        <td class="title"><b>ID:</b></td>
+                        <td id="book-id">${book.id}</td>
+                    </tr>
+                    <tr class="row">
+                        <td class="title"><b>Название:</b></td>
+                        <td class="value">${book.title}</td>
+                    </tr>
+                    <tr class="row">
+                        <td class="title"><b>Автор(ы):</b></td>
+                        <td class="value">${book.authors}</td>
+                    </tr>
+                    <tr class="row">
+                        <td class="title"><b>Жанр(ы):</b></td>
+                        <td class="value">${book.genres}</td>
+                    </tr>
+                </table>`;
         });
+
+
 
     header.innerHTML = `Информация о книге`;
     setNewContent(newContent);
+    await getCommentList(event.target.value);
+    document.getElementById('add-comment').addEventListener('submit', handleAddCommentSubmit)
+}
+
+async function handleAddCommentSubmit(event) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const url = form.action;
+
+    try {
+        const formData = new FormData(form);
+        const responseData = await saveData({ url, formData });
+        console.log({ responseData });
+    } catch (error) {
+        console.error(error);
+    }
+    form.reset();
+    await getCommentList();
+}
+
+async function getCommentList() {
+    const commentListNew = document.createElement('div');
+    commentListNew.className = 'comment-list';
+    const bookId = document.getElementById('book-id').innerText;
+
+    await fetch('rest/book/' + bookId + '/comment')
+        .then(response => response.json())
+        .then(comments => comments.forEach(function (comment) {
+                const commentRow = document.createElement('div');
+                commentRow.className = 'comment';
+
+                const name = document.createElement('p');
+                name.innerHTML = '<strong>Аноним:</strong>';
+
+                const text = document.createElement('p');
+                text.innerText = comment.text;
+
+                commentRow.append(name, text);
+                commentListNew.append(commentRow);
+            }
+        ));
+    document.getElementsByClassName('comments')[0].replaceChild(commentListNew, document.getElementsByClassName('comment-list')[0])
 }
 
 async function getEditPage(event) {
@@ -202,7 +262,7 @@ async function handleSaveBookSubmit(event) {
 
     try {
         const formData = new FormData(form);
-        const responseData = await saveBook({ url, formData });
+        const responseData = await saveData({ url, formData });
 
         console.log({ responseData });
     } catch (error) {
@@ -211,7 +271,7 @@ async function handleSaveBookSubmit(event) {
     getStartPage();
 }
 
-async function saveBook({ url, formData }) {
+async function saveData({ url, formData }) {
     const plainFormData = Object.fromEntries(formData.entries());
     const formDataJsonString = JSON.stringify(plainFormData);
 

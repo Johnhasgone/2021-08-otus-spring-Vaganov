@@ -46,7 +46,7 @@
                 </form>
             </div>
 
-            <div class="comments" th:each="comment : ${comments}">
+            <div class="comment-list" th:each="comment : ${comments}">
                 <div class="comment">
                     <p><b>Аноним:</b></p>
                     <p th:text="${comment.text}">text</p>

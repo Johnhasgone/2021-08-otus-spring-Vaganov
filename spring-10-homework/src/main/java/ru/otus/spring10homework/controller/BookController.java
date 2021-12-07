@@ -45,20 +45,13 @@ public class BookController {
         return bookService.save(book);
     }
 
+    @PostMapping("/rest/book/{id}/comment")
+    public CommentDto bookAddComment(@PathVariable Long id, @RequestBody CommentDto commentNew) {
+        return commentService.save(id, commentNew.getText());
+    }
 
-//    @PostMapping("/book/{id}/comment")
-//    public String bookAddComment(@PathVariable Long id, CommentDto commentNew) {
-//        commentService.save(id, commentNew.getText());
-//        return "redirect:/book/{id}";
-//    }
-//
-
-//
-//    @PostMapping("/book/edit")
-//    public String bookEdit(BookDto book) {
-//        BookDto saved = bookService.save(book);
-//        return "redirect:/book";
-//    }
-//
-
+    @GetMapping("/rest/book/{id}/comment")
+    public List<CommentDto> getComments(@PathVariable Long id) {
+        return commentService.findByBookId(id);
+    }
 }
