@@ -1,5 +1,3 @@
-const header = document.getElementById('title');
-
 const bookEditForm =
     `<form id="edit-form" action = "/rest/book" method="post">
             <div class="book-info">
@@ -45,8 +43,8 @@ function getStartPage() {
 
     newContent.append(createDiv, listDiv);
 
-    header.innerHTML = 'Библиотека';
-    setNewContent(newContent);
+    setPageHeader('Библиотека');
+    setPageContent(newContent);
 }
 
 function getCreatePage() {
@@ -56,8 +54,8 @@ function getCreatePage() {
     formDiv.innerHTML = bookEditForm;
     newContent.append(formDiv);
 
-    header.innerText = 'Ввести информацию о книге';
-    setNewContent(newContent);
+    setPageHeader('Ввести информацию о книге');
+    setPageContent(newContent);
 
     document.getElementById('row-id').remove();
     document.getElementById('edit-form').addEventListener('submit', handleCreateBookSubmit);
@@ -100,8 +98,8 @@ async function getBookPage(event) {
 
     newContent.append(tableDiv, comments);
 
-    header.innerText = 'Информация о книге';
-    setNewContent(newContent);
+    setPageHeader('Информация о книге');
+    setPageContent(newContent);
     await getCommentList(event.target.value);
     document.getElementById('add-comment').addEventListener('submit', handleAddCommentSubmit)
 }
@@ -226,8 +224,8 @@ async function getEditPage(event) {
     formDiv.innerHTML = bookEditForm;
     newContent.append(formDiv);
 
-    header.innerText = 'Редактировать информацию о книге';
-    setNewContent(newContent);
+    setPageHeader('Редактировать информацию о книге');
+    setPageContent(newContent);
     await getBookInfo(event.target.value);
     document.getElementById('edit-form').addEventListener('submit', handleEditBookSubmit);
 }
@@ -279,8 +277,8 @@ async function getAllBooks() {
     table.append(tbody);
     newContent.append(table);
 
-    header.innerText = 'Список книг';
-    setNewContent(newContent);
+    setPageHeader('Список книг');
+    setPageContent(newContent);
 }
 
 async function handleCreateBookSubmit(event) {
@@ -342,7 +340,12 @@ async function getBookInfo(bookId) {
     ;
 }
 
-function setNewContent(newContent) {
+function setPageContent(newContent) {
     document.getElementById('container')
         .replaceChild(newContent, document.getElementById('content'));
+}
+
+function setPageHeader(text) {
+    const header = document.getElementById('title');
+    header.innerText = text;
 }
