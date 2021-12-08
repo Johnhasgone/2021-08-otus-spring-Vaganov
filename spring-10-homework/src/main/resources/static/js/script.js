@@ -1,7 +1,7 @@
 const header = document.getElementById('title');
 
 const bookEditForm =
-    `<form id="edit-form" action = "/rest/book/save">
+    `<form id="edit-form" action = "/rest/book" method="post">
             <div class="book-info">
                 
                 <div class="row" id="row-id">
@@ -33,20 +33,19 @@ getStartPage();
 
 function getStartPage() {
     const createDiv = document.createElement('div');
-    const bookCreateButton = createButton('page-button', 'create-button', null,'Добавить книгу', getCreatePage);
+    const bookCreateButton = createButton('page-button', null,'Добавить книгу', getCreatePage);
     createDiv.append(bookCreateButton);
 
     const listDiv = document.createElement('div');
-    const bookListButton = createButton('page-button', 'list-button', null, 'Список книг', getAllBooks);
+    const bookListButton = createButton('page-button', null, 'Список книг', getAllBooks);
     listDiv.append(bookListButton);
 
     const newContent = document.createElement('div');
-    newContent.id = "content";
+    newContent.id = 'content';
 
-    newContent.append(createDiv);
-    newContent.append(listDiv);
+    newContent.append(createDiv, listDiv);
 
-    header.innerHTML = "Библиотека";
+    header.innerHTML = 'Библиотека';
     setNewContent(newContent);
 }
 
@@ -57,10 +56,11 @@ function getCreatePage() {
     formDiv.innerHTML = bookEditForm;
     newContent.append(formDiv);
 
-    header.innerText = "Ввести информацию о книге";
+    header.innerText = 'Ввести информацию о книге';
     setNewContent(newContent);
+
     document.getElementById('row-id').remove();
-    document.getElementById('edit-form').addEventListener("submit", handleSaveBookSubmit);
+    document.getElementById('edit-form').addEventListener('submit', handleCreateBookSubmit);
 }
 
 function createNewContentWithBackButton(action) {
@@ -69,7 +69,7 @@ function createNewContentWithBackButton(action) {
 
     const backDiv = document.createElement('div');
     backDiv.className = 'back-button';
-    const backButton = createButton('page-button', 'back-button', null, 'Назад', action);
+    const backButton = createButton('page-button', null, 'Назад', action);
     backDiv.append(backButton);
     newContent.append(backDiv);
 
@@ -78,21 +78,39 @@ function createNewContentWithBackButton(action) {
 
 async function getBookPage(event) {
     const newContent = createNewContentWithBackButton(getAllBooks);
-    const tableDiv = document.createElement('div');
+    const tableDiv = await createBookPageTable(event.target.value);
 
     const comments = document.createElement('div');
     comments.className = 'comments';
 
-    const commentAdd = document.createElement('div');
-    commentAdd.className = 'add-comment';
-
     const commentHeader = document.createElement('h2');
     commentHeader.innerText = 'Комментарии';
 
+    const commentAdd = document.createElement('div');
+    commentAdd.className = 'add-comment';
+
+    const commentForm = createCommentForm(event.target.value);
+
+    commentAdd.append(commentForm);
+
+    const commentList = document.createElement('div');
+    commentList.className = 'comment-list';
+
+    comments.append(commentHeader, commentAdd, commentList);
+
+    newContent.append(tableDiv, comments);
+
+    header.innerText = 'Информация о книге';
+    setNewContent(newContent);
+    await getCommentList(event.target.value);
+    document.getElementById('add-comment').addEventListener('submit', handleAddCommentSubmit)
+}
+
+function createCommentForm(bookId) {
     const commentForm = document.createElement('form');
     commentForm.id = 'add-comment';
     commentForm.method = 'post';
-    commentForm.action = '/rest/book/' + event.target.value + '/comment';
+    commentForm.action = '/rest/book/' + bookId + '/comment';
 
     const label = document.createElement('label');
     label.for = 'text-input';
@@ -109,24 +127,21 @@ async function getBookPage(event) {
     commentButton.type = 'submit';
     commentButton.innerText = 'Добавить';
 
-    commentForm.append(label);
-    commentForm.append(input);
-    commentForm.append(commentButton);
+    commentForm.append(label, input, commentButton);
 
-    commentAdd.appendChild(commentHeader);
-    commentAdd.appendChild(commentForm);
+    return commentForm;
+}
 
-    const commentList = document.createElement('div');
-    commentList.className = 'comment-list';
+async function createBookPageTable(bookId) {
+    const tableDiv = document.createElement('div')
 
-    comments.append(commentAdd);
-    comments.append(commentList);
-
-    newContent.append(tableDiv);
-    newContent.append(comments);
-
-    await fetch('/rest/book/' + event.target.value)
-        .then(response => response.json())
+    await fetch('/rest/book/' + bookId)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Could not get data for book with id=' + bookId);
+            }
+            return response.json();
+        })
         .then(book => {
             tableDiv.innerHTML =
                 `<table class="book-info">
@@ -147,17 +162,19 @@ async function getBookPage(event) {
                         <td class="value">${book.genres}</td>
                     </tr>
                 </table>`;
-        });
+        })
+        .catch(err => console.log(err))
+    ;
 
-
-
-    header.innerHTML = `Информация о книге`;
-    setNewContent(newContent);
-    await getCommentList(event.target.value);
-    document.getElementById('add-comment').addEventListener('submit', handleAddCommentSubmit)
+    return tableDiv;
 }
 
 async function handleAddCommentSubmit(event) {
+    await handleFormSubmit(event);
+    await getCommentList();
+}
+
+async function handleFormSubmit(event) {
     event.preventDefault();
     const form = event.currentTarget;
     const url = form.action;
@@ -170,7 +187,6 @@ async function handleAddCommentSubmit(event) {
         console.error(error);
     }
     form.reset();
-    await getCommentList();
 }
 
 async function getCommentList() {
@@ -179,7 +195,12 @@ async function getCommentList() {
     const bookId = document.getElementById('book-id').innerText;
 
     await fetch('rest/book/' + bookId + '/comment')
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Could not get comments for book with id=' + bookId);
+            }
+            return response.json();
+        })
         .then(comments => comments.forEach(function (comment) {
                 const commentRow = document.createElement('div');
                 commentRow.className = 'comment';
@@ -192,8 +213,9 @@ async function getCommentList() {
 
                 commentRow.append(name, text);
                 commentListNew.append(commentRow);
-            }
-        ));
+            })
+        ).catch(err => console.error(err))
+    ;
     document.getElementsByClassName('comments')[0].replaceChild(commentListNew, document.getElementsByClassName('comment-list')[0])
 }
 
@@ -204,10 +226,10 @@ async function getEditPage(event) {
     formDiv.innerHTML = bookEditForm;
     newContent.append(formDiv);
 
-    header.innerHTML = `Редактировать информацию о книге`;
+    header.innerText = 'Редактировать информацию о книге';
     setNewContent(newContent);
-    await getBookInfo(event);
-    document.getElementById('edit-form').addEventListener("submit", handleSaveBookSubmit);
+    await getBookInfo(event.target.value);
+    document.getElementById('edit-form').addEventListener('submit', handleEditBookSubmit);
 }
 
 async function getAllBooks() {
@@ -228,7 +250,12 @@ async function getAllBooks() {
     table.append(head);
 
     await fetch('/rest/book')
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Could not get book data');
+            }
+            return response.json();
+        })
         .then(books => books.forEach(function (book) {
             const tr = document.createElement('tr');
 
@@ -241,34 +268,29 @@ async function getAllBooks() {
             const genres = document.createElement('td');
             genres.innerHTML = book.genres;
 
-            const openButton = createButton('action-button', 'open-button', book.id, 'Открыть', getBookPage);
-            const editButton = createButton('action-button', 'edit-button', book.id, 'Изменить', getEditPage);
-            const deleteButton = createButton('action-button', 'delete-button', book.id, 'Удалить', deleteBook);
+            const openButton = createButton('action-button', book.id, 'Открыть', getBookPage);
+            const editButton = createButton('action-button', book.id, 'Изменить', getEditPage);
+            const deleteButton = createButton('action-button', book.id, 'Удалить', deleteBook);
 
             tr.append(id, title, authors, genres, openButton, editButton, deleteButton);
             tbody.append(tr);
-        }));
-    table.appendChild(tbody);
+        })).catch(err => console.error(err))
+    ;
+    table.append(tbody);
     newContent.append(table);
 
     header.innerText = 'Список книг';
     setNewContent(newContent);
 }
 
-async function handleSaveBookSubmit(event) {
-    event.preventDefault();
-    const form = event.currentTarget;
-    const url = form.action;
-
-    try {
-        const formData = new FormData(form);
-        const responseData = await saveData({ url, formData });
-
-        console.log({ responseData });
-    } catch (error) {
-        console.error(error);
-    }
+async function handleCreateBookSubmit(event) {
+    await handleFormSubmit(event);
     getStartPage();
+}
+
+async function handleEditBookSubmit(event) {
+    await handleFormSubmit(event);
+    await getAllBooks();
 }
 
 async function saveData({ url, formData }) {
@@ -276,10 +298,10 @@ async function saveData({ url, formData }) {
     const formDataJsonString = JSON.stringify(plainFormData);
 
     const fetchOptions = {
-        method: "POST",
+        method: 'POST',
         headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
         },
         body: formDataJsonString,
     };
@@ -294,10 +316,9 @@ async function saveData({ url, formData }) {
     return response.json();
 }
 
-function createButton(className, id, value, innerText, eventOption) {
+function createButton(className, value, innerText, eventOption) {
     const button = document.createElement('button');
     button.className = className;
-    button.id = id;
     button.value = value;
     button.innerText = innerText;
     button.addEventListener('click', eventOption);
@@ -309,15 +330,16 @@ async function deleteBook(event) {
     await getAllBooks();
 }
 
-async function getBookInfo(event) {
-    await fetch('/rest/book/' + event.target.value)
+async function getBookInfo(bookId) {
+    await fetch('/rest/book/' + bookId)
         .then(response => response.json())
         .then(book => {
             document.getElementById('id-input').value = book.id;
             document.getElementById('title-input').value = book.title;
             document.getElementById('author-input').value = book.authors;
             document.getElementById('genre-input').value = book.genres;
-        });
+        })
+    ;
 }
 
 function setNewContent(newContent) {

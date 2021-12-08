@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface BookService {
 
-    Optional<BookDto> findById(Long id);
+    BookDto findById(Long id);
 
     List<BookDto> findByTitle(String title);
 

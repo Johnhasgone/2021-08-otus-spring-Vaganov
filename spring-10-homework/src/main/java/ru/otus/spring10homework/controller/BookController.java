@@ -30,18 +30,17 @@ public class BookController {
     }
 
     @GetMapping("/rest/book/{id}")
-    public BookDto bookPage(@PathVariable Long id) {
-        return bookService.findById(id)
-                .orElseThrow(() -> new EmptyResultDataAccessException("Не найдена книга с id " + id, 1));
+    public BookDto getBook(@PathVariable Long id) {
+        return bookService.findById(id);
     }
 
     @DeleteMapping("/rest/book/{id}")
-    public void bookDelete(@PathVariable Long id) {
+    public void deleteBook(@PathVariable Long id) {
         bookService.deleteById(id);
     }
 
-    @PostMapping("/rest/book/save")
-    public BookDto bookSave(@RequestBody BookDto book) {
+    @PostMapping("/rest/book")
+    public BookDto saveBook(@RequestBody BookDto book) {
         return bookService.save(book);
     }
 

@@ -60,8 +60,8 @@ class BookServiceImplTest {
         );
 
         when(bookRepository.findById(any())).thenReturn(Optional.of(book));
-        Optional<BookDto> actualBook = bookService.findById(FIRST_BOOK_ID);
-        assertThat(actualBook).isPresent().get().usingRecursiveComparison().isEqualTo(expectedBookDto);
+        BookDto actualBook = bookService.findById(FIRST_BOOK_ID);
+        assertThat(actualBook).usingRecursiveComparison().isEqualTo(expectedBookDto);
     }
 
     @DisplayName("возвращать ожидаемую книгу по названию")

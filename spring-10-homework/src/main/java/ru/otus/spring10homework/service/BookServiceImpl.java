@@ -1,6 +1,7 @@
 package ru.otus.spring10homework.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.spring10homework.dao.BookRepository;
@@ -31,8 +32,9 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<BookDto> findById(Long id) {
-        return Optional.ofNullable(mapper.toDto(bookRepository.findById(id).orElse(null)));
+    public BookDto findById(Long id) {
+        return mapper.toDto(bookRepository.findById(id)
+                .orElseThrow(() -> new EmptyResultDataAccessException("Не найдена книга с id " + id, 1)));
     }
 
     @Override
