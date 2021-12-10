@@ -1,9 +1,6 @@
 package ru.otus.spring10homework.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.otus.spring10homework.dto.BookDto;
 import ru.otus.spring10homework.dto.CommentDto;
@@ -12,14 +9,14 @@ import ru.otus.spring10homework.service.CommentService;
 
 import java.util.List;
 
-@RestController
-public class BookController {
+@org.springframework.web.bind.annotation.RestController
+public class RestController {
 
     private final BookService bookService;
     private final CommentService commentService;
 
     @Autowired
-    public BookController(BookService bookService, CommentService commentService) {
+    public RestController(BookService bookService, CommentService commentService) {
         this.bookService = bookService;
         this.commentService = commentService;
     }

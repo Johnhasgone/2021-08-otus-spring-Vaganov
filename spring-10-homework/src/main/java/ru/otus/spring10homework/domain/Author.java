@@ -1,6 +1,5 @@
 package ru.otus.spring10homework.domain;
 
-import com.googlecode.jmapper.annotations.JGlobalMap;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,7 +9,6 @@ import javax.persistence.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@JGlobalMap
 @Entity
 @Table(name = "author")
 public class Author {

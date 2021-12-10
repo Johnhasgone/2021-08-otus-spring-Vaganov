@@ -1,22 +1,20 @@
 package ru.otus.spring10homework.mapper;
 
-import com.googlecode.jmapper.JMapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Component;
 import ru.otus.spring10homework.domain.Author;
 import ru.otus.spring10homework.dto.AuthorDto;
 
 @Component
-public class AuthorMapper implements Mapper<Author, AuthorDto>{
-    private static final JMapper<AuthorDto, Author> mapperToDto = new JMapper<>(AuthorDto.class, Author.class);
-    private static final JMapper<Author, AuthorDto> mapperToEntity = new JMapper<>(Author.class, AuthorDto.class);
+@org.mapstruct.Mapper
+public interface AuthorMapper extends Mapper<Author, AuthorDto> {
+
+    AuthorMapper INSTANCE = Mappers.getMapper(AuthorMapper.class);
 
     @Override
-    public AuthorDto toDto(Author entity) {
-        return mapperToDto.getDestination(entity);
-    }
+    AuthorDto toDto(Author entity);
 
     @Override
-    public Author toEntity(AuthorDto dto) {
-        return mapperToEntity.getDestination(dto);
-    }
+    Author toEntity(AuthorDto dto);
 }

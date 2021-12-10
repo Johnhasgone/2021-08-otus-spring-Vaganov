@@ -1,21 +1,37 @@
 package ru.otus.spring10homework.mapper;
 
-import com.googlecode.jmapper.JMapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Component;
+import ru.otus.spring10homework.domain.Author;
 import ru.otus.spring10homework.domain.Book;
+import ru.otus.spring10homework.domain.Genre;
 import ru.otus.spring10homework.dto.BookDto;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Component
-public class BookMapper implements Mapper<Book, BookDto>{
-    private static final JMapper<BookDto, Book> mapperToDto = new JMapper<>(BookDto.class, Book.class);
+@org.mapstruct.Mapper
+public interface BookMapper extends Mapper<Book, BookDto>{
+
+    BookMapper INSTANCE = Mappers.getMapper(BookMapper.class);
 
     @Override
-    public BookDto toDto(Book entity) {
-        return mapperToDto.getDestination(entity);
+    BookDto toDto(Book entity);
+
+    default String conversionAuthor(List<Author> authors) {
+        return authors.stream()
+                .map(Author::getName)
+                .collect(Collectors.joining(", "));
+    }
+
+    default String conversionGenre(List<Genre> genres) {
+        return genres.stream()
+                .map(Genre::getName)
+                .collect(Collectors.joining(", "));
     }
 
     @Override
-    public Book toEntity(BookDto dto) {
-        throw new UnsupportedOperationException();
-    }
+    Book toEntity(BookDto dto);
 }

@@ -1,22 +1,19 @@
 package ru.otus.spring10homework.mapper;
 
-import com.googlecode.jmapper.JMapper;
+import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Component;
 import ru.otus.spring10homework.domain.Comment;
 import ru.otus.spring10homework.dto.CommentDto;
 
 @Component
-public class CommentMapper implements Mapper<Comment, CommentDto>{
-    private static final JMapper<CommentDto, Comment> mapperToDto = new JMapper<>(CommentDto.class, Comment.class);
-    private static final JMapper<Comment, CommentDto> mapperToEntity = new JMapper<>(Comment.class, CommentDto.class);
+@org.mapstruct.Mapper
+public interface CommentMapper extends Mapper<Comment, CommentDto>{
+    CommentMapper INSTANCE = Mappers.getMapper(CommentMapper.class);
+
 
     @Override
-    public CommentDto toDto(Comment entity) {
-        return mapperToDto.getDestination(entity);
-    }
+    CommentDto toDto(Comment entity);
 
     @Override
-    public Comment toEntity(CommentDto dto) {
-        return mapperToEntity.getDestination(dto);
-    }
+    Comment toEntity(CommentDto dto);
 }

@@ -1,22 +1,17 @@
 package ru.otus.spring10homework.mapper;
 
-import com.googlecode.jmapper.JMapper;
+import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Component;
 import ru.otus.spring10homework.domain.Genre;
 import ru.otus.spring10homework.dto.GenreDto;
 
 @Component
-public class GenreMapper implements Mapper<Genre, GenreDto>{
-    private static final JMapper<GenreDto, Genre> mapperToDto = new JMapper<>(GenreDto.class, Genre.class);
-    private static final JMapper<Genre, GenreDto> mapperToEntity = new JMapper<>(Genre.class, GenreDto.class);
+public interface GenreMapper extends Mapper<Genre, GenreDto>{
+    GenreMapper INSTANCE = Mappers.getMapper(GenreMapper.class);
 
     @Override
-    public GenreDto toDto(Genre entity) {
-        return mapperToDto.getDestination(entity);
-    }
+    GenreDto toDto(Genre entity);
 
     @Override
-    public Genre toEntity(GenreDto dto) {
-        return mapperToEntity.getDestination(dto);
-    }
+    Genre toEntity(GenreDto dto);
 }

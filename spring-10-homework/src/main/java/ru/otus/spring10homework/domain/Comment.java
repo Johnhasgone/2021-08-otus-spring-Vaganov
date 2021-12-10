@@ -1,6 +1,5 @@
 package ru.otus.spring10homework.domain;
 
-import com.googlecode.jmapper.annotations.JGlobalMap;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +11,6 @@ import javax.persistence.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@JGlobalMap(excluded = {"book"})
 @Entity
 @Table(name = "comment")
 public class Comment {
