@@ -17,7 +17,7 @@ public interface AuthorService {
 
     void updateNameById(String id, String name);
 
-    boolean deleteById(String id);
+    void deleteById(String id);
 
     boolean existsById(String id);
 }

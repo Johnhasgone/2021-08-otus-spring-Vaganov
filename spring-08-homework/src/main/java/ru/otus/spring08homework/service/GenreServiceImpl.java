@@ -1,6 +1,8 @@
 package ru.otus.spring08homework.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.spring08homework.dao.BookRepository;
@@ -69,10 +71,10 @@ public class GenreServiceImpl implements GenreService {
     public boolean deleteById(String id) {
         Genre genre = genreRepository.findById(id).orElse(null);
         if (genre == null) {
-            return false;
+            throw new EmptyResultDataAccessException("жанр не найден", 1);
         }
         if (!bookRepository.findByGenresContaining(genre).isEmpty()) {
-            return false;
+            throw new DataIntegrityViolationException("удаление отклонено - в базе имеются книги c указанным жанром");
         }
         genreRepository.deleteById(id);
         return true;

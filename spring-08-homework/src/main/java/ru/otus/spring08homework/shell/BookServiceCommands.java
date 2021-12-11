@@ -1,8 +1,11 @@
 package ru.otus.spring08homework.shell;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
+import ru.otus.spring08homework.domain.Book;
 import ru.otus.spring08homework.dto.AuthorDto;
 import ru.otus.spring08homework.dto.BookDto;
 import ru.otus.spring08homework.dto.CommentDto;
@@ -43,7 +46,7 @@ public class BookServiceCommands {
     @ShellMethod(value = "getting book by id", key = {"book-get"})
     public String getBookById(String id) {
         Optional<BookDto> book = bookService.findById(id);
-        return book.isPresent() ? book.get().toString() : "книга не найдена";
+        return book.map(BookDto::toString).orElse("книга не найдена");
     }
 
     @ShellMethod(value = "getting all books", key = {"book-get-all"})
@@ -104,7 +107,7 @@ public class BookServiceCommands {
     @ShellMethod(value = "get comment by id", key = {"comment-get"})
     public String getCommentById(String id) {
         Optional<CommentDto> comment =  commentService.findById(id);
-        return comment.isPresent() ? comment.get().toString() : "Комментарий не найден";
+        return comment.map(CommentDto::toString).orElse("Комментарий не найден");
     }
 
     @ShellMethod(value = "deleting comment by id", key = {"comment-delete"})
@@ -128,7 +131,7 @@ public class BookServiceCommands {
     @ShellMethod(value = "getting author by id", key = {"author-get"})
     public String getAuthorById(String id) {
         Optional<AuthorDto> author = authorService.findById(id);
-        return author.isPresent() ? author.get().toString() : "автор не найден";
+        return author.map(AuthorDto::toString).orElse("автор не найден");
     }
 
     @ShellMethod(value = "getting all authors", key = {"author-get-all"})
@@ -157,20 +160,18 @@ public class BookServiceCommands {
 
     @ShellMethod(value = "deleting author", key = {"author-delete"})
     public String deleteAuthor(String id) {
-        if (!authorService.existsById(id)) {
-            return "автор не найден";
+        try {
+            authorService.deleteById(id);
+            return "автор удален";
+        } catch (EmptyResultDataAccessException | DataIntegrityViolationException e) {
+            return e.getMessage();
         }
-        if (!bookService.findByAuthorsContaining(id).isEmpty()) {
-            return "удаление отклонено - в базе имеются книги автора";
-        }
-        authorService.deleteById(id);
-        return "автор удален";
     }
 
     @ShellMethod(value = "getting genre by id", key = {"genre-get"})
     public String getGenreById(String id) {
         Optional<GenreDto> genre = genreService.findById(id);
-        return genre.isPresent() ? genre.get().toString() : "жанр не найден";
+        return genre.map(GenreDto::toString).orElse("жанр не найден");
     }
 
     @ShellMethod(value = "getting all genres", key = {"genre-get-all"})
@@ -199,13 +200,11 @@ public class BookServiceCommands {
 
     @ShellMethod(value = "deleting genre", key = {"genre-delete"})
     public String deleteGenre(String id) {
-        if (!genreService.existsById(id)) {
-            return "жанр не найден";
+        try {
+            genreService.deleteById(id);
+            return "жанр удален";
+        } catch (EmptyResultDataAccessException | DataIntegrityViolationException e) {
+            return e.getMessage();
         }
-        if (!bookService.findByGenresContaining(id).isEmpty()) {
-            return "удаление отклонено - в базе имеются книги c указанным жанром";
-        }
-        genreService.deleteById(id);
-        return "жанр удален";
     }
 }

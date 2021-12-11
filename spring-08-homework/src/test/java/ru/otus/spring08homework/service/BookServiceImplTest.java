@@ -46,15 +46,15 @@ class BookServiceImplTest {
 
 
     @Autowired
-    BookService bookService;
+    private BookService bookService;
     @MockBean
-    BookRepository bookRepository;
+    private BookRepository bookRepository;
     @MockBean
-    AuthorRepository authorRepository;
+    private AuthorRepository authorRepository;
     @MockBean
-    GenreRepository genreRepository;
+    private GenreRepository genreRepository;
     @MockBean
-    CommentRepository commentRepository;
+    private CommentRepository commentRepository;
 
 
     @DisplayName("возвращать ожидаемую книгу по ID")

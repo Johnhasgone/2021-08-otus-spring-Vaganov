@@ -1,6 +1,8 @@
 package ru.otus.spring08homework.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.spring08homework.dao.AuthorRepository;
@@ -62,16 +64,15 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     @Transactional
-    public boolean deleteById(String id) {
+    public void deleteById(String id) {
         Author author = authorRepository.findById(id).orElse(null);
         if (author == null) {
-            return false;
+            throw new EmptyResultDataAccessException("автор не найден", 1);
         }
         if (!bookRepository.findByAuthorsContaining(author).isEmpty()) {
-            return false;
+            throw new DataIntegrityViolationException("удаление отклонено - в базе имеются книги автора");
         }
         authorRepository.deleteById(id);
-        return true;
     }
 
     @Override
