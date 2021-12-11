@@ -42,7 +42,7 @@ public class RestController {
     }
 
     @PostMapping("/rest/book/{id}/comment")
-    public CommentDto bookAddComment(@PathVariable Long id, @RequestBody CommentDto commentNew) {
+    public CommentDto addComment(@PathVariable Long id, @RequestBody CommentDto commentNew) {
         return commentService.save(id, commentNew.getText());
     }
 

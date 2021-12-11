@@ -17,26 +17,25 @@ import java.util.stream.Collectors;
 public class AuthorServiceImpl implements AuthorService {
 
     private final AuthorRepository repository;
-    private final AuthorMapper mapper;
 
     @Override
     @Transactional(readOnly = true)
     public Optional<AuthorDto> findById(Long id) {
-        return Optional.ofNullable(mapper.toDto(repository.findById(id).orElse(null)));
+        return Optional.ofNullable(AuthorMapper.INSTANCE.toDto(repository.findById(id).orElse(null)));
     }
 
     @Override
     @Transactional(readOnly = true)
     public Optional<AuthorDto> findByName(String name) {
         List<Author> authors = repository.findByName(name);
-        return Optional.ofNullable(authors.isEmpty() ? null : mapper.toDto(authors.get(0)));
+        return Optional.ofNullable(authors.isEmpty() ? null : AuthorMapper.INSTANCE.toDto(authors.get(0)));
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<AuthorDto> findAll() {
         return repository.findAll().stream()
-                .map(mapper::toDto)
+                .map(AuthorMapper.INSTANCE::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -44,7 +43,7 @@ public class AuthorServiceImpl implements AuthorService {
     @Transactional
     public AuthorDto save(String authorName) {
         Author author = new Author(authorName);
-        return mapper.toDto(repository.save(author));
+        return AuthorMapper.INSTANCE.toDto(repository.save(author));
     }
 
     @Override

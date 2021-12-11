@@ -3,7 +3,6 @@ package ru.otus.spring10homework.service;
 import ru.otus.spring10homework.dto.BookDto;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface BookService {
 

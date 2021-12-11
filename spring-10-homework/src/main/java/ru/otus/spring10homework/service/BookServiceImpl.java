@@ -16,7 +16,6 @@ import ru.otus.spring10homework.mapper.GenreMapper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,16 +23,13 @@ import java.util.stream.Collectors;
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
-    private final BookMapper mapper;
     private final GenreService genreService;
     private final AuthorService authorService;
-    private final GenreMapper genreMapper;
-    private final AuthorMapper authorMapper;
 
     @Override
     @Transactional(readOnly = true)
     public BookDto findById(Long id) {
-        return mapper.toDto(bookRepository.findById(id)
+        return BookMapper.INSTANCE.toDto(bookRepository.findById(id)
                 .orElseThrow(() -> new EmptyResultDataAccessException("Не найдена книга с id " + id, 1)));
     }
 
@@ -41,7 +37,7 @@ public class BookServiceImpl implements BookService {
     @Transactional(readOnly = true)
     public List<BookDto> findByTitle(String title) {
         return bookRepository.findByTitle(title).stream()
-                .map(mapper::toDto)
+                .map(BookMapper.INSTANCE::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -49,7 +45,7 @@ public class BookServiceImpl implements BookService {
     @Transactional(readOnly = true)
     public List<BookDto> findAll() {
         return bookRepository.findAll().stream()
-                .map(mapper::toDto)
+                .map(BookMapper.INSTANCE::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -59,7 +55,7 @@ public class BookServiceImpl implements BookService {
         List<Author> authors = getAuthors(bookDto.getAuthors());
         List<Genre> genres = getGenres(bookDto.getGenres());
         Book book = new Book(bookDto.getId(), bookDto.getTitle(), authors, genres);
-        return mapper.toDto(bookRepository.save(book));
+        return BookMapper.INSTANCE.toDto(bookRepository.save(book));
     }
 
 
@@ -72,9 +68,9 @@ public class BookServiceImpl implements BookService {
                 .collect(Collectors.toList());
         List<Genre> genreList = new ArrayList<>();
         for (String genreName : genreNames) {
-            Genre genre = genreMapper.toEntity(
+            Genre genre = GenreMapper.INSTANCE.toEntity(
                     genreService.findByName(genreName)
-                            .orElse(genreService.save(genreName))
+                            .orElseGet(() -> genreService.save(genreName))
             );
             genreList.add(genre);
         }
@@ -90,9 +86,9 @@ public class BookServiceImpl implements BookService {
                 .collect(Collectors.toList());
         List<Author> authorList = new ArrayList<>();
         for (String authorName : authorNames) {
-            Author author = authorMapper.toEntity(
+            Author author = AuthorMapper.INSTANCE.toEntity(
                     authorService.findByName(authorName)
-                            .orElse(authorService.save(authorName))
+                            .orElseGet(() -> authorService.save(authorName))
             );
             authorList.add(author);
         }

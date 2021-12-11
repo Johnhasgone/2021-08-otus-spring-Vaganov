@@ -19,20 +19,19 @@ import java.util.stream.Collectors;
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
-    private final CommentMapper commentMapper;
     private final BookRepository bookRepository;
 
     @Override
     @Transactional(readOnly = true)
     public Optional<CommentDto> findById(Long id) {
-        return Optional.ofNullable(commentMapper.toDto(commentRepository.findById(id).orElse(null)));
+        return Optional.ofNullable(CommentMapper.INSTANCE.toDto(commentRepository.findById(id).orElse(null)));
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<CommentDto> findByBookId(Long bookId) {
         return commentRepository.findByBookId(bookId).stream()
-                .map(commentMapper::toDto)
+                .map(CommentMapper.INSTANCE::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -40,7 +39,7 @@ public class CommentServiceImpl implements CommentService {
     @Transactional(readOnly = true)
     public List<CommentDto> findAll() {
         return commentRepository.findAll().stream()
-                .map(commentMapper::toDto)
+                .map(CommentMapper.INSTANCE::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -49,7 +48,7 @@ public class CommentServiceImpl implements CommentService {
     public CommentDto save(Long bookId, String text) {
         Comment comment = new Comment(null, text, bookRepository.findById(bookId)
                 .orElseThrow(() -> new EmptyResultDataAccessException("Не найдена книга с id " + bookId, 1)));
-        return commentMapper.toDto(commentRepository.save(comment));
+        return CommentMapper.INSTANCE.toDto(commentRepository.save(comment));
     }
 
     @Override

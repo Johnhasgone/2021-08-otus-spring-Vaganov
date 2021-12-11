@@ -17,13 +17,12 @@ import java.util.stream.Collectors;
 public class GenreServiceImpl implements GenreService {
 
     private final GenreRepository genreRepository;
-    private final GenreMapper mapper;
 
     @Override
     @Transactional(readOnly = true)
     public Optional<GenreDto> findById(Long id) {
         return Optional.ofNullable(
-                mapper.toDto(
+                GenreMapper.INSTANCE.toDto(
                         genreRepository.findById(id).orElse(null)
                 )
         );
@@ -33,14 +32,14 @@ public class GenreServiceImpl implements GenreService {
     @Transactional(readOnly = true)
     public Optional<GenreDto> findByName(String name) {
         List<Genre> genres = genreRepository.findByName(name);
-        return Optional.ofNullable(genres.isEmpty() ? null : mapper.toDto(genres.get(0)));
+        return Optional.ofNullable(genres.isEmpty() ? null : GenreMapper.INSTANCE.toDto(genres.get(0)));
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<GenreDto> findAll() {
         return genreRepository.findAll().stream()
-                .map(mapper::toDto)
+                .map(GenreMapper.INSTANCE::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -48,7 +47,7 @@ public class GenreServiceImpl implements GenreService {
     @Transactional
     public GenreDto save(String name) {
         Genre genre = new Genre(name);
-        return mapper.toDto(genreRepository.save(genre));
+        return GenreMapper.INSTANCE.toDto(genreRepository.save(genre));
     }
 
     @Override
