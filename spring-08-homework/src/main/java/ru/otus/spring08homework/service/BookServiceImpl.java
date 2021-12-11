@@ -1,16 +1,17 @@
-package ru.otus.spring07homework.service;
+package ru.otus.spring08homework.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.otus.spring07homework.dao.BookRepository;
-import ru.otus.spring07homework.domain.Author;
-import ru.otus.spring07homework.domain.Book;
-import ru.otus.spring07homework.domain.Genre;
-import ru.otus.spring07homework.dto.BookDto;
-import ru.otus.spring07homework.mapper.AuthorMapper;
-import ru.otus.spring07homework.mapper.BookMapper;
-import ru.otus.spring07homework.mapper.GenreMapper;
+import ru.otus.spring08homework.dao.BookRepository;
+import ru.otus.spring08homework.dao.CommentRepository;
+import ru.otus.spring08homework.domain.Author;
+import ru.otus.spring08homework.domain.Book;
+import ru.otus.spring08homework.domain.Genre;
+import ru.otus.spring08homework.dto.BookDto;
+import ru.otus.spring08homework.mapper.AuthorMapper;
+import ru.otus.spring08homework.mapper.BookMapper;
+import ru.otus.spring08homework.mapper.GenreMapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
+    private final CommentRepository commentRepository;
     private final BookMapper mapper;
     private final GenreService genreService;
     private final AuthorService authorService;
@@ -30,7 +32,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<BookDto> findById(Long id) {
+    public Optional<BookDto> findById(String id) {
         return Optional.ofNullable(mapper.toDto(bookRepository.findById(id).orElse(null)));
     }
 
@@ -86,18 +88,42 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public void updateNameById(Long id, String title) {
-        bookRepository.updateNameById(id, title);
+    public void updateNameById(String id, String title) {
+        Optional<Book> bookOptional = bookRepository.findById(id);
+        if (bookOptional.isPresent()) {
+            Book book = bookOptional.get();
+            book.setTitle(title);
+            bookRepository.save(book);
+        }
     }
 
     @Override
     @Transactional
-    public void deleteById(Long id) {
+    public void deleteById(String id) {
+        commentRepository.deleteAll(commentRepository.findByBookId(id));
         bookRepository.deleteById(id);
     }
 
     @Override
-    public boolean existsById(Long id) {
+    public boolean existsById(String id) {
         return bookRepository.existsById(id);
+    }
+
+    @Override
+    public List<BookDto> findByAuthorsContaining(String id) {
+        Author author = authorMapper.toEntity(authorService.findById(id).orElse(null));
+        return bookRepository.findByAuthorsContaining(author)
+                .stream()
+                .map(mapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<BookDto> findByGenresContaining(String id) {
+        Genre genre = genreMapper.toEntity(genreService.findById(id).orElse(null));
+        return bookRepository.findByGenresContaining(genre)
+                .stream()
+                .map(mapper::toDto)
+                .collect(Collectors.toList());
     }
 }

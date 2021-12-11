@@ -65,7 +65,7 @@ public class BookServiceImpl implements BookService {
         for (String genreName : genreNames) {
             Genre genre = genreMapper.toEntity(
                     genreService.findByName(genreName)
-                            .orElse(genreService.save(genreName))
+                            .orElseGet(() -> genreService.save(genreName))
             );
             genres.add(genre);
         }
@@ -77,7 +77,7 @@ public class BookServiceImpl implements BookService {
         for (String authorName : authorNames) {
             Author author = authorMapper.toEntity(
                     authorService.findByName(authorName)
-                            .orElse(authorService.save(authorName))
+                            .orElseGet(() -> authorService.save(authorName))
             );
             authors.add(author);
         }
