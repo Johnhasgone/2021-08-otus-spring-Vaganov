@@ -7,11 +7,12 @@ import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import ru.otus.spring11homework.dao.AuthorRepository;
 import ru.otus.spring11homework.dao.BookRepository;
+import ru.otus.spring11homework.dao.CommentRepository;
 import ru.otus.spring11homework.dao.GenreRepository;
 import ru.otus.spring11homework.dto.BookDto;
+import ru.otus.spring11homework.dto.CommentDto;
 import ru.otus.spring11homework.mapper.BookMapper;
-
-import java.util.stream.Collectors;
+import ru.otus.spring11homework.mapper.CommentMapper;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.web.reactive.function.BodyInserters.fromValue;
@@ -29,7 +30,8 @@ public class Spring11HomeworkApplication {
     @Bean
     public RouterFunction<ServerResponse> composedRoutes(BookRepository bookRepository,
                                                          AuthorRepository authorRepository,
-                                                         GenreRepository genreRepository) {
+                                                         GenreRepository genreRepository,
+                                                         CommentRepository commentRepository) {
         return route()
                 .GET("/book", accept(APPLICATION_JSON),
                         req -> bookRepository.findAll()
@@ -46,7 +48,22 @@ public class Spring11HomeworkApplication {
                             return ok().build();
                         }
                 ).POST("/book", accept(APPLICATION_JSON),
-                        req -> bookRepository.save(req.bodyToMono(BookDto.class))
+                        req -> req.bodyToMono(BookDto.class)
+                                .map(BookMapper.INSTANCE::toEntity)
+                                .flatMap(bookRepository::save)
+                                .map(BookMapper.INSTANCE::toDto)
+                                .flatMap(bookDto -> ok().contentType(APPLICATION_JSON).body(fromValue(bookDto)))
+                ).POST("/book/{id}/comment", accept(APPLICATION_JSON),
+                        req -> req.bodyToMono(CommentDto.class)
+                                .map(CommentMapper.INSTANCE::toEntity)
+                                .flatMap(commentRepository::save)
+                                .map(CommentMapper.INSTANCE::toDto)
+                                .flatMap(commentDto -> ok().contentType(APPLICATION_JSON).body(fromValue(commentDto)))
+                ).GET("/book/{id}/comment", accept(APPLICATION_JSON),
+                        req -> commentRepository.findByBookId(req.pathVariable("id"))
+                                .map(CommentMapper.INSTANCE::toDto)
+                                .collectList()
+                                .flatMap(commentDtos -> ok().body(commentDtos, CommentDto.class))
                 )
                 .build();
     }
