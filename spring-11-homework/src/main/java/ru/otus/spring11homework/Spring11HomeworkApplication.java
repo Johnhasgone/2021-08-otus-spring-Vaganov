@@ -1,8 +1,14 @@
 package ru.otus.spring11homework;
 
+import com.github.cloudyrock.spring.v5.EnableMongock;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.mongo.embedded.DownloadConfigBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.io.Resource;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import ru.otus.spring11homework.dao.AuthorRepository;
@@ -16,15 +22,28 @@ import ru.otus.spring11homework.mapper.CommentMapper;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.web.reactive.function.BodyInserters.fromValue;
+import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
 import static org.springframework.web.reactive.function.server.RequestPredicates.accept;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 import static org.springframework.web.reactive.function.server.ServerResponse.ok;
 
+@EnableMongock
+@EnableMongoRepositories
 @SpringBootApplication
 public class Spring11HomeworkApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(Spring11HomeworkApplication.class, args);
+    }
+
+
+
+    @Bean
+    public RouterFunction<ServerResponse> htmlRouter(
+            @Value("classpath:/templates/bookMain.html") Resource html) {
+        return route(GET("/"), request
+                -> ok().contentType(MediaType.TEXT_HTML).bodyValue(html)
+        );
     }
 
     @Bean
@@ -65,6 +84,13 @@ public class Spring11HomeworkApplication {
                                 .collectList()
                                 .flatMap(commentDtos -> ok().body(commentDtos, CommentDto.class))
                 )
+                .build();
+    }
+
+    @Bean
+    public DownloadConfigBuilderCustomizer downloadConfigBuilderCustomizer() {
+        return (downloadConfigBuilder) -> downloadConfigBuilder
+                .downloadPath(distribution -> "https://fastdl.mongodb.org/macos/mongodb-macos-x86_64-5.0.4.tgz")
                 .build();
     }
 }

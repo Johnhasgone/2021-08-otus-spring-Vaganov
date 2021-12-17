@@ -30,9 +30,9 @@ public class InitMongoDBDataChangeLog {
 
     @ChangeSet(order = "001", id = "initAuthors", author = "johnhasgone", runAlways = true)
     public void initAuthors(AuthorRepository repository){
-        ans = repository.save(new Author("Аркадий Стругацкий"));
-        bns = repository.save(new Author("Борис Стругацкий"));
-        asp = repository.save(new Author("Александр Пушкин"));
+        ans = repository.save(new Author("Аркадий Стругацкий")).block();
+        bns = repository.save(new Author("Борис Стругацкий")).block();
+        asp = repository.save(new Author("Александр Пушкин")).block();
     }
 
     @ChangeSet(order = "002", id = "initGenres", author = "johnhasgone", runAlways = true)

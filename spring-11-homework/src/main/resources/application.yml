@@ -5,6 +5,9 @@ spring:
       host: localhost
       port: 27017
       database: bookdb
+#  mongodb:
+#    embedded:
+#      version: 5.0.4
 
 mongock:
   runner-type: "InitializingBean"
