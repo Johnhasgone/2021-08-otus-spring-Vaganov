@@ -4,7 +4,6 @@ import com.github.cloudyrock.spring.v5.EnableMongock;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.mongo.embedded.DownloadConfigBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.Resource;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
@@ -46,39 +45,44 @@ public class Spring11HomeworkApplication {
         );
     }
 
+//    @Bean
+//    public RouterFunction<ServerResponse> staticResources() {
+//        return resources("/**", new ClassPathResource("/static/"));
+//    }
+
     @Bean
     public RouterFunction<ServerResponse> composedRoutes(BookRepository bookRepository,
                                                          AuthorRepository authorRepository,
                                                          GenreRepository genreRepository,
                                                          CommentRepository commentRepository) {
         return route()
-                .GET("/book", accept(APPLICATION_JSON),
+                .GET("/rest/book", accept(APPLICATION_JSON),
                         req -> bookRepository.findAll()
                                 .map(BookMapper.INSTANCE::toDto)
                                 .collectList()
-                                .flatMap(bookDtos -> ok().body(bookDtos, BookDto.class))
-                ).GET("/book/{id}", accept(APPLICATION_JSON),
+                                .flatMap(bookDtos -> ok().bodyValue(bookDtos))
+                ).GET("/rest/book/{id}", accept(APPLICATION_JSON),
                         req -> bookRepository.findById(req.pathVariable("id"))
                                 .map(BookMapper.INSTANCE::toDto)
                                 .flatMap(bookDto -> ok().contentType(APPLICATION_JSON).body(fromValue(bookDto)))
-                ).DELETE("/book/{id}", accept(APPLICATION_JSON),
+                ).DELETE("/rest/book/{id}", accept(APPLICATION_JSON),
                         req -> {
                             bookRepository.deleteById(req.pathVariable("id"));
                             return ok().build();
                         }
-                ).POST("/book", accept(APPLICATION_JSON),
+                ).POST("/rest/book", accept(APPLICATION_JSON),
                         req -> req.bodyToMono(BookDto.class)
                                 .map(BookMapper.INSTANCE::toEntity)
                                 .flatMap(bookRepository::save)
                                 .map(BookMapper.INSTANCE::toDto)
                                 .flatMap(bookDto -> ok().contentType(APPLICATION_JSON).body(fromValue(bookDto)))
-                ).POST("/book/{id}/comment", accept(APPLICATION_JSON),
+                ).POST("/rest/book/{id}/comment", accept(APPLICATION_JSON),
                         req -> req.bodyToMono(CommentDto.class)
                                 .map(CommentMapper.INSTANCE::toEntity)
                                 .flatMap(commentRepository::save)
                                 .map(CommentMapper.INSTANCE::toDto)
                                 .flatMap(commentDto -> ok().contentType(APPLICATION_JSON).body(fromValue(commentDto)))
-                ).GET("/book/{id}/comment", accept(APPLICATION_JSON),
+                ).GET("/rest/book/{id}/comment", accept(APPLICATION_JSON),
                         req -> commentRepository.findByBookId(req.pathVariable("id"))
                                 .map(CommentMapper.INSTANCE::toDto)
                                 .collectList()
@@ -87,10 +91,10 @@ public class Spring11HomeworkApplication {
                 .build();
     }
 
-    @Bean
-    public DownloadConfigBuilderCustomizer downloadConfigBuilderCustomizer() {
-        return (downloadConfigBuilder) -> downloadConfigBuilder
-                .downloadPath(distribution -> "https://fastdl.mongodb.org/macos/mongodb-macos-x86_64-5.0.4.tgz")
-                .build();
-    }
+//    @Bean
+//    public DownloadConfigBuilderCustomizer downloadConfigBuilderCustomizer() {
+//        return (downloadConfigBuilder) -> downloadConfigBuilder
+//                .downloadPath(distribution -> "https://fastdl.mongodb.org/macos/mongodb-macos-x86_64-5.0.4.tgz")
+//                .build();
+//    }
 }
