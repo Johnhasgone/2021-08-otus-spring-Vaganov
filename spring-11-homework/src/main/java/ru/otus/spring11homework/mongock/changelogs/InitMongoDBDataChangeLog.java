@@ -37,14 +37,14 @@ public class InitMongoDBDataChangeLog {
 
     @ChangeSet(order = "002", id = "initGenres", author = "johnhasgone", runAlways = true)
     public void initGenres(GenreRepository repository) {
-        novel = repository.save(new Genre("роман"));
-        lyrics = repository.save(new Genre("поэзия"));
-        scienceFiction = repository.save(new Genre("фантастика"));
+        novel = repository.save(new Genre("роман")).block();
+        lyrics = repository.save(new Genre("поэзия")).block();
+        scienceFiction = repository.save(new Genre("фантастика")).block();
     }
 
     @ChangeSet(order = "003", id = "initBooks", author = "johnhasgone", runAlways = true)
     public void initBooks(BookRepository repository){
-        repository.save(new Book("1", "Улитка на склоне", List.of(ans, bns), List.of(novel, scienceFiction)));
-        repository.save(new Book("2", "Стихотворения и поэмы", List.of(asp), List.of(lyrics)));
+        repository.save(new Book("Улитка на склоне", List.of(ans, bns), List.of(novel, scienceFiction))).block();
+        repository.save(new Book("Стихотворения и поэмы", List.of(asp), List.of(lyrics))).block();
     }
 }
