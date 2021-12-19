@@ -1,7 +1,2 @@
 mongock:
   enabled: false
-
-spring:
-  shell:
-    interactive:
-      enabled: false

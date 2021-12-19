@@ -238,7 +238,7 @@ async function getAllBooks() {
     const head = document.createElement('thead');
     head.innerHTML =
         `<tr>
-            <th>ID</th>
+            <th>№ п/п</th>
             <th>Название</th>
             <th>Автор(ы)</th>
             <th>Жанр(ы)</th>
@@ -247,6 +247,7 @@ async function getAllBooks() {
 
     table.append(head);
 
+    let i = 1;
     await fetch('/rest/book')
         .then(response => {
             if (!response.ok) {
@@ -258,7 +259,7 @@ async function getAllBooks() {
             const tr = document.createElement('tr');
 
             const id = document.createElement('td');
-            id.innerHTML = book.id;
+            id.innerHTML = i++;//book.id;
             const title = document.createElement('td');
             title.innerHTML = book.title;
             const authors = document.createElement('td');

@@ -48,7 +48,6 @@ public class Spring11HomeworkApplication {
         SpringApplication.run(Spring11HomeworkApplication.class, args);
     }
 
-
     @Bean
     public RouterFunction<ServerResponse> htmlRouter(
             @Value("classpath:/templates/bookMain.html") Resource html) {
