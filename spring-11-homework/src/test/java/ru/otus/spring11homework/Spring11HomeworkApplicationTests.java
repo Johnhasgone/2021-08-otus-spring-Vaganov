@@ -1,7 +1,6 @@
 package ru.otus.spring11homework;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -22,6 +21,10 @@ import ru.otus.spring11homework.dto.BookDto;
 import ru.otus.spring11homework.dto.CommentDto;
 
 import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class Spring11HomeworkApplicationTests {
@@ -74,7 +77,7 @@ class Spring11HomeworkApplicationTests {
                 .bindToRouterFunction(composedRoutes)
                 .build();
 
-        Mockito.when(bookRepository.findAll()).thenReturn(Flux.just(bookExpected));
+        when(bookRepository.findAll()).thenReturn(Flux.just(bookExpected));
 
         client.get()
                 .uri("/rest/book")
@@ -91,7 +94,7 @@ class Spring11HomeworkApplicationTests {
                 .bindToRouterFunction(composedRoutes)
                 .build();
 
-        Mockito.when(bookRepository.findById(Mockito.anyString())).thenReturn(Mono.just(bookExpected));
+        when(bookRepository.findById(anyString())).thenReturn(Mono.just(bookExpected));
 
         client.get()
                 .uri("/rest/book/1")
@@ -108,8 +111,8 @@ class Spring11HomeworkApplicationTests {
                 .bindToRouterFunction(composedRoutes)
                 .build();
 
-        Mockito.when(bookRepository.deleteById(Mockito.anyString())).thenReturn(Mono.empty());
-        Mockito.when(commentRepository.deleteByBookId(Mockito.anyString())).thenReturn(Mono.empty());
+        when(bookRepository.deleteById(anyString())).thenReturn(Mono.empty());
+        when(commentRepository.deleteByBookId(anyString())).thenReturn(Mono.empty());
 
         client.delete()
                 .uri("/rest/book/1")
@@ -124,9 +127,9 @@ class Spring11HomeworkApplicationTests {
                 .bindToRouterFunction(composedRoutes)
                 .build();
 
-        Mockito.when(bookRepository.save(Mockito.any())).thenReturn(Mono.just(bookExpected));
-        Mockito.when(authorRepository.findByName(Mockito.anyString())).thenReturn(Flux.just(authorExpected));
-        Mockito.when(genreRepository.findByName(Mockito.anyString())).thenReturn(Flux.just(genreExpected));
+        when(bookRepository.save(any())).thenReturn(Mono.just(bookExpected));
+        when(authorRepository.findByName(anyString())).thenReturn(Flux.just(authorExpected));
+        when(genreRepository.findByName(anyString())).thenReturn(Flux.just(genreExpected));
 
         client.post()
                 .uri("/rest/book")
@@ -144,8 +147,8 @@ class Spring11HomeworkApplicationTests {
                 .bindToRouterFunction(composedRoutes)
                 .build();
 
-        Mockito.when(commentRepository.save(Mockito.any())).thenReturn(Mono.just(commentExpected));
-        Mockito.when(bookRepository.findById(Mockito.anyString())).thenReturn(Mono.just(bookExpected));
+        when(commentRepository.save(any())).thenReturn(Mono.just(commentExpected));
+        when(bookRepository.findById(anyString())).thenReturn(Mono.just(bookExpected));
 
         client.post()
                 .uri("/rest/book/1/comment")
@@ -163,7 +166,7 @@ class Spring11HomeworkApplicationTests {
                 .bindToRouterFunction(composedRoutes)
                 .build();
 
-        Mockito.when(commentRepository.findByBookId(Mockito.anyString())).thenReturn(Flux.just(commentExpected));
+        when(commentRepository.findByBookId(anyString())).thenReturn(Flux.just(commentExpected));
 
         client.get()
                 .uri("/rest/book/1/comment")
