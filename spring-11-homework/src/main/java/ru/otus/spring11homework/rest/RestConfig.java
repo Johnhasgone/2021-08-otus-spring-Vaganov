@@ -41,7 +41,7 @@ public class RestConfig {
                         req -> bookRepository.findAll()
                                 .map(BookMapper.INSTANCE::toDto)
                                 .collectList()
-                                .flatMap(bookDtos -> ok().contentType(APPLICATION_JSON).body(bookDtos, BookDto.class))
+                                .flatMap(bookDtos -> ok().contentType(APPLICATION_JSON).bodyValue(bookDtos))
                 ).GET("/rest/book/{id}", accept(APPLICATION_JSON),
                         req -> bookRepository.findById(req.pathVariable("id"))
                                 .map(BookMapper.INSTANCE::toDto)
