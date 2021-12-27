@@ -56,3 +56,12 @@ create table if not exists comment(
             references book(id)
             on delete cascade
 );
+
+--changeset johnhasgone:2021-12-28-001-user
+create table if not exists user (
+    id bigint auto_increment primary key,
+    username varchar(2048),
+    password varchar(2048),
+    enabled boolean default true,
+    authority varchar(2048)
+)
