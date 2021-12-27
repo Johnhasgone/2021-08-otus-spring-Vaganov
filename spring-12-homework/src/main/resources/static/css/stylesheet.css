@@ -10,7 +10,7 @@ body {
     font-family: "Roboto Slab", serif;
 }
 
-#container {
+.container {
     width: 90%;
     max-width: 1300px;
     margin: 2rem auto;
@@ -44,7 +44,13 @@ h2, .comment, .add-comment {
 .book-edit-input {
     font-size: 1.5rem;
     font-family: "Roboto Slab", serif;
-    padding: 5px;
+}
+
+.edit-button {
+    font-size: 1.5rem;
+    font-family: "Roboto Slab", serif;
+    height: 2.5rem;
+    width: 200px;
 }
 
 .comment-button {
@@ -61,16 +67,14 @@ h2, .comment, .add-comment {
     width: 80px;
 }
 
-.back-button {
+.book-add {
     margin-bottom: 3rem;
 }
 
-.page-button {
+.book-add-button {
     font-family: "Roboto Slab", serif;
     font-size: 1.5rem;
     padding: 5px 5px;
-    margin: 5px 5px;
-    width: 250px;
 }
 
 td {

@@ -26,7 +26,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authenticated()
                 .and()
                 .formLogin()
-                .defaultSuccessUrl("/book");
+                .defaultSuccessUrl("/book")
+        ;
     }
 
     @SuppressWarnings("deprecation")

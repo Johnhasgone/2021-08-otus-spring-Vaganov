@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Список книг</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/stylesheet.css}">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+    <h1 class="main-title">Список книг</h1>
+    <div class="book-add">
+        <form action="#" th:action="@{/book/create}" th:method="get">
+            <button type="submit" class="book-add-button">
+                Добавить книгу
+            </button>
+        </form>
+    </div>
+
+    <table class="books">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Название</th>
+            <th>Автор(ы)</th>
+            <th>Жанр(ы)</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="book : ${books}">
+            <td th:text="${book.id}">1</td>
+            <td th:text="${book.title}">Book Title</td>
+            <td th:text="${book.authors}">Authors</td>
+            <td th:text="${book.genres}">Genres</td>
+            <td>
+                <form action="#" th:action="@{/book/{id}(id=${book.id})}" th:method="get">
+                    <button type="submit" class="action-button">
+                        Открыть
+                    </button>
+                </form>
+            </td>
+            <td>
+                <form action="#" th:action="@{/book/{id}/edit(id=${book.id})}" th:method="get">
+                    <button type="submit" class="action-button">
+                        Изменить
+                    </button>
+                </form>
+            </td>
+            <td>
+                <form action="#" th:action="@{/book/{id}(id=${book.id})}" th:method="delete">
+                    <button type="submit" class="action-button">
+                        Удалить
+                    </button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
