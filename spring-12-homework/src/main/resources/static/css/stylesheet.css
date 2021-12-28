@@ -23,6 +23,10 @@ body {
     color: firebrick;
 }
 
+.form-signin-heading {
+    color: firebrick;
+}
+
 .book-info {
     font-size: 2em;
     margin-bottom: 3rem
@@ -36,7 +40,7 @@ h2, .comment, .add-comment {
     margin-bottom: 1rem;
 }
 
-.book-label {
+.book-label, .sr-only {
     display: inline-block;
     width: 200px;
 }
@@ -50,10 +54,10 @@ h2, .comment, .add-comment {
     font-size: 1.5rem;
     font-family: "Roboto Slab", serif;
     height: 2.5rem;
-    width: 200px;
+    width: 220px;
 }
 
-.comment-button {
+.comment-button, .enter-button {
     font-family: "Roboto Slab", serif;
 }
 
@@ -67,14 +71,15 @@ h2, .comment, .add-comment {
     width: 80px;
 }
 
-.book-add {
-    margin-bottom: 3rem;
+.page-div {
+    margin-bottom: 1rem;
 }
 
-.book-add-button {
+.page-button {
     font-family: "Roboto Slab", serif;
     font-size: 1.5rem;
-    padding: 5px 5px;
+    height: 2.5rem;
+    width: 220px;
 }
 
 td {
@@ -89,6 +94,28 @@ col:nth-child(4) {
     background: beige;
 }
 
+.exit-button {
+    float: right;
+    background-color: beige;
+    border: none;
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+    font-family: "Roboto Slab", serif;
+    font-size: 0.7rem;
+}
+
 input:read-only {
     background: aliceblue;
+}
+
+.logout {
+    float: right;
+    padding-top: 20px;
+    font-size: 0.7rem;
+}
+
+.alert {
+    color: firebrick;
+    font-size: 0.7rem;
 }

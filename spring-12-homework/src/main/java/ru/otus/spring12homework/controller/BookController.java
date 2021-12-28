@@ -26,6 +26,16 @@ public class BookController {
         this.commentService = commentService;
     }
 
+    @GetMapping("/login")
+    public String login() {
+        return "login";
+    }
+
+    @GetMapping("/")
+    public String startPage(Model model) {
+        return "index";
+    }
+
     @GetMapping("/book")
     public String bookListPage(Model model) {
         List<BookDto> books = bookService.findAll();
@@ -59,18 +69,18 @@ public class BookController {
     @GetMapping("/book/create")
     public String bookCreatePage(Model model) {
         model.addAttribute("book", new BookDto());
-        return "bookEdit";
+        return "bookCreate";
     }
 
     @PostMapping("/book/create")
     public String bookCreate(BookDto book) {
         bookService.save(book);
-        return "redirect:/book";
+        return "redirect:/";
     }
 
     @PostMapping("/book/edit")
     public String bookEdit(BookDto book) {
-        BookDto saved = bookService.save(book);
+        bookService.save(book);
         return "redirect:/book";
     }
 

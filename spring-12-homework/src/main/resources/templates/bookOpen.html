@@ -11,7 +11,22 @@
 </head>
 <body>
     <div class="container">
+        <div class="logout">
+            <span>Пользователь:</span>
+            <span th:text="${#authentication.getPrincipal().getUsername()}"></span>
+            <form name="logout-form" th:action="@{/logout}" method="post">
+                <input type="submit" class="exit-button" value="Выйти"/>
+            </form>
+        </div>
         <h1 class="main-title">Информация о книге</h1>
+
+        <div class="page-div">
+            <form action="#" th:action="@{/book}" th:method="get">
+                <button type="submit" class="page-button">
+                    Назад
+                </button>
+            </form>
+        </div>
 
         <table class="book-info">
             <tr class="row">

@@ -18,23 +18,18 @@
                 <input type="submit" class="exit-button" value="Выйти"/>
             </form>
         </div>
-        <h1 class="main-title">Редактировать информацию о книге</h1>
+        <h1 class="main-title">Добавить информацию о книге</h1>
 
         <div class="page-div">
-            <form action="#" th:action="@{/book}" th:method="get">
+            <form action="#" th:action="@{/}" th:method="get">
                 <button type="submit" class="page-button">
                     Назад
                 </button>
             </form>
         </div>
 
-        <form id="edit-form" th:action="@{/book/edit}" th:method="post" action="bookEdit.html">
+        <form id="edit-form" th:action="@{/book/create}" th:method="post" action="bookEdit.html">
             <div class="book-info">
-                <div class="row">
-                    <label class="book-label" for="id-input"><b>ID:</b></label>
-                    <input class="book-edit-input" id="id-input" name="id" type="text" readonly="readonly" th:value="${book.id}" value="1"/>
-                </div>
-
                 <div class="row">
                     <label class="book-label" for="title-input"><b>Название:</b></label>
                     <input class="book-edit-input" id="title-input" name="title" type="text" th:value="${book.title}" value="John Doe"/>
