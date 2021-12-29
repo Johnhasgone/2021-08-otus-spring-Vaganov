@@ -1,6 +1,7 @@
 package ru.otus.spring12homework.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -19,7 +20,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     public void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .authorizeRequests()
-                .antMatchers("/css/**").permitAll()
+                .antMatchers("/css/*").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
@@ -29,15 +30,20 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .defaultSuccessUrl("/")
                 .and()
                 .logout()
+                .logoutSuccessUrl("/login")
                 .deleteCookies("JSESSIONID")
         ;
     }
 
+    @Bean("passwordEncoder")
+    BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
-    @Autowired
-    public void configure( AuthenticationManagerBuilder auth ) throws Exception {
+    @Override
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.jdbcAuthentication()
-                .passwordEncoder(new BCryptPasswordEncoder())
+                .passwordEncoder(passwordEncoder())
                 .dataSource(dataSource)
                 .usersByUsernameQuery("select username, password, enabled from user where username = ?")
                 .authoritiesByUsernameQuery("select username, authority from user where username = ?")

@@ -149,6 +149,6 @@ insert into comment(text, book_id) values
 
 --changeset johnhasgone:2021-12-28-001-user
 insert into user (username, password, authority) values
-                            ('admin', '$2a$12$L7kqn2D2N2KKlJqpwDrbIuXjGBtviYQg5YWSxboAvjDTKbL4QnGGu', 'ROLE_ADMIN'),
-                            ('user', '$2a$12$sQ2szjsB1zBk3xhM/L5gyetCh87Cw2hzgjcOCCzE4nm33nkNl2ZFG', 'ROLE_USER')
+                            ('admin', '$2a$10$vIlwS97XFgdHi0dPaaCese/9ZF2u.jntA3I.dbHD0pVfFz/SX25.a', 'ROLE_ADMIN'),
+                            ('user', '$2a$10$vIlwS97XFgdHi0dPaaCese/9ZF2u.jntA3I.dbHD0pVfFz/SX25.a', 'ROLE_USER')
 ;
