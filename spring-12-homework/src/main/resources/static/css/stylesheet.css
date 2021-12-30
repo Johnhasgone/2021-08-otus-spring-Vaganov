@@ -102,7 +102,6 @@ col:nth-child(4) {
     text-decoration: underline;
     cursor: pointer;
     font-family: "Roboto Slab", serif;
-    font-size: 0.7rem;
 }
 
 input:read-only {
@@ -111,8 +110,7 @@ input:read-only {
 
 .logout {
     float: right;
-    padding-top: 20px;
-    font-size: 0.7rem;
+    padding-top: 15px;
 }
 
 .alert {

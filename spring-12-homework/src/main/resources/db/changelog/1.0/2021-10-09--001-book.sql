@@ -60,7 +60,7 @@ create table if not exists comment(
 --changeset johnhasgone:2021-12-28-001-user
 create table if not exists user (
     id bigint auto_increment primary key,
-    username varchar(2048),
+    username varchar(2048) not null unique,
     password varchar(2048),
     enabled boolean default true,
     authority varchar(2048)
