@@ -9,7 +9,7 @@ import ru.otus.spring12homework.dao.UserRepository;
 
 @Service
 @RequiredArgsConstructor
-public class JdbcUserDetailsService implements UserDetailsService {
+public class LibraryUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
