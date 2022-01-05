@@ -19,13 +19,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests().antMatchers(HttpMethod.GET, "/", "/book").authenticated()
                 .and()
 
-                .authorizeRequests().antMatchers(HttpMethod.POST, "/book/*/comment").hasRole("USER")
+                .authorizeRequests().antMatchers(HttpMethod.POST, "/book/*/comment").hasAnyRole("STUDENT", "TEACHER")
                 .and()
 
                 .authorizeRequests().antMatchers("/book/edit", "/book/create").hasRole("ADMIN")
                 .and()
 
-                .authorizeRequests().antMatchers(HttpMethod.GET, "/book/*").hasAnyRole("ADMIN", "USER")
+                .authorizeRequests().antMatchers(HttpMethod.GET, "/book/*").hasAnyRole("ADMIN", "STUDENT", "TEACHER")
                 .and()
 
                 .authorizeRequests().antMatchers("/book/**").hasRole("ADMIN")

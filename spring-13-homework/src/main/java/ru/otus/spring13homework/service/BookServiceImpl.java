@@ -2,6 +2,16 @@ package ru.otus.spring13homework.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.security.acls.domain.BasePermission;
+import org.springframework.security.acls.domain.GrantedAuthoritySid;
+import org.springframework.security.acls.domain.ObjectIdentityImpl;
+import org.springframework.security.acls.domain.PrincipalSid;
+import org.springframework.security.acls.model.MutableAcl;
+import org.springframework.security.acls.model.MutableAclService;
+import org.springframework.security.acls.model.ObjectIdentity;
+import org.springframework.security.acls.model.Sid;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.spring13homework.dao.BookRepository;
@@ -16,6 +26,7 @@ import ru.otus.spring13homework.mapper.GenreMapper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,12 +36,14 @@ public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final GenreService genreService;
     private final AuthorService authorService;
+    private final MutableAclService mutableAclService;
 
     @Override
     @Transactional(readOnly = true)
     public BookDto findById(Long id) {
-        return BookMapper.INSTANCE.toDto(bookRepository.findById(id)
-                .orElseThrow(() -> new EmptyResultDataAccessException("Не найдена книга с id " + id, 1)));
+        return BookMapper.INSTANCE.toDto(
+                Optional.ofNullable(bookRepository.findBookById(id))
+                        .orElseThrow(() -> new EmptyResultDataAccessException("Не найдена книга с id " + id, 1)));
     }
 
     @Override
@@ -55,7 +68,22 @@ public class BookServiceImpl implements BookService {
         List<Author> authors = getAuthors(bookDto.getAuthors());
         List<Genre> genres = getGenres(bookDto.getGenres());
         Book book = new Book(bookDto.getId(), bookDto.getTitle(), authors, genres);
-        return BookMapper.INSTANCE.toDto(bookRepository.save(book));
+        book = bookRepository.save(book);
+
+        if (bookDto.getId() == null) {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            final Sid owner = new PrincipalSid(authentication);
+            ObjectIdentity oid = new ObjectIdentityImpl(book.getClass(), book.getId());
+
+            final Sid admin = new GrantedAuthoritySid("ROLE_ADMIN");
+
+            MutableAcl acl = mutableAclService.createAcl(oid);
+            acl.setOwner(owner);
+            acl.insertAce(acl.getEntries().size(), BasePermission.READ, admin, true);
+            mutableAclService.updateAcl(acl);
+        }
+
+        return BookMapper.INSTANCE.toDto(book);
     }
 
 
