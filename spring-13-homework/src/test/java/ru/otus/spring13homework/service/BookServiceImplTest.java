@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.test.context.support.WithMockUser;
 import ru.otus.spring13homework.dao.BookRepository;
 import ru.otus.spring13homework.domain.Author;
 import ru.otus.spring13homework.domain.Book;
@@ -12,7 +13,6 @@ import ru.otus.spring13homework.domain.Genre;
 import ru.otus.spring13homework.dto.BookDto;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -59,7 +59,7 @@ class BookServiceImplTest {
                 FIRST_GENRE_NAME
         );
 
-        when(bookRepository.findById(any())).thenReturn(Optional.of(book));
+        when(bookRepository.findBookById(any())).thenReturn(book);
         BookDto actualBook = bookService.findById(FIRST_BOOK_ID);
         assertThat(actualBook).usingRecursiveComparison().isEqualTo(expectedBookDto);
     }
@@ -128,6 +128,7 @@ class BookServiceImplTest {
 
     @DisplayName("возвращать ДТО созданной книги")
     @Test
+    @WithMockUser(username = "user")
     void shouldCreateBook() {
         Book creatingBook = new Book(
                 FIRST_BOOK_ID,
@@ -143,7 +144,7 @@ class BookServiceImplTest {
                 FIRST_GENRE_NAME
         );
         when(bookRepository.save(any())).thenReturn(creatingBook);
-        BookDto actualBook = bookService.save(new BookDto(null, FIRST_BOOK_TITLE, FIRST_AUTHOR_NAME, FIRST_GENRE_NAME));
+        BookDto actualBook = bookService.save(new BookDto(FIRST_BOOK_ID, FIRST_BOOK_TITLE, FIRST_AUTHOR_NAME, FIRST_GENRE_NAME));
         assertThat(actualBook).isEqualTo(createdBookDto);
     }
 }

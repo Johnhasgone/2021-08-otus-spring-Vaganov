@@ -58,12 +58,14 @@ public class AclConfig {
         );
     }
 
-    @Bean
+    @Bean()
     public JCacheCacheManager aclCacheManager() {
         CachingProvider cachingProvider = Caching.getCachingProvider();
         CacheManager cacheManager = cachingProvider.getCacheManager();
         MutableConfiguration<String, String> config = new MutableConfiguration<>();
-        cacheManager.createCache("aclCache", config);
+        if (cacheManager.getCache("aclCache") == null) {
+            cacheManager.createCache("aclCache", config);
+        }
         return new JCacheCacheManager(cacheManager);
     }
 
