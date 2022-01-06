@@ -37,11 +37,83 @@ class BookControllerTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"/", "/book", "/book/1", "/book/1/edit", "/book/create"})
-    @WithMockUser(username = "admin")
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
     void testGetUrlWithAuthenticationShouldReturnOk(String url) throws Exception {
         when(bookService.findById(any())).thenReturn(new BookDto());
         mvc.perform(get(url).with(csrf()))
                 .andExpect(status().isOk());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"/", "/book", "/book/1"})
+    @WithMockUser(username = "user", roles = {"STUDENT", "TEACHER"})
+    void testAuthorizedUrlWithAuthenticationShouldReturnOk(String url) throws Exception {
+        when(bookService.findById(any())).thenReturn(new BookDto());
+        mvc.perform(get(url).with(csrf()))
+                .andExpect(status().isOk());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"/book/1/edit", "/book/create"})
+    @WithMockUser(username = "user", roles = {"STUDENT", "TEACHER"})
+    void testUnauthorizedUrlWithAuthenticationShouldReturnForbidden(String url) throws Exception {
+        when(bookService.findById(any())).thenReturn(new BookDto());
+        mvc.perform(get(url).with(csrf()))
+                .andExpect(status().isForbidden());
+    }
+
+    @ParameterizedTest
+    @CsvSource({"/book/create,/", "/book/edit,/book"})
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    void testAuthorizedPostUrlWithAuthenticationShouldRedirectToRightUrl(String url, String redirectUrl) throws Exception {
+        when(bookService.save(any())).thenReturn(new BookDto());
+        mvc.perform(post(url).with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl(redirectUrl));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"/book/create,/", "/book/edit,/book"})
+    @WithMockUser(username = "user", roles = {"STUDENT", "TEACHER"})
+    void testUnauthorizedPostUrlWithAuthenticationShouldReturnForbidden(String url, String redirectUrl) throws Exception {
+        when(bookService.save(any())).thenReturn(new BookDto());
+        mvc.perform(post(url).with(csrf()))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "user", roles = {"STUDENT", "TEACHER"})
+    void testAuthorizedCreateCommentWithAuthenticationShouldRedirectToRightUrl() throws Exception {
+        when(commentService.save(any(), any())).thenReturn(new CommentDto());
+        mvc.perform(post("/book/1/comment").with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/book/1"))
+        ;
+    }
+
+    @Test
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    void testUnauthorizedCreateCommentWithAuthenticationShouldReturnForbidden() throws Exception {
+        when(commentService.save(any(), any())).thenReturn(new CommentDto());
+        mvc.perform(post("/book/1/comment").with(csrf()))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    void testAuthorizedDeleteBookWithAuthenticationShouldRedirectToBookPage() throws Exception {
+        doNothing().when(bookService).deleteById(any());
+        mvc.perform(delete("/book/1").with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/book"));
+    }
+
+    @Test
+    @WithMockUser(username = "user", roles = {"STUDENT", "TEACHER"})
+    void testUnauthorizedDeleteBookWithAuthenticationShouldRedirectToBookPage() throws Exception {
+        doNothing().when(bookService).deleteById(any());
+        mvc.perform(delete("/book/1").with(csrf()))
+                .andExpect(status().isForbidden());
     }
 
     @ParameterizedTest
@@ -53,17 +125,6 @@ class BookControllerTest {
     }
 
     @ParameterizedTest
-    @CsvSource({"/book/1/comment,/book/1", "/book/create,/", "/book/edit,/book"})
-    @WithMockUser(username = "admin")
-    void testPostUrlWithAuthenticationShouldRedirectToRightUrl(String url, String redirectUrl) throws Exception {
-        when(commentService.save(any(), any())).thenReturn(new CommentDto());
-        when(bookService.save(any())).thenReturn(new BookDto());
-        mvc.perform(post(url).with(csrf()))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(redirectUrl));
-    }
-
-    @ParameterizedTest
     @ValueSource(strings = {"/book/1/comment", "/book/create", "/book/edit"})
     void testPostUrlWithoutAuthenticationShouldBeForbidden(String url) throws Exception {
         mvc.perform(post(url).with(csrf()))
@@ -71,14 +132,6 @@ class BookControllerTest {
                 .andExpect(redirectedUrlPattern("http://*/login"));
     }
 
-    @Test
-    @WithMockUser(username = "admin")
-    void testDeleteBookWithAuthenticationShouldRedirectToBookPage() throws Exception {
-        doNothing().when(bookService).deleteById(any());
-        mvc.perform(delete("/book/1").with(csrf()))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/book"));
-    }
 
     @Test
     void testDeleteBookWithoutAuthenticationShouldRedirectToLoginPage() throws Exception {
