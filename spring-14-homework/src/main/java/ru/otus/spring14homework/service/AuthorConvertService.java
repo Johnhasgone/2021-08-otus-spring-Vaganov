@@ -1,13 +1,14 @@
 package ru.otus.spring14homework.service;
 
-import lombok.Setter;
 import org.springframework.stereotype.Service;
-import ru.otus.spring14homework.domain.sql.Author;
+import ru.otus.spring14homework.domain.no_sql.Author;
 
 @Service
-public class AuthorConvertService implements EntityConvertService<Author, ru.otus.spring14homework.domain.no_sql.Author>{
+public class AuthorConvertService implements EntityConvertService<ru.otus.spring14homework.domain.sql.Author, Author>{
+
+
     @Override
-    public ru.otus.spring14homework.domain.no_sql.Author convert(Author source) {
-        return new ru.otus.spring14homework.domain.no_sql.Author(source.getName());
+    public Author convert(ru.otus.spring14homework.domain.sql.Author source) {
+        return new Author(source.getName());
     }
 }
