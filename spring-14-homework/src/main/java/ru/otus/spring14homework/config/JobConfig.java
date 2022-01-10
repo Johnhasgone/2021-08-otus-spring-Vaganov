@@ -42,7 +42,7 @@ import java.util.Map;
 public class JobConfig {
     private final Logger logger = LoggerFactory.getLogger("Batch");
     private static final int CHUNK_SIZE = 5;
-    public static final String LIBRARY_MIGRATION_JOB_NAME = "libraryConversionJob";
+    public static final String LIBRARY_MIGRATION_JOB_NAME = "libraryMigrationJob";
     public Map<Long, String> authorIdMap = new HashMap<>();
     public Map<Long, String> genreIdMap = new HashMap<>();
 
@@ -153,7 +153,7 @@ public class JobConfig {
     @Bean
     public Job libraryMigrationJob(Step convertAuthorStep, Step convertGenreStep, Step convertBookStep) {
         return jobBuilderFactory.get(LIBRARY_MIGRATION_JOB_NAME)
-                .incrementer(new RunIdIncrementer())
+                //.incrementer(new RunIdIncrementer())
                 .start(splitFlow(convertAuthorStep, convertGenreStep))
                 .next(convertBookStep)
                 .end()
@@ -201,6 +201,7 @@ public class JobConfig {
     @Bean
     public Step convertAuthorStep() {
         return stepBuilderFactory.get("convertAuthorStep")
+                .allowStartIfComplete(true)
                 .<ru.otus.spring14homework.domain.sql.Author, Author>chunk(CHUNK_SIZE)
                 .reader(authorReader(authorRepository))
                 .processor(authorProcessor())
@@ -250,6 +251,7 @@ public class JobConfig {
     @Bean
     public Step convertGenreStep() {
         return stepBuilderFactory.get("convertGenreStep")
+                .allowStartIfComplete(true)
                 .<ru.otus.spring14homework.domain.sql.Genre, Genre>chunk(CHUNK_SIZE)
                 .reader(genreReader(genreRepository))
                 .processor(genreProcessor())
@@ -299,10 +301,13 @@ public class JobConfig {
     @Bean
     public Step convertBookStep() {
         return stepBuilderFactory.get("convertBookStep")
+                .allowStartIfComplete(true)
                 .<ru.otus.spring14homework.domain.sql.Book, Book>chunk(CHUNK_SIZE)
                 .reader(bookReader(bookRepository))
                 .processor(bookProcessor())
                 .writer(bookWriter())
                 .build();
     }
+
+    // TODO add deleting of copied data and clearing maps with ids
 }
