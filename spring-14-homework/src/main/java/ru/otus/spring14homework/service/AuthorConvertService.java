@@ -12,6 +12,9 @@ public class AuthorConvertService implements EntityConvertService<ru.otus.spring
 
     @Override
     public Author convert(ru.otus.spring14homework.domain.sql.Author source) {
+        if (authorIdMap.containsKey(source.getId())) {
+            return null; // to skip processed item after restart
+        }
         authorIdMap.put(source.getId(), new ObjectId().toHexString());
         return new Author(authorIdMap.get(source.getId()), source.getName());
     }

@@ -12,6 +12,10 @@ public class GenreConvertService implements EntityConvertService<ru.otus.spring1
 
     @Override
     public Genre convert(ru.otus.spring14homework.domain.sql.Genre source) {
+        if (genreIdMap.containsKey(source.getId())) {
+            return null; // to skip processed item after restart
+        }
+
         genreIdMap.put(source.getId(), new ObjectId().toHexString());
         return new Genre(genreIdMap.get(source.getId()), source.getName());
     }

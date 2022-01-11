@@ -8,11 +8,7 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.core.job.builder.FlowBuilder;
 import org.springframework.batch.core.job.flow.Flow;
 import org.springframework.batch.core.job.flow.support.SimpleFlow;
-import org.springframework.batch.core.launch.support.RunIdIncrementer;
-import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.data.MongoItemWriter;
 import org.springframework.batch.item.data.RepositoryItemReader;
 import org.springframework.batch.item.data.builder.MongoItemWriterBuilder;
@@ -24,18 +20,20 @@ import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.lang.NonNull;
-import ru.otus.spring14homework.dao.sql.AuthorRepository;
-import ru.otus.spring14homework.dao.sql.BookRepository;
-import ru.otus.spring14homework.dao.sql.GenreRepository;
+import ru.otus.spring14homework.dao.AuthorRepository;
+import ru.otus.spring14homework.dao.BookRepository;
+import ru.otus.spring14homework.dao.GenreRepository;
 import ru.otus.spring14homework.domain.no_sql.Author;
 import ru.otus.spring14homework.domain.no_sql.Book;
 import ru.otus.spring14homework.domain.no_sql.Genre;
 import ru.otus.spring14homework.service.AuthorConvertService;
 import ru.otus.spring14homework.service.BookConvertService;
 import ru.otus.spring14homework.service.GenreConvertService;
+import ru.otus.spring14homework.service.listener.MigrationProcessListener;
+import ru.otus.spring14homework.service.listener.MigrationReadListener;
+import ru.otus.spring14homework.service.listener.MigrationWriteListener;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Configuration
@@ -45,6 +43,7 @@ public class JobConfig {
     public static final String LIBRARY_MIGRATION_JOB_NAME = "libraryMigrationJob";
     public Map<Long, String> authorIdMap = new HashMap<>();
     public Map<Long, String> genreIdMap = new HashMap<>();
+    public Map<Long, String> bookIdMap = new HashMap<>();
 
     @Autowired
     private JobBuilderFactory jobBuilderFactory;
@@ -76,7 +75,7 @@ public class JobConfig {
 
     @Bean
     public BookConvertService bookConvertService() {
-        return new BookConvertService(authorIdMap, genreIdMap);
+        return new BookConvertService(authorIdMap, genreIdMap, bookIdMap);
     }
 
     @Bean
@@ -153,7 +152,6 @@ public class JobConfig {
     @Bean
     public Job libraryMigrationJob(Step convertAuthorStep, Step convertGenreStep, Step convertBookStep) {
         return jobBuilderFactory.get(LIBRARY_MIGRATION_JOB_NAME)
-                //.incrementer(new RunIdIncrementer())
                 .start(splitFlow(convertAuthorStep, convertGenreStep))
                 .next(convertBookStep)
                 .end()
@@ -173,7 +171,7 @@ public class JobConfig {
 
     @Bean
     public Flow splitFlow(Step convertAuthorStep, Step convertGenreStep) {
-        return new FlowBuilder<SimpleFlow>("splitFlow")
+        return new FlowBuilder<SimpleFlow>("authorAndGenreSplitFlow")
                 .split(taskExecutor())
                 .add(convertAuthorFlow(convertAuthorStep), convertGenreFlow(convertGenreStep))
                 .build();
@@ -186,14 +184,14 @@ public class JobConfig {
 
     @Bean
     public Flow convertAuthorFlow(Step convertAuthorStep) {
-        return new FlowBuilder<SimpleFlow>("flow1")
+        return new FlowBuilder<SimpleFlow>("convertAuthorFlow")
                 .start(convertAuthorStep)
                 .build();
     }
 
     @Bean
     public Flow convertGenreFlow(Step convertGenreStep) {
-        return new FlowBuilder<SimpleFlow>("flow2")
+        return new FlowBuilder<SimpleFlow>("convertGenreFlow")
                 .start(convertGenreStep)
                 .build();
     }
@@ -206,45 +204,9 @@ public class JobConfig {
                 .reader(authorReader(authorRepository))
                 .processor(authorProcessor())
                 .writer(authorWriter())
-                .listener(new ItemReadListener<>() {
-                    public void beforeRead() {
-                        logger.info("Начало чтения");
-                    }
-
-                    public void afterRead(@NonNull ru.otus.spring14homework.domain.sql.Author o) {
-                        logger.info("Конец чтения");
-                    }
-
-                    public void onReadError(@NonNull Exception e) {
-                        logger.info("Ошибка чтения");
-                    }
-                })
-                .listener(new ItemWriteListener<>() {
-                    public void beforeWrite(@NonNull List list) {
-                        logger.info("Начало записи");
-                    }
-
-                    public void afterWrite(@NonNull List list) {
-                        logger.info("Конец записи");
-                    }
-
-                    public void onWriteError(@NonNull Exception e, @NonNull List list) {
-                        logger.info("Ошибка записи");
-                    }
-                })
-                .listener(new ItemProcessListener<>() {
-                    public void beforeProcess(ru.otus.spring14homework.domain.sql.Author o) {
-                        logger.info("Начало обработки");
-                    }
-
-                    public void afterProcess(@NonNull ru.otus.spring14homework.domain.sql.Author o, Author o2) {
-                        logger.info("Конец обработки - {}", o2.getName());
-                    }
-
-                    public void onProcessError(@NonNull ru.otus.spring14homework.domain.sql.Author o, @NonNull Exception e) {
-                        logger.info("Ошибка обработки");
-                    }
-                })
+                .listener(new MigrationReadListener<>())
+                .listener(new MigrationWriteListener<>())
+                .listener(new MigrationProcessListener<>())
                 .build();
     }
 
@@ -256,45 +218,9 @@ public class JobConfig {
                 .reader(genreReader(genreRepository))
                 .processor(genreProcessor())
                 .writer(genreWriter())
-                .listener(new ItemReadListener<>() {
-                    public void beforeRead() {
-                        logger.info("Начало чтения");
-                    }
-
-                    public void afterRead(@NonNull ru.otus.spring14homework.domain.sql.Genre o) {
-                        logger.info("Конец чтения");
-                    }
-
-                    public void onReadError(@NonNull Exception e) {
-                        logger.info("Ошибка чтения");
-                    }
-                })
-                .listener(new ItemWriteListener<>() {
-                    public void beforeWrite(@NonNull List list) {
-                        logger.info("Начало записи");
-                    }
-
-                    public void afterWrite(@NonNull List list) {
-                        logger.info("Конец записи");
-                    }
-
-                    public void onWriteError(@NonNull Exception e, @NonNull List list) {
-                        logger.info("Ошибка записи");
-                    }
-                })
-                .listener(new ItemProcessListener<>() {
-                    public void beforeProcess(ru.otus.spring14homework.domain.sql.Genre o) {
-                        logger.info("Начало обработки");
-                    }
-
-                    public void afterProcess(@NonNull ru.otus.spring14homework.domain.sql.Genre o, Genre o2) {
-                        logger.info("Конец обработки - {}", o2.getName());
-                    }
-
-                    public void onProcessError(@NonNull ru.otus.spring14homework.domain.sql.Genre o, @NonNull Exception e) {
-                        logger.info("Ошибка обработки");
-                    }
-                })
+                .listener(new MigrationReadListener<>())
+                .listener(new MigrationWriteListener<>())
+                .listener(new MigrationProcessListener<>())
                 .build();
     }
 
@@ -306,8 +232,9 @@ public class JobConfig {
                 .reader(bookReader(bookRepository))
                 .processor(bookProcessor())
                 .writer(bookWriter())
+                .listener(new MigrationReadListener<>())
+                .listener(new MigrationWriteListener<>())
+                .listener(new MigrationProcessListener<>())
                 .build();
     }
-
-    // TODO add deleting of copied data and clearing maps with ids
 }

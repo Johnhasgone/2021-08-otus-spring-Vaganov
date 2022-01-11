@@ -33,12 +33,3 @@ spring:
     console:
       enabled: true
       path: /h2-console
-
-mongock:
-  runner-type: "InitializingBean"
-  change-logs-scan-package:
-    - ru.otus.spring14homework.mongock.changelogs
-  mongo-db:
-    write-concern:
-      journal: false
-    read-concern: local

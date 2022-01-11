@@ -13,7 +13,7 @@ spring:
 
   batch:
     job:
-      enabled: false
+      enabled: true
   shell:
     interactive:
       enabled: false
@@ -27,12 +27,3 @@ spring:
       host: localhost
       port: 0
       database: BookDB
-
-mongock:
-  runner-type: "InitializingBean"
-  change-logs-scan-package:
-    - ru.otus.spring14homework.mongock.chandgelogs
-  mongo-db:
-    write-concern:
-      journal: false
-    read-concern: local
