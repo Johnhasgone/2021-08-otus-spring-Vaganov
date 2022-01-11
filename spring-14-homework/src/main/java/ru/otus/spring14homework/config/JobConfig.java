@@ -33,8 +33,7 @@ import ru.otus.spring14homework.service.listener.MigrationProcessListener;
 import ru.otus.spring14homework.service.listener.MigrationReadListener;
 import ru.otus.spring14homework.service.listener.MigrationWriteListener;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Configuration
 public class JobConfig {
@@ -43,7 +42,7 @@ public class JobConfig {
     public static final String LIBRARY_MIGRATION_JOB_NAME = "libraryMigrationJob";
     public Map<Long, String> authorIdMap = new HashMap<>();
     public Map<Long, String> genreIdMap = new HashMap<>();
-    public Map<Long, String> bookIdMap = new HashMap<>();
+    public Set<Long> bookIdSet = new HashSet<>();
 
     @Autowired
     private JobBuilderFactory jobBuilderFactory;
@@ -75,7 +74,7 @@ public class JobConfig {
 
     @Bean
     public BookConvertService bookConvertService() {
-        return new BookConvertService(authorIdMap, genreIdMap, bookIdMap);
+        return new BookConvertService(authorIdMap, genreIdMap, bookIdSet);
     }
 
     @Bean
