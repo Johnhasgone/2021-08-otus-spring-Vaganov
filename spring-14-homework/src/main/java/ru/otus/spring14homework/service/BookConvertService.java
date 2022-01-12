@@ -1,37 +1,38 @@
 package ru.otus.spring14homework.service;
 
 import lombok.RequiredArgsConstructor;
-import org.bson.types.ObjectId;
-import ru.otus.spring14homework.domain.no_sql.Author;
-import ru.otus.spring14homework.domain.no_sql.Book;
-import ru.otus.spring14homework.domain.no_sql.Genre;
+import org.springframework.stereotype.Service;
+import ru.otus.spring14homework.domain.no_sql.MongoAuthor;
+import ru.otus.spring14homework.domain.no_sql.MongoBook;
+import ru.otus.spring14homework.domain.no_sql.MongoGenre;
+import ru.otus.spring14homework.domain.sql.SqlDbBook;
 
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Service
 @RequiredArgsConstructor
-public class BookConvertService implements EntityConvertService<ru.otus.spring14homework.domain.sql.Book, Book> {
-    private final Map<Long, String> authorIdMap;
-    private final Map<Long, String> genreIdMap;
-    private final Set<Long> bookIdSet;
+public class BookConvertService {
+    private final AuthorConvertService authorConvertService;
+    private final GenreConvertService genreConvertService;
+    private final Set<Long> bookIdSet = new HashSet<>();
 
-    @Override
-    public Book convert(ru.otus.spring14homework.domain.sql.Book source) {
+    public MongoBook convert(SqlDbBook source) {
         if (bookIdSet.contains(source.getId())) {
             return null; // to skip processed item after restart
         }
 
-        List<Author> noSqlAuthors = source.getAuthors()
+        List<MongoAuthor> mongoAuthors = source.getAuthors()
                 .stream()
-                .map(e -> new Author(authorIdMap.get(e.getId()), e.getName()))
+                .map(e -> new MongoAuthor(authorConvertService.getMongoId(e.getId()), e.getName()))
                 .collect(Collectors.toList());
-        List<Genre> noSqlGenres = source.getGenres()
+        List<MongoGenre> mongoGenres = source.getGenres()
                 .stream()
-                .map(e -> new Genre(genreIdMap.get(e.getId()), e.getName()))
+                .map(e -> new MongoGenre(genreConvertService.getMongoId(e.getId()), e.getName()))
                 .collect(Collectors.toList());
         bookIdSet.add(source.getId());
-        return new Book(null, source.getTitle(), noSqlAuthors, noSqlGenres);
+        return new MongoBook(null, source.getTitle(), mongoAuthors, mongoGenres);
     }
 }

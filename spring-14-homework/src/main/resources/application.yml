@@ -27,7 +27,7 @@ spring:
   data:
     mongodb:
       host: localhost
-      port: 27017
+      port: 0
       database: BookDB
   h2:
     console:

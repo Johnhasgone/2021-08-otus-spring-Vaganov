@@ -9,7 +9,6 @@ import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -17,7 +16,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @Entity
 @Table(name = "book")
-public class Book {
+public class SqlDbBook {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,7 +30,7 @@ public class Book {
     @JoinTable(name = "book_author",
             joinColumns = {@JoinColumn(name = "book_id")},
             inverseJoinColumns = {@JoinColumn(name = "author_id")})
-    private List<Author> authors;
+    private List<SqlDbAuthor> authors;
 
     @Column(name = "genre_id")
     @Fetch(FetchMode.SUBSELECT)
@@ -39,5 +38,5 @@ public class Book {
     @JoinTable(name = "book_genre",
             joinColumns = {@JoinColumn(name = "book_id")},
             inverseJoinColumns = {@JoinColumn(name = "genre_id")})
-    private List<Genre> genres;
+    private List<SqlDbGenre> genres;
 }

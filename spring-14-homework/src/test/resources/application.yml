@@ -13,7 +13,7 @@ spring:
 
   batch:
     job:
-      enabled: true
+      enabled: false
   shell:
     interactive:
       enabled: false

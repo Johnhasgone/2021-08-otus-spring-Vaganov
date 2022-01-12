@@ -2,21 +2,27 @@ package ru.otus.spring14homework.service;
 
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
-import ru.otus.spring14homework.domain.no_sql.Genre;
+import org.springframework.stereotype.Service;
+import ru.otus.spring14homework.domain.no_sql.MongoGenre;
+import ru.otus.spring14homework.domain.sql.SqlDbGenre;
 
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
-@RequiredArgsConstructor
-public class GenreConvertService implements EntityConvertService<ru.otus.spring14homework.domain.sql.Genre, Genre>{
-    private final Map<Long, String> genreIdMap;
+@Service
+public class GenreConvertService {
+    private final ConcurrentMap<Long, String> genreIdMap = new ConcurrentHashMap<>();
 
-    @Override
-    public Genre convert(ru.otus.spring14homework.domain.sql.Genre source) {
+    public MongoGenre convert(SqlDbGenre source) {
         if (genreIdMap.containsKey(source.getId())) {
             return null; // to skip processed item after restart
         }
 
         genreIdMap.put(source.getId(), new ObjectId().toHexString());
-        return new Genre(genreIdMap.get(source.getId()), source.getName());
+        return new MongoGenre(genreIdMap.get(source.getId()), source.getName());
+    }
+
+    public String getMongoId(Long id) {
+        return genreIdMap.get(id);
     }
 }

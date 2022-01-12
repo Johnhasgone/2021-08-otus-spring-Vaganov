@@ -2,20 +2,26 @@ package ru.otus.spring14homework.service;
 
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
-import ru.otus.spring14homework.domain.no_sql.Author;
+import org.springframework.stereotype.Service;
+import ru.otus.spring14homework.domain.no_sql.MongoAuthor;
+import ru.otus.spring14homework.domain.sql.SqlDbAuthor;
 
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
-@RequiredArgsConstructor
-public class AuthorConvertService implements EntityConvertService<ru.otus.spring14homework.domain.sql.Author, Author>{
-    private final Map<Long, String> authorIdMap;
+@Service
+public class AuthorConvertService {
+    private final ConcurrentMap<Long, String> authorIdMap = new ConcurrentHashMap<>();
 
-    @Override
-    public Author convert(ru.otus.spring14homework.domain.sql.Author source) {
+    public MongoAuthor convert(SqlDbAuthor source) {
         if (authorIdMap.containsKey(source.getId())) {
             return null; // to skip processed item after restart
         }
         authorIdMap.put(source.getId(), new ObjectId().toHexString());
-        return new Author(authorIdMap.get(source.getId()), source.getName());
+        return new MongoAuthor(authorIdMap.get(source.getId()), source.getName());
+    }
+
+    public String getMongoId(Long id) {
+        return authorIdMap.get(id);
     }
 }

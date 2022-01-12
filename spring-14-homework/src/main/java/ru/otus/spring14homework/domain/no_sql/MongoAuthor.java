@@ -9,13 +9,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Document
-public class Genre {
+@Document(value = "author")
+public class MongoAuthor {
     @Id
     private String id;
     private String name;
 
-    public Genre(String name) {
-        this.name = name;
+    public MongoAuthor(String authorName) {
+        this.name = authorName;
     }
+
 }

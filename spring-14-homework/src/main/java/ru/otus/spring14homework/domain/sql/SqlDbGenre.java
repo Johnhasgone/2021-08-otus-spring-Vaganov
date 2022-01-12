@@ -10,7 +10,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "genre")
-public class Genre {
+public class SqlDbGenre {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -18,7 +18,7 @@ public class Genre {
     @Column(name = "name")
     private String name;
 
-    public Genre(String name) {
+    public SqlDbGenre(String name) {
         this.name = name;
     }
 }

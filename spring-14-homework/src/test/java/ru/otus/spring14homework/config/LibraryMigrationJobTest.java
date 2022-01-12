@@ -10,10 +10,10 @@ import org.springframework.batch.test.JobRepositoryTestUtils;
 import org.springframework.batch.test.context.SpringBatchTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.otus.spring14homework.dao.no_sql.AuthorMongoRepository;
-import ru.otus.spring14homework.dao.no_sql.BookMongoRepository;
-import ru.otus.spring14homework.dao.no_sql.GenreMongoRepository;
-import ru.otus.spring14homework.domain.no_sql.Book;
+import ru.otus.spring14homework.dao.no_sql.MongoAuthorRepository;
+import ru.otus.spring14homework.dao.no_sql.MongoBookRepository;
+import ru.otus.spring14homework.dao.no_sql.MongoGenreRepository;
+import ru.otus.spring14homework.domain.no_sql.MongoBook;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,13 +36,13 @@ class LibraryMigrationJobTest {
     private JobRepositoryTestUtils jobRepositoryTestUtils;
 
     @Autowired
-    private GenreMongoRepository genreMongoRepository;
+    private MongoGenreRepository mongoGenreRepository;
 
     @Autowired
-    private AuthorMongoRepository authorMongoRepository;
+    private MongoAuthorRepository mongoAuthorRepository;
 
     @Autowired
-    private BookMongoRepository bookMongoRepository;
+    private MongoBookRepository mongoBookRepository;
 
     @BeforeEach
     void clearMetaData() {
@@ -61,12 +61,12 @@ class LibraryMigrationJobTest {
 
         assertThat(jobExecution.getExitStatus().getExitCode()).isEqualTo("COMPLETED");
 
-        assertEquals(TOTAL_AUTHORS, authorMongoRepository.findAll().size());
-        assertEquals(TOTAL_GENRES, genreMongoRepository.findAll().size());
-        assertEquals(TOTAL_BOOKS, bookMongoRepository.findAll().size());
+        assertEquals(TOTAL_AUTHORS, mongoAuthorRepository.findAll().size());
+        assertEquals(TOTAL_GENRES, mongoGenreRepository.findAll().size());
+        assertEquals(TOTAL_BOOKS, mongoBookRepository.findAll().size());
 
-        Book actualBook = bookMongoRepository.findByTitle(BOOK_TITLE).get(0);
-        assertEquals(EXPECTED_AUTHOR, actualBook.getAuthors().get(0).getName());
-        assertEquals(EXPECTED_GENRE, actualBook.getGenres().get(0).getName());
+        MongoBook actualMongoBook = mongoBookRepository.findByTitle(BOOK_TITLE).get(0);
+        assertEquals(EXPECTED_AUTHOR, actualMongoBook.getAuthors().get(0).getName());
+        assertEquals(EXPECTED_GENRE, actualMongoBook.getGenres().get(0).getName());
     }
 }

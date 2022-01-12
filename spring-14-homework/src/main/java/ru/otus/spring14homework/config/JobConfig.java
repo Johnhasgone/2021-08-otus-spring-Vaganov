@@ -20,12 +20,15 @@ import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.lang.NonNull;
-import ru.otus.spring14homework.dao.AuthorRepository;
-import ru.otus.spring14homework.dao.BookRepository;
-import ru.otus.spring14homework.dao.GenreRepository;
-import ru.otus.spring14homework.domain.no_sql.Author;
-import ru.otus.spring14homework.domain.no_sql.Book;
-import ru.otus.spring14homework.domain.no_sql.Genre;
+import ru.otus.spring14homework.dao.sql.SqlDbAuthorRepository;
+import ru.otus.spring14homework.dao.sql.SqlDbBookRepository;
+import ru.otus.spring14homework.dao.sql.SqlDbGenreRepository;
+import ru.otus.spring14homework.domain.no_sql.MongoAuthor;
+import ru.otus.spring14homework.domain.no_sql.MongoBook;
+import ru.otus.spring14homework.domain.no_sql.MongoGenre;
+import ru.otus.spring14homework.domain.sql.SqlDbAuthor;
+import ru.otus.spring14homework.domain.sql.SqlDbBook;
+import ru.otus.spring14homework.domain.sql.SqlDbGenre;
 import ru.otus.spring14homework.service.AuthorConvertService;
 import ru.otus.spring14homework.service.BookConvertService;
 import ru.otus.spring14homework.service.GenreConvertService;
@@ -40,9 +43,6 @@ public class JobConfig {
     private final Logger logger = LoggerFactory.getLogger("Batch");
     private static final int CHUNK_SIZE = 5;
     public static final String LIBRARY_MIGRATION_JOB_NAME = "libraryMigrationJob";
-    public Map<Long, String> authorIdMap = new HashMap<>();
-    public Map<Long, String> genreIdMap = new HashMap<>();
-    public Set<Long> bookIdSet = new HashSet<>();
 
     @Autowired
     private JobBuilderFactory jobBuilderFactory;
@@ -51,35 +51,29 @@ public class JobConfig {
     private StepBuilderFactory stepBuilderFactory;
 
     @Autowired
-    private AuthorRepository authorRepository;
+    private SqlDbAuthorRepository authorRepository;
 
     @Autowired
-    private GenreRepository genreRepository;
+    private SqlDbGenreRepository genreRepository;
 
     @Autowired
-    private BookRepository bookRepository;
+    private SqlDbBookRepository bookRepository;
+
+    @Autowired
+    private AuthorConvertService authorConvertService;
+
+    @Autowired
+    private GenreConvertService genreConvertService;
+
+    @Autowired
+    private BookConvertService bookConvertService;
 
     @Autowired
     private MongoTemplate mongoTemplate;
 
     @Bean
-    public AuthorConvertService authorConvertService() {
-        return new AuthorConvertService(authorIdMap);
-    }
-
-    @Bean
-    public GenreConvertService genreConvertService() {
-        return new GenreConvertService(genreIdMap);
-    }
-
-    @Bean
-    public BookConvertService bookConvertService() {
-        return new BookConvertService(authorIdMap, genreIdMap, bookIdSet);
-    }
-
-    @Bean
-    public RepositoryItemReader<ru.otus.spring14homework.domain.sql.Author> authorReader(AuthorRepository authorRepository) {
-        return new RepositoryItemReaderBuilder<ru.otus.spring14homework.domain.sql.Author>()
+    public RepositoryItemReader<SqlDbAuthor> authorReader() {
+        return new RepositoryItemReaderBuilder<SqlDbAuthor>()
                 .name("authorReader")
                 .repository(authorRepository)
                 .pageSize(CHUNK_SIZE)
@@ -89,8 +83,8 @@ public class JobConfig {
     }
 
     @Bean
-    public RepositoryItemReader<ru.otus.spring14homework.domain.sql.Genre> genreReader(GenreRepository genreRepository) {
-        return new RepositoryItemReaderBuilder<ru.otus.spring14homework.domain.sql.Genre>()
+    public RepositoryItemReader<SqlDbGenre> genreReader() {
+        return new RepositoryItemReaderBuilder<SqlDbGenre>()
                 .name("genreReader")
                 .repository(genreRepository)
                 .pageSize(CHUNK_SIZE)
@@ -100,8 +94,8 @@ public class JobConfig {
     }
 
     @Bean
-    public RepositoryItemReader<ru.otus.spring14homework.domain.sql.Book> bookReader(BookRepository bookRepository) {
-        return new RepositoryItemReaderBuilder<ru.otus.spring14homework.domain.sql.Book>()
+    public RepositoryItemReader<SqlDbBook> bookReader() {
+        return new RepositoryItemReaderBuilder<SqlDbBook>()
                 .name("bookReader")
                 .repository(bookRepository)
                 .pageSize(CHUNK_SIZE)
@@ -111,38 +105,38 @@ public class JobConfig {
     }
 
     @Bean
-    public ItemProcessor<ru.otus.spring14homework.domain.sql.Author, Author> authorProcessor() {
-        return authorConvertService()::convert;
+    public ItemProcessor<SqlDbAuthor, MongoAuthor> authorProcessor() {
+        return authorConvertService::convert;
     }
 
     @Bean
-    public ItemProcessor<ru.otus.spring14homework.domain.sql.Genre, Genre> genreProcessor() {
-        return genreConvertService()::convert;
+    public ItemProcessor<SqlDbGenre, MongoGenre> genreProcessor() {
+        return genreConvertService::convert;
     }
 
-    @Bean ItemProcessor<ru.otus.spring14homework.domain.sql.Book, Book> bookProcessor() {
-        return bookConvertService()::convert;
+    @Bean ItemProcessor<SqlDbBook, MongoBook> bookProcessor() {
+        return bookConvertService::convert;
     }
 
     @Bean
-    public MongoItemWriter<Author> authorWriter() {
-        return new MongoItemWriterBuilder<Author>()
+    public MongoItemWriter<MongoAuthor> authorWriter() {
+        return new MongoItemWriterBuilder<MongoAuthor>()
                 .template(mongoTemplate)
                 .collection("author")
                 .build();
     }
 
     @Bean
-    public MongoItemWriter<Genre> genreWriter() {
-        return new MongoItemWriterBuilder<Genre>()
+    public MongoItemWriter<MongoGenre> genreWriter() {
+        return new MongoItemWriterBuilder<MongoGenre>()
                 .template(mongoTemplate)
                 .collection("genre")
                 .build();
     }
 
     @Bean
-    public MongoItemWriter<Book> bookWriter() {
-        return new MongoItemWriterBuilder<Book>()
+    public MongoItemWriter<MongoBook> bookWriter() {
+        return new MongoItemWriterBuilder<MongoBook>()
                 .template(mongoTemplate)
                 .collection("book")
                 .build();
@@ -199,8 +193,8 @@ public class JobConfig {
     public Step convertAuthorStep() {
         return stepBuilderFactory.get("convertAuthorStep")
                 .allowStartIfComplete(true)
-                .<ru.otus.spring14homework.domain.sql.Author, Author>chunk(CHUNK_SIZE)
-                .reader(authorReader(authorRepository))
+                .<SqlDbAuthor, MongoAuthor>chunk(CHUNK_SIZE)
+                .reader(authorReader())
                 .processor(authorProcessor())
                 .writer(authorWriter())
                 .listener(new MigrationReadListener<>())
@@ -213,8 +207,8 @@ public class JobConfig {
     public Step convertGenreStep() {
         return stepBuilderFactory.get("convertGenreStep")
                 .allowStartIfComplete(true)
-                .<ru.otus.spring14homework.domain.sql.Genre, Genre>chunk(CHUNK_SIZE)
-                .reader(genreReader(genreRepository))
+                .<SqlDbGenre, MongoGenre>chunk(CHUNK_SIZE)
+                .reader(genreReader())
                 .processor(genreProcessor())
                 .writer(genreWriter())
                 .listener(new MigrationReadListener<>())
@@ -227,8 +221,8 @@ public class JobConfig {
     public Step convertBookStep() {
         return stepBuilderFactory.get("convertBookStep")
                 .allowStartIfComplete(true)
-                .<ru.otus.spring14homework.domain.sql.Book, Book>chunk(CHUNK_SIZE)
-                .reader(bookReader(bookRepository))
+                .<SqlDbBook, MongoBook>chunk(CHUNK_SIZE)
+                .reader(bookReader())
                 .processor(bookProcessor())
                 .writer(bookWriter())
                 .listener(new MigrationReadListener<>())

@@ -1,23 +1,21 @@
 package ru.otus.spring14homework.domain.no_sql;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.List;
-
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Document
-public class Book {
+@Document(value = "genre")
+public class MongoGenre {
     @Id
     private String id;
-    private String title;
-    private List<Author> authors;
-    private List<Genre> genres;
+    private String name;
+
+    public MongoGenre(String name) {
+        this.name = name;
+    }
 }

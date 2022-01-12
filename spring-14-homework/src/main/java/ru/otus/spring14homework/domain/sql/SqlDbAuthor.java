@@ -10,7 +10,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 @Table(name = "author")
-public class Author {
+public class SqlDbAuthor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -18,7 +18,7 @@ public class Author {
     @Column(name = "name")
     private String name;
 
-    public Author(String authorName) {
+    public SqlDbAuthor(String authorName) {
         this.name = authorName;
     }
 
