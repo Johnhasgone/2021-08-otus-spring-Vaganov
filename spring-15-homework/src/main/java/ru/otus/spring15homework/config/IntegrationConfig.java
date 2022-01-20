@@ -106,7 +106,7 @@ public class IntegrationConfig {
 
                 .channel(presidentChannel())
                 .enrichHeaders(Map.of("veto", new Random().nextBoolean()))
-
+                // todo change to  Law and sign (separate flow?)
                 .channel("publicationChannel")
                 .log(LoggingHandler.Level.INFO, "", m -> m.getHeaders().get("resolution")) // veto?
                 .logAndReply(LoggingHandler.Level.INFO, "", message -> {}) // in the end of flow = president veto
