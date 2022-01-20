@@ -3,12 +3,12 @@ package ru.otus.spring15homework.domain;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
+import java.time.LocalDate;
 
 @Getter
 @Setter
-public class DraftLaw {
-    private String title;
+public class Law {
     private String text;
-    private List<Modification> modifications;
+    private String registerNumber;
+    private LocalDate signedDate;
 }
