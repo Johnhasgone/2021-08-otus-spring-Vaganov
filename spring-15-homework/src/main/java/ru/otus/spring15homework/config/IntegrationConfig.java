@@ -3,25 +3,21 @@ package ru.otus.spring15homework.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.integration.channel.NullChannel;
 import org.springframework.integration.channel.PublishSubscribeChannel;
 import org.springframework.integration.channel.QueueChannel;
 import org.springframework.integration.config.EnableIntegration;
-import org.springframework.integration.dsl.IntegrationFlow;
-import org.springframework.integration.dsl.IntegrationFlowExtension;
-import org.springframework.integration.dsl.IntegrationFlows;
-import org.springframework.integration.dsl.MessageChannels;
+import org.springframework.integration.dsl.*;
 import org.springframework.integration.handler.LoggingHandler;
+import org.springframework.integration.scheduling.PollerMetadata;
 import org.springframework.messaging.Message;
-import org.springframework.messaging.handler.annotation.Header;
 import ru.otus.spring15homework.domain.DraftLaw;
+import ru.otus.spring15homework.domain.Header;
 import ru.otus.spring15homework.service.DumaSecretariat;
 import ru.otus.spring15homework.service.InitiativeDepartment;
 import ru.otus.spring15homework.service.ProfileCommittees;
 
 import java.util.Map;
 import java.util.Random;
-import java.util.function.Consumer;
 
 @Configuration
 @EnableIntegration
@@ -35,6 +31,10 @@ public class IntegrationConfig {
     @Autowired
     private ProfileCommittees committees;
 
+    @Bean(name = PollerMetadata.DEFAULT_POLLER)
+    public PollerMetadata poller() {
+        return Pollers.fixedRate( 100 ).maxMessagesPerPoll( 1 ).get();
+    }
 
     //TODO think about what channel type to choose
     @Bean
@@ -42,19 +42,33 @@ public class IntegrationConfig {
         return MessageChannels.queue( 10 ).get();
     }
 
-    @Bean QueueChannel stateDumaFirstReadingChannel() {
+    @Bean
+    public QueueChannel stateDumaFirstReadingChannel() {
         return MessageChannels.queue(10).get();
     }
 
-    @Bean QueueChannel stateDumaSecondReadingChannel() {
+    @Bean
+    public QueueChannel stateDumaSecondReadingChannel() {
         return MessageChannels.queue(10).get();
     }
 
-    @Bean QueueChannel stateDumaThirdReadingChannel() {
+    @Bean
+    public QueueChannel stateDumaThirdReadingChannel() {
         return MessageChannels.queue(10).get();
     }
 
-    @Bean QueueChannel federalCouncilChannel() {
+    @Bean
+    public QueueChannel federalCouncilChannel() {
+        return MessageChannels.queue(10).get();
+    }
+
+    @Bean
+    public QueueChannel presidentChannel() {
+        return MessageChannels.queue(10).get();
+    }
+
+    @Bean
+    public QueueChannel prepareLawChannel() {
         return MessageChannels.queue(10).get();
     }
 
@@ -64,64 +78,100 @@ public class IntegrationConfig {
     }
 
     @Bean
-    public PublishSubscribeChannel committeeChannel() {
-        return MessageChannels.publishSubscribe().get();
+    public QueueChannel committeeChannel() {
+        return MessageChannels.queue(10).get();
     }
 
 
     @Bean
     public IntegrationFlow mainLegislativeProcessFlow() {
-        return IntegrationFlows.fromSupplier(department::createDraftLaw)
-                .channel(departmentChannel())
-                .log(LoggingHandler.Level.INFO, "В секретариат Госдумы поступил законопроект ",
-                        m -> ((DraftLaw) m.getPayload()).getTitle())
-                .handle(m -> secretariat.prepareForApprovalProcess((Message<DraftLaw>) m)) // or transform or string bean and method name
-                .log(LoggingHandler.Level.INFO, "Законопроект подготовлен в серетариате Госдумы и отправлен в профильные комитеты")
-                .transform(Message.class, m -> committees.checkEconomicIssues(m))
-                .route("headers['commiteeApproval']",
-                        m -> m
-                                .subFlowMapping(false, acceptModificationsFlow())
-                                .subFlowMapping(true, sf -> sf.gateway(stateDumaFirstReadingChannel())))
+        return IntegrationFlows
+                //.fromSupplier(department::createDraftLaw)
+                .from(departmentChannel())
+                .log(LoggingHandler.Level.INFO, "Секретариат Государственной Думы:",
+                        m -> "Поступил на согласование проект: " + ((DraftLaw) m.getPayload()).getTitle())
 
-                .channel("stateDumaFirstReadingChannel")
+                // transform требует измененения метода подготовки сообщения (Message -> Message)
+                .handle("dumaSecretariat", "prepareForApprovalProcess") // or transform or string bean and method name
+                .log(LoggingHandler.Level.INFO, "Секретариат Государственной Думы:",
+                        m -> ((DraftLaw) m.getPayload()).getTitle() + " передан на согласование в профильные комитеты")
+
+                .handle("profileCommittees", "checkDraftLaw")
+                //.transform(Message.class, m -> committees.checkDraftLaw(m))
+                .log(LoggingHandler.Level.INFO, "профильные комитеты", m -> "done")
+                .route("headers['committeeApproval']",
+                        m -> m.subFlowMapping(false, acceptModificationsFlow())
+                                .subFlowMapping(true, sf -> sf.gateway(stateDumaFirstReadingChannel())))
+                .log(LoggingHandler.Level.INFO, "Профильные комитеты:",
+                        m -> String.format("Законопроект \"%s\" одобрен и передан в Госдуму для обсуждения в Первом чтении",
+                                ((DraftLaw)m.getPayload()).getTitle()))
+
+                .channel(stateDumaFirstReadingChannel())
                 .handle("stateDuma", "readFirst") // TODO add bean
                 .route("headers['dumaApproval1']",
                         m -> m.subFlowMapping(false, acceptModificationsFlow())
                                 .subFlowMapping(true, sf -> sf.gateway(stateDumaSecondReadingChannel())))
+                .log(LoggingHandler.Level.INFO, "Государственная дума:",
+                        m -> String.format("Законопроект \"%s\" одобрен в Первом чтении",
+                        ((DraftLaw)m.getPayload()).getTitle()))
 
                 .channel(stateDumaSecondReadingChannel())
                 .handle("stateDuma", "readSecond")
                 .route("headers['dumaApproval2']",
                         m -> m.subFlowMapping(false, acceptModificationsFlow())
                                 .subFlowMapping(true, sf -> sf.gateway(stateDumaThirdReadingChannel())))
+                .log(LoggingHandler.Level.INFO, "Государственная дума:",
+                        m -> String.format("Законопроект \"%s\" одобрен во Втором чтении",
+                                ((DraftLaw)m.getPayload()).getTitle()))
 
                 .channel(stateDumaThirdReadingChannel())
-                .enrichHeaders(Map.of("vote", new Random().nextBoolean()))
-                .route("headers['vote']", m -> m.channelMapping(false, new NullChannel())
-                        .subFlowMapping(true, sf -> sf.channel(federalCouncilChannel())))
+                .handle("stateDuma", "vote")
+                .route("headers['dumaVoteResult']",
+                        m -> m.subFlowMapping(false, BaseIntegrationFlowDefinition::nullChannel)
+                                .subFlowMapping(true, sf -> sf.gateway(federalCouncilChannel())))
+                .log(LoggingHandler.Level.INFO, "Государственная дума:",
+                        m -> String.format("Законопроект \"%s\" принят в Третьем чтении",
+                                ((DraftLaw)m.getPayload()).getTitle()))
 
                 .channel(federalCouncilChannel())
-                .enrichHeaders(Map.of("veto", new Random().nextBoolean())) // TODO change weight?
-                .route()
+                .enrichHeaders(Map.of(Header.COUNCIL_APPROVAL.getValue(), new Random().nextBoolean()))
+                .log(LoggingHandler.Level.INFO, "Совет Федерации: ",
+                        m -> String.format((boolean) m.getHeaders().get(Header.COUNCIL_APPROVAL.getValue())
+                                ? "Законопроект \"%s\" одобрен Советом Федерации"
+                                : "На законопроект \"%s\" наложено вето",
+                                ((DraftLaw)m.getPayload()).getTitle()))
+                .route("headers['councilApproval']",
+                        m -> m.subFlowMapping(false, BaseIntegrationFlowDefinition::nullChannel)
+                                .subFlowMapping(true, sf -> sf.gateway(presidentChannel())))
 
                 .channel(presidentChannel())
-                .enrichHeaders(Map.of("veto", new Random().nextBoolean()))
-                // todo change to  Law and sign (separate flow?)
+                .enrichHeaders(Map.of(Header.SIGNED.getValue(), new Random().nextBoolean()))
+                .log(LoggingHandler.Level.INFO, "Президент: ",
+                        m -> String.format((boolean) m.getHeaders().get(Header.SIGNED.getValue())
+                                        ? "%s подписан"
+                                        : "На законопроект \"%s\" наложено вето",
+                                ((DraftLaw)m.getPayload()).getTitle()))
+                .route("headers['signed']",
+                        m -> m.subFlowMapping(false, BaseIntegrationFlowDefinition::nullChannel)
+                                .subFlowMapping(true, sf -> sf.gateway(prepareLawChannel())))
+
+                .channel(prepareLawChannel())
+                .handle("dumaSecretariat", "prepareLaw")
                 .channel("publicationChannel")
-                .log(LoggingHandler.Level.INFO, "", m -> m.getHeaders().get("resolution")) // veto?
-                .logAndReply(LoggingHandler.Level.INFO, "", message -> {}) // in the end of flow = president veto
-                .get();
+                .get()
+        ;
     }
 
     @Bean
     public IntegrationFlow acceptModificationsFlow() {
         return f -> f
-                .transform(Message.class, m -> department.acceptModifications(m)) // maybe work only with payload
-                .to(mainLegislativeProcessFlow());
+                .log(LoggingHandler.Level.INFO, "Министерство-инициатор:", m -> "Законопроект возвращен на доработку")
+                .<DraftLaw, DraftLaw>transform(p -> department.acceptModifications(p))
+                .channel(departmentChannel());
+                //.to(mainLegislativeProcessFlow());
     }
 
-    @Bean
-    public IntegrationFlow
+/*
 
     // to use for return for rework if draft has some modifications (secretariat gets result from
     // committees, then decides where to send draft - back to department, or to 1st reading in state duma)
@@ -192,5 +242,5 @@ public class IntegrationConfig {
         }
 
     }
-
+*/
 }

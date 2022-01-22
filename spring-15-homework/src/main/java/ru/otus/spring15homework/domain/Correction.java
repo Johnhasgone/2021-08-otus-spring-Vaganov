@@ -8,7 +8,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class Modification {
+public class Correction {
     private List<String> addModifications = new ArrayList<>();
     private List<String> deleteModifications = new ArrayList<>();
 }

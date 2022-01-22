@@ -1,31 +1,46 @@
 package ru.otus.spring15homework.service;
 
 import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 import ru.otus.spring15homework.domain.DraftLaw;
-import ru.otus.spring15homework.domain.Modification;
+import ru.otus.spring15homework.domain.Correction;
+import ru.otus.spring15homework.domain.Header;
 
 import java.util.List;
 
 @Service
 public class ProfileCommittees {
-    List<String> deleteSentences = List.of("неэкономичное предложение", "меры, требующее высоких расходов");
+    private static final List<String> deleteModifications = List.of("Положение, противоречащее Конституции",
+            "Положение, противоречащее Федеральному закону номер 35",
+            "Положение, реализация которого потребует расходов сверх утвержденного бюджета",
+            "Положение, угрожающее национальной безопасности");
 
-    public Message<DraftLaw> checkEconomicIssues(Message<DraftLaw> message) {
-        Modification modification = new Modification();
+    public static final List<String> addModifications = List.of(
+            "Меры по противодействию коррупции",
+            "Положения, направленные на предотвращение ограничения конкуренции",
+            "Положения, направленные на поддержку промыслов малых народов России");
+
+    public Message<DraftLaw> checkDraftLaw(Message<DraftLaw> message) {
+        Correction correction = new Correction();
         DraftLaw draftLaw = message.getPayload();
-        for (String sentence : deleteSentences) {
-            if (draftLaw.getText().contains(sentence)) {
-                modification.getDeleteModifications().add(sentence);
+        for (String modification : deleteModifications) {
+            if (draftLaw.getText().contains(modification)) {
+                correction.getDeleteModifications().add(modification);
             }
         }
-        if (!modification.getDeleteModifications().isEmpty()) {
-            draftLaw.getModifications().add(modification);
-            message.getHeaders().put("committeeApproval", false);
+        for (String modification : addModifications) {
+            if (!draftLaw.getText().contains(modification)) {
+                correction.getAddModifications().add(modification);
+            }
         }
+        draftLaw.setCorrection(correction);
 
-        return message;
+        return MessageBuilder
+                .withPayload(draftLaw)
+                .copyHeaders(message.getHeaders())
+                .setHeader(Header.COMMITTEE_APPROVAL.getValue(),
+                        correction.getAddModifications().isEmpty() && correction.getDeleteModifications().isEmpty())
+                .build();
     }
-
-    // TODO copy this to other committees, add or delete addModifications
 }

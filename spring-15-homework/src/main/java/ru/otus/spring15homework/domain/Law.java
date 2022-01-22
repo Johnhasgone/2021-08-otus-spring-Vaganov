@@ -9,6 +9,7 @@ import java.time.LocalDate;
 @Setter
 public class Law {
     private String text;
+    private String title;
     private String registerNumber;
     private LocalDate signedDate;
 }
