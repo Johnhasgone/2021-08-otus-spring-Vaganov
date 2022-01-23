@@ -13,9 +13,18 @@ public class LegislativeProcessCommands {
     private final InitiativeDepartment department;
 
     @ShellMethod(value = "start process", key = {"start"})
-    public String startProcess() {
-        Law law = process.process(department.createDraftLaw());
+    public String startProcess(int count) {
 
-        return  law.getTitle() + "\n\n" + law.getText();
+        for (int i = 0; i < count; i++) {
+            Law law = process.process(department.createDraftLaw());
+            System.out.println(law.getTitle() + "\n\n" + law.getText());
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return  "ok";
     }
 }
