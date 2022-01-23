@@ -8,6 +8,6 @@ import ru.otus.spring15homework.domain.Law;
 @MessagingGateway
 public interface LegislativeProcess {
 
-    @Gateway(requestChannel = "departmentChannel", replyChannel = "presidentChannel")
+    @Gateway(requestChannel = "departmentChannel", replyChannel = "publicationChannel")
     Law process(DraftLaw draftLaw);
 }

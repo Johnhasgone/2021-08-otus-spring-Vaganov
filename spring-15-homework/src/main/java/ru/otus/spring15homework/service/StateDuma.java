@@ -10,30 +10,22 @@ import java.util.Random;
 
 @Service
 public class StateDuma {
-    private int votedFor = 298;
-    private int votedAgainst = 1;
-    private int abstained = 1;
-    public Message<DraftLaw> readFirst(Message<DraftLaw> message) {
-        return MessageBuilder
-                .withPayload(message.getPayload())
-                .copyHeaders(message.getHeaders())
-                .setHeader(Header.DUMA_APPROVAL_1.getValue(), new Random().nextBoolean())
-                .build();
-    }
-
-    public Message<DraftLaw> readSecond(Message<DraftLaw> message) {
-        return MessageBuilder
-                .withPayload(message.getPayload())
-                .copyHeaders(message.getHeaders())
-                .setHeader(Header.DUMA_APPROVAL_2.getValue(), new Random().nextBoolean())
-                .build();
-    }
+    private static final int total = 300;
+    private int votedFor;
+    private int votedAgainst;
+    private int abstained;
 
     public Message<DraftLaw> vote(Message<DraftLaw> message) {
+        votedFor = new Random().nextInt(250);
+        votedAgainst = new Random().nextInt(50);
+        abstained = total - votedFor - votedAgainst;
+
+        System.out.println("Голосование: ЗА - " + votedFor + ", ПРОТИВ - " + votedAgainst + ", ВОЗДЕРЖАЛИСЬ - " + abstained);
+
         return MessageBuilder
                 .withPayload(message.getPayload())
                 .copyHeaders(message.getHeaders())
-                .setHeader(Header.DUMA_VOTE_RESULT.getValue(), votedFor > votedAgainst + abstained)
+                .setHeader(Header.DUMA_APPROVAL.getValue(), votedFor > votedAgainst + abstained)
                 .build();
     }
 }

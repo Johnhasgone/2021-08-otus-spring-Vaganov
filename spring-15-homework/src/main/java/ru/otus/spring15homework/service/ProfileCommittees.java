@@ -40,7 +40,8 @@ public class ProfileCommittees {
                 .withPayload(draftLaw)
                 .copyHeaders(message.getHeaders())
                 .setHeader(Header.COMMITTEE_APPROVAL.getValue(),
-                        correction.getAddModifications().isEmpty() && correction.getDeleteModifications().isEmpty())
+                        correction.getAddModifications().isEmpty() && correction.getDeleteModifications().isEmpty()
+                )
                 .build();
     }
 }

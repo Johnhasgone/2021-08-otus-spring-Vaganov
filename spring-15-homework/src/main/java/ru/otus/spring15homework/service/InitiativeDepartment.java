@@ -44,12 +44,16 @@ public class InitiativeDepartment {
         List<String> addModifications = draftLaw.getCorrection().getAddModifications();
         List<String> deleteModifications = draftLaw.getCorrection().getDeleteModifications();
 
+        System.out.println("Нужны доработки:\nДобавить: \n" + String.join("\n", addModifications) +
+                        "\nУдалить: \n" + String.join("\n", deleteModifications)
+                );
 
-        if (addModifications != null && !addModifications.isEmpty()) {
+
+        if (!addModifications.isEmpty()) {
             draftLaw.setText(draftLaw.getText() + String.join(".", addModifications));
         }
 
-        if (deleteModifications != null && !deleteModifications.isEmpty()) {
+        if (!deleteModifications.isEmpty()) {
             List<String> currentText = new ArrayList<>(List.of(draftLaw.getText().split("\\.")));
             currentText.removeAll(deleteModifications);
             draftLaw.setText(String.join(".", currentText));
