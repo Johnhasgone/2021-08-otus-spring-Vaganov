@@ -6,8 +6,7 @@ public enum ChainElement {
     COMMITTEES("Профильные комитеты"),
     STATE_DUMA("Государственная Дума"),
     COUNCIL("Совет Федерации"),
-    PRESIDENT("Президент"),
-    PRESIDENT_ADM("Администрация президента");
+    PRESIDENT("Президент");
 
     private final String value;
 

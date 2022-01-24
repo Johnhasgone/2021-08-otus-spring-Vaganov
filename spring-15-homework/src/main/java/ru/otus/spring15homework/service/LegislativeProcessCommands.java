@@ -6,6 +6,8 @@ import org.springframework.shell.standard.ShellMethod;
 import ru.otus.spring15homework.config.LegislativeProcess;
 import ru.otus.spring15homework.domain.Law;
 
+import java.util.concurrent.ForkJoinPool;
+
 @ShellComponent
 @RequiredArgsConstructor
 public class LegislativeProcessCommands {
@@ -13,18 +15,23 @@ public class LegislativeProcessCommands {
     private final InitiativeDepartment department;
 
     @ShellMethod(value = "start process", key = {"start"})
-    public String startProcess(int count) {
+    public void startProcess() {
 
-        for (int i = 0; i < count; i++) {
-            Law law = process.process(department.createDraftLaw());
-            System.out.println(law.getTitle() + "\n\n" + law.getText());
+        ForkJoinPool pool = ForkJoinPool.commonPool();
+
+        while (true) {
             try {
-                Thread.sleep(5000);
+                Thread.sleep( 5000 );
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }
 
-        return  "ok";
+            pool.execute(() -> {
+
+                Law law = process.process(department.createDraftLaw());
+                System.out.println(law.getTitle() + "\n" + law.getText());
+
+            });
+        }
     }
 }

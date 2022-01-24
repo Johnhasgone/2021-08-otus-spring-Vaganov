@@ -3,6 +3,7 @@ package ru.otus.spring15homework.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.channel.PublishSubscribeChannel;
 import org.springframework.integration.channel.QueueChannel;
 import org.springframework.integration.config.EnableIntegration;
@@ -35,8 +36,8 @@ public class IntegrationConfig {
     }
 
     @Bean
-    public QueueChannel departmentChannel() {
-        return MessageChannels.queue( 10 ).get();
+    public DirectChannel departmentChannel() {
+        return MessageChannels.direct().get();
     }
 
     @Bean
@@ -85,7 +86,7 @@ public class IntegrationConfig {
                                 )
                 )
 
-                .enrichHeaders(Map.of(Header.COUNCIL_APPROVAL.getValue(), new Random().nextBoolean()))
+                .handle("federalCouncil", "approve")
                 .route("headers['" + COUNCIL_APPROVAL.getValue() + "']",
                         message -> message
                                 .subFlowMapping(false, sf -> sf
@@ -100,7 +101,7 @@ public class IntegrationConfig {
                                 )
                 )
 
-                .enrichHeaders(Map.of(Header.SIGNED.getValue(), new Random().nextBoolean()))
+                .handle("president", "sign")
                 .route("headers['" + SIGNED.getValue() + "']",
                         message -> message
                                 .subFlowMapping(false, sf -> sf

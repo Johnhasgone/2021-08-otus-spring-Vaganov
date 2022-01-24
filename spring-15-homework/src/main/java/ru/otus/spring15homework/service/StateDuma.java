@@ -16,7 +16,7 @@ public class StateDuma {
     private int abstained;
 
     public Message<DraftLaw> vote(Message<DraftLaw> message) {
-        votedFor = new Random().nextInt(250);
+        votedFor = new Random().ints(200, 250).findAny().getAsInt();
         votedAgainst = new Random().nextInt(50);
         abstained = total - votedFor - votedAgainst;
 
