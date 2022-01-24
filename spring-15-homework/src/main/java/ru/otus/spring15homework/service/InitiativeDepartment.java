@@ -4,10 +4,8 @@ import org.springframework.stereotype.Service;
 import ru.otus.spring15homework.domain.DraftLaw;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 @Service
 public class InitiativeDepartment {

@@ -5,21 +5,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.channel.PublishSubscribeChannel;
-import org.springframework.integration.channel.QueueChannel;
 import org.springframework.integration.config.EnableIntegration;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlows;
 import org.springframework.integration.dsl.MessageChannels;
-import org.springframework.integration.dsl.Pollers;
 import org.springframework.integration.handler.LoggingHandler;
-import org.springframework.integration.scheduling.PollerMetadata;
 import ru.otus.spring15homework.domain.DraftLaw;
-import ru.otus.spring15homework.domain.Header;
 import ru.otus.spring15homework.service.InitiativeDepartment;
 
 import java.time.LocalDate;
 import java.util.Map;
-import java.util.Random;
 
 import static ru.otus.spring15homework.domain.ChainElement.*;
 import static ru.otus.spring15homework.domain.Header.*;
@@ -29,11 +24,6 @@ import static ru.otus.spring15homework.domain.Header.*;
 public class IntegrationConfig {
     @Autowired
     private InitiativeDepartment department;
-
-    @Bean(name = PollerMetadata.DEFAULT_POLLER)
-    public PollerMetadata poller() {
-        return Pollers.fixedRate(100).maxMessagesPerPoll(1).get();
-    }
 
     @Bean
     public DirectChannel departmentChannel() {
