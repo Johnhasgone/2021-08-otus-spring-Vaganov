@@ -43,7 +43,7 @@ public class IntegrationConfig {
                         m -> "Поступил на согласование проект: " + ((DraftLaw) m.getPayload()).getTitle()
                 )
 
-                .handle("dumaSecretariat", "prepareForApprovalProcess") // or transform or string bean and method name
+                .handle("dumaSecretariat", "prepareForApprovalProcess")
                 .log(LoggingHandler.Level.WARN, DUMA_SECRETARIAT.getValue(),
                         m -> ((DraftLaw) m.getPayload()).getTitle() + " передан на согласование в профильные комитеты"
                 )
