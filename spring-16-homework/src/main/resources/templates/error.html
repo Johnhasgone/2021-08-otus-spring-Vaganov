@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Доступ ограничен</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/stylesheet.css}">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="logout">
+            <span>Пользователь:</span>
+            <span th:text="${#authentication.getPrincipal().getUsername()}"></span>
+            <form name="logout-form" th:action="@{/logout}" method="post">
+                <input type="submit" class="exit-button" value="Выйти"/>
+            </form>
+        </div>
+        <h1 class="main-title">Доступ ограничен</h1>
+
+        <div class="page-div">
+            <form action="#" th:action="@{/book}" th:method="get">
+                <button type="submit" class="page-button">
+                    Назад
+                </button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

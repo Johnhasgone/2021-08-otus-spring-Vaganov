@@ -1,0 +1,62 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:bookdb
+
+  jpa:
+    show-sql: true
+
+    hibernate:
+      ddl-auto: none
+
+    properties:
+      hibernate:
+        format-sql: true
+
+  h2:
+    console:
+      path: /h2-console
+      settings:
+        web-allow-others: true
+  liquibase:
+    enabled: true
+    drop-first: true
+
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: metrics,health,logfile,info,beans
+  endpoint:
+    health:
+      show-details: always
+  health:
+    defaults:
+      enabled: true
+  info:
+    git:
+      mode: full
+    env:
+      enabled: true
+  cors:
+    allowed-origins: http://localhost:9090/
+    allowed-methods: GET,POST,OPTIONS
+
+info:
+  version: @project.version@
+  author: eu.vaganov
+  descriptiion: library app
+
+logging:
+  file:
+    name: logs/logfile.log
+  logback:
+    rollingpolicy:
+      file-name-pattern: logs/logfile_%d{yyyy-MM-dd}_%i.log
+      max-file-size: 10MB
+      max-history: 10
+      clean-history-on-start: true
