@@ -11,7 +11,7 @@ import org.springframework.integration.dsl.IntegrationFlows;
 import org.springframework.integration.dsl.MessageChannels;
 import org.springframework.integration.handler.LoggingHandler;
 import ru.otus.spring15homework.domain.DraftLaw;
-import ru.otus.spring15homework.service.InitiativeDepartment;
+import ru.otus.spring15homework.service.*;
 
 import java.time.LocalDate;
 import java.util.Map;
@@ -24,6 +24,22 @@ import static ru.otus.spring15homework.domain.Header.*;
 public class IntegrationConfig {
     @Autowired
     private InitiativeDepartment department;
+
+    @Autowired
+    private StateDuma stateDuma;
+
+    @Autowired
+    private DumaSecretariat dumaSecretariat;
+
+    @Autowired
+    private ProfileCommittees profileCommittees;
+
+    @Autowired
+    private FederalCouncil federalCouncil;
+
+    @Autowired
+    private President president;
+
 
     @Bean
     public DirectChannel departmentChannel() {
@@ -39,64 +55,64 @@ public class IntegrationConfig {
     public IntegrationFlow mainLegislativeProcessFlow() {
         return IntegrationFlows
                 .from(departmentChannel())
-                .log(LoggingHandler.Level.WARN, DUMA_SECRETARIAT.getValue(),
-                        m -> "Поступил на согласование проект: " + ((DraftLaw) m.getPayload()).getTitle()
+                .<DraftLaw>log(LoggingHandler.Level.WARN, DUMA_SECRETARIAT.getValue(),
+                        m -> "Поступил на согласование проект: " + m.getPayload().getTitle()
                 )
 
-                .handle("dumaSecretariat", "prepareForApprovalProcess")
-                .log(LoggingHandler.Level.WARN, DUMA_SECRETARIAT.getValue(),
-                        m -> ((DraftLaw) m.getPayload()).getTitle() + " передан на согласование в профильные комитеты"
+                .handle(dumaSecretariat, "prepareForApprovalProcess")
+                .<DraftLaw>log(LoggingHandler.Level.WARN, DUMA_SECRETARIAT.getValue(),
+                        m -> m.getPayload().getTitle() + " передан на согласование в профильные комитеты"
                 )
 
-                .handle("profileCommittees", "checkDraftLaw")
+                .handle(profileCommittees, "checkDraftLaw")
                 .route("headers['" + COMMITTEE_APPROVAL.getValue() + "']",
                         message -> message
                                 .subFlowMapping(false, sf -> sf
-                                        .log(LoggingHandler.Level.WARN, COMMITTEES.getValue(),
-                                                m -> String.format("Законопроект \"%s\" возвращен на доработку", ((DraftLaw)m.getPayload()).getTitle())
+                                        .<DraftLaw>log(LoggingHandler.Level.WARN, COMMITTEES.getValue(),
+                                                m -> String.format("Законопроект \"%s\" возвращен на доработку", m.getPayload().getTitle())
                                         )
                                         .gateway(acceptModificationsFlow())
                                 )
                 )
-                .log(LoggingHandler.Level.WARN, COMMITTEES.getValue(),
-                        m -> ((DraftLaw) m.getPayload()).getTitle() + " передан на рассмотрение в Государственную Думу")
+                .<DraftLaw>log(LoggingHandler.Level.WARN, COMMITTEES.getValue(),
+                        m -> m.getPayload().getTitle() + " передан на рассмотрение в Государственную Думу")
 
-                .handle("stateDuma", "vote")
+                .handle(stateDuma, "vote")
                 .route("headers['" + DUMA_APPROVAL.getValue() + "']",
                         message -> message
                                 .subFlowMapping(false, sf -> sf
-                                        .log(LoggingHandler.Level.WARN, STATE_DUMA.getValue(),
-                                                m -> ((DraftLaw) m.getPayload()).getTitle() + " не одобрен Государственной Думой")
+                                        .<DraftLaw>log(LoggingHandler.Level.WARN, STATE_DUMA.getValue(),
+                                                m -> m.getPayload().getTitle() + " не одобрен Государственной Думой")
                                         .nullChannel()
                                 )
                                 .subFlowMapping(true, sf -> sf
-                                        .log(LoggingHandler.Level.WARN, STATE_DUMA.getValue(),
-                                                m -> ((DraftLaw) m.getPayload()).getTitle() + " одобрен Государственной Думой и передан в Совет Федерации")
+                                        .<DraftLaw>log(LoggingHandler.Level.WARN, STATE_DUMA.getValue(),
+                                                m -> m.getPayload().getTitle() + " одобрен Государственной Думой и передан в Совет Федерации")
                                         .enrichHeaders(Map.of(DUMA_APPROVAL_DATE.getValue(), LocalDate.now()))
                                 )
                 )
 
-                .handle("federalCouncil", "approve")
+                .handle(federalCouncil, "approve")
                 .route("headers['" + COUNCIL_APPROVAL.getValue() + "']",
                         message -> message
                                 .subFlowMapping(false, sf -> sf
-                                        .log(LoggingHandler.Level.WARN, COUNCIL.getValue(),
-                                                m -> ((DraftLaw) m.getPayload()).getTitle() + " не одобрен Советом Федерации - наложено вето")
+                                        .<DraftLaw>log(LoggingHandler.Level.WARN, COUNCIL.getValue(),
+                                                m -> m.getPayload().getTitle() + " не одобрен Советом Федерации - наложено вето")
                                         .nullChannel()
                                 )
                                 .subFlowMapping(true, sf -> sf
-                                        .log(LoggingHandler.Level.WARN, COUNCIL.getValue(),
-                                                m -> ((DraftLaw) m.getPayload()).getTitle() + " одобрен Советом Федерации")
+                                        .<DraftLaw>log(LoggingHandler.Level.WARN, COUNCIL.getValue(),
+                                                m -> m.getPayload().getTitle() + " одобрен Советом Федерации")
                                         .enrichHeaders(Map.of(COUNCIL_APPROVAL_DATE.getValue(), LocalDate.now()))
                                 )
                 )
 
-                .handle("president", "sign")
+                .handle(president, "sign")
                 .route("headers['" + SIGNED.getValue() + "']",
                         message -> message
                                 .subFlowMapping(false, sf -> sf
-                                        .log(LoggingHandler.Level.WARN, PRESIDENT.getValue(),
-                                                m -> ((DraftLaw) m.getPayload()).getTitle() + " не подписан - наложено вето")
+                                        .<DraftLaw>log(LoggingHandler.Level.WARN, PRESIDENT.getValue(),
+                                                m -> m.getPayload().getTitle() + " не подписан - наложено вето")
                                         .nullChannel()
                                 )
                                 .subFlowMapping(true, sf -> sf
@@ -105,8 +121,8 @@ public class IntegrationConfig {
                                 )
                 )
 
-                .handle("dumaSecretariat", "prepareLaw")
-                .channel("publicationChannel")
+                .handle(dumaSecretariat, "prepareLaw")
+                .channel(publicationChannel())
                 .get()
         ;
     }
