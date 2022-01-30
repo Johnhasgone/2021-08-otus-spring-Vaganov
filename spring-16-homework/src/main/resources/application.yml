@@ -30,7 +30,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: metrics,health,logfile,info,beans
+        include: metrics,prometheus,health,logfile,info
   endpoint:
     health:
       show-details: always
@@ -38,13 +38,8 @@ management:
     defaults:
       enabled: true
   info:
-    git:
-      mode: full
     env:
       enabled: true
-  cors:
-    allowed-origins: http://localhost:9090/
-    allowed-methods: GET,POST,OPTIONS
 
 info:
   version: @project.version@

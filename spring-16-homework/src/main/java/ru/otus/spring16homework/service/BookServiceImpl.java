@@ -1,8 +1,6 @@
 package ru.otus.spring16homework.service;
 
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.acls.domain.GrantedAuthoritySid;
@@ -39,12 +37,10 @@ public class BookServiceImpl implements BookService {
     private final GenreService genreService;
     private final AuthorService authorService;
     private final MutableAclService mutableAclService;
-    private final Logger logger = LoggerFactory.getLogger(BookServiceImpl.class);
 
     @Override
     @Transactional(readOnly = true)
     public BookDto findById(Long id) {
-        logger.info("Got book id = {} from database", id);
         return BookMapper.INSTANCE.toDto(
                 Optional.ofNullable(bookRepository.findBookById(id))
                         .orElseThrow(() -> new EmptyResultDataAccessException("Не найдена книга с id " + id, 1)));
@@ -61,7 +57,6 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional(readOnly = true)
     public List<BookDto> findAll() {
-        logger.info("Got all books from database");
         return bookRepository.findAll().stream()
                 .map(BookMapper.INSTANCE::toDto)
                 .collect(Collectors.toList());
