@@ -148,7 +148,7 @@ insert into comment(text, book_id) values
                                           ('интересные герои', 30);
 
 --changeset johnhasgone:2021-12-28-001-user
-insert into user (username, password, authority) values
+insert into library_user (username, password, authority) values
                             ('admin', '$2a$10$vIlwS97XFgdHi0dPaaCese/9ZF2u.jntA3I.dbHD0pVfFz/SX25.a', 'ROLE_ADMIN'),
                             ('teacher', '$2a$10$vIlwS97XFgdHi0dPaaCese/9ZF2u.jntA3I.dbHD0pVfFz/SX25.a', 'ROLE_TEACHER'),
                             ('student', '$2a$10$vIlwS97XFgdHi0dPaaCese/9ZF2u.jntA3I.dbHD0pVfFz/SX25.a', 'ROLE_STUDENT')
