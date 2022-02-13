@@ -49,7 +49,7 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     @Transactional
-    @HystrixCommand(fallbackMethod = "getGenreFallback")
+    @HystrixCommand(fallbackMethod = "saveGenreFallback")
     public GenreDto save(String name) {
         Genre genre = new Genre(name);
         return GenreMapper.INSTANCE.toDto(genreRepository.save(genre));
@@ -67,11 +67,16 @@ public class GenreServiceImpl implements GenreService {
         return genreRepository.existsById(id);
     }
 
-    private GenreDto getGenreFallback() {
+    private Optional<GenreDto> getGenreFallback(String name) {
+        return Optional.of(new GenreDto(0L, NO_INFO));
+    }
+
+    private GenreDto saveGenreFallback(String name) {
         return new GenreDto(0L, NO_INFO);
     }
 
-    private void deleteGenreFallback() {
+
+    private void deleteGenreFallback(Long id) {
         // nothing to do
     }
 }

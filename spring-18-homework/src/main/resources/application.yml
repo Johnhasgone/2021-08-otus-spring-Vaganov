@@ -51,3 +51,16 @@ logging:
       max-file-size: 10MB
       max-history: 10
       clean-history-on-start: true
+  level:
+    root: debug
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          strategy: SEMAPHORE
+          thread:
+            timeoutInMilliseconds: 10000
+  shareSecurityContext: true
+

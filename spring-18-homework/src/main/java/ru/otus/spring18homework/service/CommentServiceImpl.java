@@ -49,7 +49,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    @HystrixCommand(fallbackMethod = "getCommentFallback")
+    @HystrixCommand(fallbackMethod = "saveCommentFallback")
     public CommentDto save(Long bookId, String text) {
         Comment comment = new Comment(null, text, bookRepository.findById(bookId)
                 .orElseThrow(() -> new EmptyResultDataAccessException("Не найдена книга с id " + bookId, 1)));
@@ -68,12 +68,16 @@ public class CommentServiceImpl implements CommentService {
         return commentRepository.existsById(id);
     }
 
-    private CommentDto getCommentFallback() {
+    private CommentDto getCommentFallback(Long id) {
         return new CommentDto(0L, NO_INFO);
     }
 
-    private List<CommentDto> getCommentsFallback() {
-        return List.of(getCommentFallback());
+    private CommentDto saveCommentFallback(Long id, String text) {
+        return new CommentDto(0L, NO_INFO);
+    }
+
+    private List<CommentDto> getCommentsFallback(Long id) {
+        return List.of(getCommentFallback(0L));
     }
 
     private void deleteCommentFallback() {

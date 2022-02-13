@@ -1,12 +1,15 @@
 package ru.otus.spring18homework.service;
 
+import liquibase.pro.packaged.G;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
+import ru.otus.spring18homework.dao.AuthorRepository;
 import ru.otus.spring18homework.dao.BookRepository;
+import ru.otus.spring18homework.dao.GenreRepository;
 import ru.otus.spring18homework.domain.Author;
 import ru.otus.spring18homework.domain.Book;
 import ru.otus.spring18homework.domain.Genre;
@@ -16,6 +19,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @DisplayName("Сервис для работы с книгами должен ")
@@ -42,6 +46,10 @@ class BookServiceImplTest {
     BookService bookService;
     @MockBean
     BookRepository bookRepository;
+    @MockBean
+    AuthorRepository authorRepository;
+    @MockBean
+    GenreRepository genreRepository;
 
     @DisplayName("возвращать ожидаемую книгу по ID")
     @Test
@@ -130,11 +138,13 @@ class BookServiceImplTest {
     @Test
     @WithMockUser(username = "user")
     void shouldCreateBook() {
+        Author author = new Author(FIRST_AUTHOR_ID, FIRST_AUTHOR_NAME);
+        Genre genre = new Genre(FIRST_GENRE_ID, FIRST_GENRE_NAME);
         Book creatingBook = new Book(
                 FIRST_BOOK_ID,
                 FIRST_BOOK_TITLE,
-                List.of(new Author(FIRST_AUTHOR_ID, FIRST_AUTHOR_NAME)),
-                List.of(new Genre(FIRST_GENRE_ID, FIRST_GENRE_NAME))
+                List.of(author),
+                List.of(genre)
         );
 
         BookDto createdBookDto = new BookDto(
@@ -144,6 +154,8 @@ class BookServiceImplTest {
                 FIRST_GENRE_NAME
         );
         when(bookRepository.save(any())).thenReturn(creatingBook);
+        when(authorRepository.findByName(anyString())).thenReturn(List.of(author));
+        when(genreRepository.findByName(anyString())).thenReturn(List.of(genre));
         BookDto actualBook = bookService.save(new BookDto(FIRST_BOOK_ID, FIRST_BOOK_TITLE, FIRST_AUTHOR_NAME, FIRST_GENRE_NAME));
         assertThat(actualBook).isEqualTo(createdBookDto);
     }

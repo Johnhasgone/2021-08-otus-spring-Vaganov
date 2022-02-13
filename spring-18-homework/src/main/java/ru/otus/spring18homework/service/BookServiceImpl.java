@@ -68,7 +68,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    @HystrixCommand(fallbackMethod = "getBookFallback")
+    @HystrixCommand(fallbackMethod = "saveBookFallback")
     public BookDto save(BookDto bookDto) {
         List<Author> authors = getAuthors(bookDto.getAuthors());
         List<Genre> genres = getGenres(bookDto.getGenres());
@@ -140,15 +140,20 @@ public class BookServiceImpl implements BookService {
         return bookRepository.existsById(id);
     }
 
-    private BookDto getBookFallback() {
+    private BookDto getBookFallback(Long id) {
         return new BookDto(0L, NO_INFO, NO_INFO, NO_INFO);
     }
 
-    private List<BookDto> getBooksFallback() {
-        return List.of(getBookFallback());
+    private BookDto saveBookFallback(BookDto dto) {
+        return new BookDto(0L, NO_INFO, NO_INFO, NO_INFO);
     }
 
-    private void deleteBookFallback() {
+
+    private List<BookDto> getBooksFallback() {
+        return List.of(getBookFallback(0L));
+    }
+
+    private void deleteBookFallback(Long id) {
         // nothing to do
     }
 }

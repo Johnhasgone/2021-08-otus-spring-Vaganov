@@ -43,7 +43,7 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     @Transactional
-    @HystrixCommand(fallbackMethod = "getAuthorFallback")
+    @HystrixCommand(fallbackMethod = "saveAuthorFallback")
     public AuthorDto save(String authorName) {
         Author author = new Author(authorName);
         return AuthorMapper.INSTANCE.toDto(repository.save(author));
@@ -62,11 +62,15 @@ public class AuthorServiceImpl implements AuthorService {
         return repository.existsById(id);
     }
 
-    private AuthorDto getAuthorFallback() {
+    private Optional<AuthorDto> getAuthorFallback(String name) {
+        return Optional.of(new AuthorDto(0L, "N/A"));
+    }
+
+    private AuthorDto saveAuthorFallback(String name) {
         return new AuthorDto(0L, "N/A");
     }
 
-    private void deleteAuthorFallback() {
+    private void deleteAuthorFallback(Long id) {
         // nothing to do
     }
 }
