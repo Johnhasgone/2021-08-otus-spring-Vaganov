@@ -38,16 +38,16 @@ insert into comment(id, text, book_id) values
 
 ;
 
-insert into acl_sid (id, sid, principal) values
-                                             (1, 'ROLE_ADMIN', 0),
-                                             (2, 'ROLE_TEACHER', 0),
-                                             (3, 'ROLE_STUDENT', 0)
+insert into acl_sid (sid, principal) values
+                                             ('ROLE_ADMIN', false),
+                                             ('ROLE_TEACHER', false),
+                                             ('ROLE_STUDENT', false)
 ;
 
-insert into acl_class (id, class) values (1, 'ru.otus.spring17homework.domain.Book');
+insert into acl_class (id, class) values (1, 'ru.otus.spring18homework.domain.Book');
 
-insert into acl_object_identity (id, object_id_class, object_id_identity, parent_object, owner_sid, entries_inheriting)
-values ( 1, 1, 1, NULL, 3, 0 );
+insert into acl_object_identity (object_id_class, object_id_identity, parent_object, owner_sid, entries_inheriting)
+values ( 1, 1, NULL, 3, false );
 
-insert into ACL_ENTRY (id, acl_object_identity, ace_order, sid, mask, granting, audit_success, audit_failure)
-values ( 1, 1, 1, 1, 1, 1, 1, 1 );
+insert into ACL_ENTRY (acl_object_identity, ace_order, sid, mask, granting, audit_success, audit_failure)
+values ( 1, 1, 1, 1, true, true, true );

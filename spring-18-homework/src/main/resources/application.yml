@@ -59,8 +59,8 @@ hystrix:
     default:
       execution:
         isolation:
-          strategy: SEMAPHORE
+          #strategy: SEMAPHORE
           thread:
-            timeoutInMilliseconds: 10000
+            timeoutInMilliseconds: 3000
   shareSecurityContext: true
 

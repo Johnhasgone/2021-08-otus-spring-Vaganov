@@ -36,7 +36,11 @@ public class AclConfig {
 
     @Bean
     public JdbcMutableAclService aclService() {
-        return new JdbcMutableAclService(dataSource, lookupStrategy(), aclCache());
+        JdbcMutableAclService aclService = new JdbcMutableAclService(dataSource, lookupStrategy(), aclCache());
+        aclService.setSidIdentityQuery("SELECT currval('acl_sid_id_seq')");
+        aclService.setClassIdentityQuery("SELECT currval('acl_class_id_seq')");
+        aclService.setObjectIdentityPrimaryKeyQuery("SELECT currval('acl_object_identity_id_seq')");
+        return aclService;
     }
 
     @Bean

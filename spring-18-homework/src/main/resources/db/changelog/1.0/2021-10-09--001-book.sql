@@ -68,9 +68,9 @@ create table if not exists library_user (
 
 --changeset johnhasgone:2022-01-05-001-acl
 create table if not exists acl_sid (
-    id varchar(36) primary key,
+    id bigserial primary key,
     sid varchar(100) not null unique,
-    principal smallint
+    principal boolean
 );
 
 create table if not exists acl_class (
@@ -79,12 +79,12 @@ create table if not exists acl_class (
 );
 
 create table if not exists acl_object_identity (
-    id varchar(36) primary key,
+    id bigserial primary key,
     object_id_class varchar(36) not null,
     object_id_identity varchar(36) not null,
-    parent_object varchar(36),
-    owner_sid varchar(36),
-    entries_inheriting smallint not null,
+    parent_object bigint,
+    owner_sid bigint,
+    entries_inheriting boolean,
     constraint fk_object_id_class
         foreign key (object_id_class)
             references acl_class(id),
@@ -97,14 +97,14 @@ create table if not exists acl_object_identity (
 );
 
 create table if not exists acl_entry (
-    id varchar(36) primary key,
-    acl_object_identity varchar(36) not null,
+    id serial primary key,
+    acl_object_identity bigint not null,
     ace_order int not null,
-    sid varchar(36) not null,
+    sid bigint not null,
     mask int not null,
-    granting smallint not null,
-    audit_success smallint not null,
-    audit_failure smallint not null,
+    granting boolean,
+    audit_success boolean,
+    audit_failure boolean,
     constraint fk_sid
         foreign key (sid)
             references acl_sid(id)
