@@ -1,8 +1,10 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/db
+    url: jdbc:postgresql://localhost:5432/music
     username: postgres
     password: postgres
+    hikari:
+      schema: db
 
   jpa:
     hibernate:

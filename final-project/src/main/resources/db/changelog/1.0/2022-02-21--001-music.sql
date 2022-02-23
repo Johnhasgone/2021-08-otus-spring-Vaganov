@@ -2,22 +2,22 @@
 
 --changeset johnhasgone:2022-02-21-001-music
 create table if not exists track(
-    id bigserial,
+    id bigserial primary key,
     title varchar(1000) not null
 );
 
 create table if not exists artist(
-    id bigserial,
+    id bigserial primary key,
     name varchar(100) not null
 );
 
 create table if not exists genre(
-    id bigserial,
+    id bigserial primary key,
     name varchar(100)
 );
 
 create table if not exists playlist(
-    id bigserial,
+    id bigserial primary key,
     title varchar(1000)
 );
 
