@@ -2,11 +2,11 @@ package ru.otus.finalproject.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,4 +18,23 @@ public class Track {
 
     @Column
     private String title;
+
+    @ManyToMany
+    @Fetch(FetchMode.SUBSELECT)
+    @JoinTable(
+            name = "track_artist",
+            joinColumns = {@JoinColumn(name = "track_id")},
+            inverseJoinColumns = {@JoinColumn(name = "artist_id")}
+    )
+    private List<Artist> artists;
+
+    @ManyToMany
+    @Fetch(FetchMode.SUBSELECT)
+    @JoinTable(
+            name = "track_genre",
+            joinColumns = {@JoinColumn(name = "track_id")},
+            inverseJoinColumns = {@JoinColumn(name = "genre_id")}
+    )
+    private List<Genre> genres;
+
 }
