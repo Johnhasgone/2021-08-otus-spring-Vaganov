@@ -13,23 +13,23 @@ import java.util.stream.Collectors;
 
 @Service
 public class GenreService {
-    private final GenreMapper genreMapper;
     private final GenreRepository genreRepository;
 
     @Autowired
-    public GenreService(GenreMapper genreMapper, GenreRepository genreRepository) {
-        this.genreMapper = genreMapper;
+    public GenreService(GenreRepository genreRepository) {
         this.genreRepository = genreRepository;
     }
 
     public List<GenreDto> findAll() {
         return genreRepository.findAll(Sort.by("name"))
                 .stream()
-                .map(genreMapper::toDto)
+                .map(GenreMapper.INSTANCE::toDto)
                 .collect(Collectors.toList());
     }
 
     public GenreDto createGenre(String name) {
-        return genreMapper.toDto(genreRepository.save(new Genre(name)));
+        return GenreMapper.INSTANCE.toDto(
+                genreRepository.save(new Genre(name))
+        );
     }
 }

@@ -14,6 +14,7 @@ import java.util.List;
 @Table(name = "track")
 public class Track {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column

@@ -1,12 +1,13 @@
 package ru.otus.finalproject.mapper;
 
 import org.mapstruct.Mapping;
-import org.springframework.stereotype.Component;
+import org.mapstruct.factory.Mappers;
 import ru.otus.finalproject.domain.Genre;
 import ru.otus.finalproject.dto.GenreDto;
 
-@Component
+@org.mapstruct.Mapper
 public interface GenreMapper extends Mapper<Genre, GenreDto> {
+    GenreMapper INSTANCE = Mappers.getMapper(GenreMapper.class);
 
     @Override
     @Mapping(target = "id")
