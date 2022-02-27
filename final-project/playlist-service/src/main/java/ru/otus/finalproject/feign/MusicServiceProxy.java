@@ -1,6 +1,7 @@
 package ru.otus.finalproject.feign;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import ru.otus.finalproject.dto.GenreDto;
@@ -16,4 +17,7 @@ public interface MusicServiceProxy {
 
 	@PostMapping(value = "track")
 	List<TrackDto> findTracksByGenres(@RequestBody List<GenreDto> genres);
+
+	@GetMapping(value = "genre")
+	List<GenreDto> findGenres();
 }

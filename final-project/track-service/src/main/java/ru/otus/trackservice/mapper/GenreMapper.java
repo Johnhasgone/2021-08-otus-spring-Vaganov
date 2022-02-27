@@ -1,9 +1,9 @@
-package ru.otus.finalproject.mapper;
+package ru.otus.trackservice.mapper;
 
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
-import ru.otus.finalproject.domain.Genre;
-import ru.otus.finalproject.dto.GenreDto;
+import ru.otus.trackservice.domain.Genre;
+import ru.otus.trackservice.dto.GenreDto;
 
 @org.mapstruct.Mapper
 public interface GenreMapper extends Mapper<Genre, GenreDto> {
