@@ -1,6 +1,6 @@
 version: '3'
 services:
-  your-wave:
+  playlist-service:
     build:
       context: .
       dockerfile: Dockerfile

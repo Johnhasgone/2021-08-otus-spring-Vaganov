@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>ru.otus</groupId>
-    <artifactId>final-project</artifactId>
+    <artifactId>playlist-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>final-project</name>
-    <description>final-project</description>
+    <name>playlist-service</name>
+    <description>playlist-service</description>
     <properties>
         <java.version>11</java.version>
         <spring-cloud.version>2021.0.0</spring-cloud.version>
@@ -113,7 +113,7 @@
                 </configuration>
             </plugin>
         </plugins>
-        <finalName>your-wave</finalName>
+        <finalName>playlist-service</finalName>
     </build>
 
 </project>

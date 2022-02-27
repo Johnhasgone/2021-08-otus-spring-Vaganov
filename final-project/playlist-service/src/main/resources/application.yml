@@ -14,4 +14,3 @@ spring:
   liquibase:
     enabled: true
     drop-first: true
-
