@@ -1,0 +1,26 @@
+spring.application.name: playlist-service
+server.port: 6001
+
+spring.cloud.config.uri: http://localhost:5000
+
+
+eureka.client.service-url.defaultZone: http://localhost:8001/eureka
+eureka.client.register-with-eureka: true
+eureka.client.fetch-registry: true
+#eureka.server.eviction-interval-timer-in-ms: 15000
+eureka.instance.leaseRenewalIntervalInSeconds: 30
+eureka.instance.leaseExpirationDurationInSeconds: 90
+
+eureka.instance.instance-id: ${spring.application.name}:${server.port}
+eureka.instance.prefer-ip-address: true
+
+#hystrix.command.getRentsKey.execution.isolation.thread.timeoutInMilliseconds=3000
+#
+#  #hystrix.command.getRentsKey.metrics.rollingStats.timeInMilliseconds=15000
+#  #hystrix.command.getRentsKey.circuitBreaker.requestVolumeThreshold=10
+#  #hystrix.command.getRentsKey.circuitBreaker.errorThresholdPercentage=50
+#  #hystrix.command.getRentsKey.circuitBreaker.sleepWindowInMilliseconds=6
+#
+#spring.sleuth.sampler.probability=100
+#  #Not mandatory; this is the default value
+#spring.zipkin.baseUrl=http://localhost:9411
