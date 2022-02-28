@@ -46,8 +46,8 @@ public class PlaylistService {
         );
     }
 
-    public List<TrackDto> getTracks(List<GenreDto> genres) {
-        return musicServiceProxy.findTracksByGenres(genres);
+    public List<TrackDto> getTracks(List<Long> genreIds) {
+        return musicServiceProxy.findTracksByGenres(genreIds, "genre");
     }
 
 }

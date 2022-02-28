@@ -23,14 +23,14 @@ public class PlaylistController {
         return playlistService.findAll();
     }
 
-    @GetMapping("playlist")
-    public PlaylistDto getPlaylistById(@RequestParam Long id) {
+    @GetMapping("playlist/{id}")
+    public PlaylistDto getPlaylistById(@PathVariable Long id) {
         return playlistService.findById(id);
     }
 
     @PostMapping("playlist/create")
-    public PlaylistDto createPlaylist(@RequestBody List<GenreDto> genres) {
-        List<TrackDto> tracks = playlistService.getTracks(genres);
+    public PlaylistDto createPlaylist(@RequestBody List<Long> genreIds) {
+        List<TrackDto> tracks = playlistService.getTracks(genreIds);
         PlaylistDto dto = new PlaylistDto();
         dto.setName("Новый плейлист");
         dto.setTracks(tracks);

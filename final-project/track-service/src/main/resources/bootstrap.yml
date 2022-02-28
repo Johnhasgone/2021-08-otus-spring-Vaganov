@@ -1,7 +1,7 @@
 spring.application.name: track-service
 server.port: 7001
 
-spring.cloud.config.uri: http://localhost:5000
+spring.cloud.config.uri: http://localhost:5001
 
 
 eureka.client.service-url.defaultZone: http://localhost:8001/eureka
